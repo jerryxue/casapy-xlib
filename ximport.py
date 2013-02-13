@@ -1,10 +1,8 @@
 ﻿#########################################################################################
 #
-#    Script Name - ILOAD    
-#
 #   Author
 #
-#        Rui Xue, University of Illinois
+#       Rui Xue, University of Illinois
 #   
 #   PURPOSE
 #
@@ -18,6 +16,7 @@
 #       ONE UVFITS file written out by AIPS, MIRIAD, or other packages
 #
 #   OUTPUT FILES
+#
 #       Measurement Set (MS):       <prefix>.ms
 #       Observation Summary Log:    <prefix>.listobs.log
 #
@@ -76,25 +75,15 @@
 #                       after calibrations). Sigma is always not touched during the
 #                       calibration, and weight acts like a scratch column.
 #       20110921    RX  using gencal to get the evla gain/tsys calibration table.                       
-#       20111120    RX  mir2ms was merged into this script
-#		20121120	RX	add a git repo. test
+#       20111120    RX  mir2ms was merged into this script / add timebin
+#		20130213	RX	added into a git repo.
 #
 #   WORKING FLOW
 #
-#       (1) Import raw data
-#       (2) Export the LISTOBS log file
-#       (3) [Use SPLIT to extract the data based on your additional selection setting]
-#       (4) [Baseline correction]
-#
-#   HINTS:
-#       for importing CAMRA MIRIAD data, the script mir2ms_*.py may be a good start
-#   To Do:
-#       get ready for the raw ms file support
-#
-#		sometimes, you may want to do a timebin to reduce the data size
-#		split(vis='XX',outputvis='XX.new',datacolumn='data',timebin='10s')
-#		flagmanager(vis = msfile,mode='save',versionname='Original',comment='Original flags at import into CASA',\
-#			merge='replace')
+#       * import raw data
+#       * export the LISTOBS log file
+#      [* use SPLIT to extract the data based on your additional selection setting]
+#      [* baseline solution]
 #
 #########################################################################################
 
@@ -106,7 +95,7 @@ casalog.filter('INFO')
 startTime=time.time()
 news("")
 news("++")
-news("------------- Begin Task: ILOAD "+prefix+" -------------")
+news("------------- Begin Task: ximport "+prefix+" -------------")
 news("++")
 news("")
 casa_log = open(casalog.logfile(),'r')
@@ -165,7 +154,6 @@ try:
 except NameError:
     import_band=''
 
-#   Narrowband Windows to be Exported
 try:
     import_win
 except NameError:
@@ -275,8 +263,8 @@ if  importmode=='mir':
     news("Write the data into the Measurement Set (MS):")
     news(str(msfile))
     news("")
-    importmir(    mirfile=rawfiles,
-                 vis=msfile,
+    importmir(  mirfile=rawfiles,
+                vis=msfile,
                 telescope=telescope,
                 nocal=nocal,
                 win_list=import_win,
@@ -374,19 +362,19 @@ news("")
 news("Total importing time: %10.1f" %(import2time-startTime))
 news("")
 news("++")
-news("------------- End Task: ILOAD "+prefix+" -------------")
+news("------------- End Task: ximport "+prefix+" -------------")
 news("++")
 news("")
 casa_log = open(casalog.logfile(),'r')
 stoplog = casa_log.readlines()
 casa_log.close()
-exportcasalog(startlog,stoplog, prefix+'.iload.reduc.log')
+exportcasalog(startlog,stoplog, prefix+'.ximport.reduc.log')
 
 if  sending==True:
     emailsender(myemail,\
-                "RUN <ILOAD> End: "+prefix,\
+                "RUN <ximport> End: "+prefix,\
                 "This email was generated automatically by your successful reduction run.\nThe log files are attached",\
-                [prefix+'.iload.reduc.log']+logflist)
+                [prefix+'.ximport.reduc.log']+logflist)
                 
 #----------------------------------------------------------------------------------------
 #   Clean Global Variables
