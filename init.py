@@ -51,17 +51,15 @@ if  machinename.find('neon')!=-1:
     gspath='/opt/local/bin/'
     mirbin='/usr/local/miriad-carma/bin/darwin/'
 
-if  not (script_home in sys.path):
-    sys.path=[script_home]+sys.path
-
-import sys
-sys.path.append(script_home+"analysis_scripts/")
-import analysisUtils as au
-
+# add scripts path
 print ""
 print ">>>> reduction script path:"
 print script_home
 print ""
+if  not (script_home in sys.path):
+    sys.path=[script_home]+sys.path
+if  not (script_home+"analysis_scripts/" in sys.path):
+    sys.path=[script_home+"analysis_scripts/"]+sys.path
 
 print ">>>> ghostscript path:"
 print gspath
@@ -72,11 +70,13 @@ print ">>>> miriad path:"
 print mirbin
 print ""
 
-print ">>>> load reduction modules:"
-from reduc_lib import *
+print ">>>> load reduction/analysis modules:"
+from xutils import *
 from iplot_lib import *
-print "reduc_lib.py"
+import analysisUtils as au
+print "xutils.py"
 print "iplot_lib.py"
+print "analysisUtils.py"
 print ""
 
 print ">>>> load modified tasks:"
@@ -85,12 +85,12 @@ print "iplotxy.py"
 print ""
 
 print ">>>> reduction script_version:"
-script_version='20121110'
+script_version=''
 print script_version
 print ""
 
 print ">>>> notification email:"
-myemail=None
+myemail='jerryxue@gmail.com'
 print myemail
 print ""
 
