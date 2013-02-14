@@ -1,6 +1,6 @@
 #########################################################################################
 #
-#   Script Name - IMERGE
+#   Script Name - xmerge
 #
 #   Author
 #
@@ -340,7 +340,7 @@ casalog.filter('INFO')
 startTime=time.time()
 news("")
 news("++")
-news("------------- Begin Task: IMERGE "+prefix+" -------------")
+news("------------- Begin Task: xmerge "+prefix+" -------------")
 news("++")
 news("")
 casa_log = open(casalog.logfile(),'r')
@@ -432,9 +432,9 @@ except NameError:
     wtstat_fitspw=''
         
 try:
-    concat_mms
+    usevconcat
 except NameError:
-    concat_mms=False
+    usevconcat=False
 
 sending=True
 try:
@@ -646,9 +646,10 @@ for i in range(len(prefix_combine)):
     prefix_combine_file[i]=prefix_combine[i]+'.src.ms'
     tb.open(prefix_combine_file[i]+'/SPECTRAL_WINDOW')
     if  uvcs==True and len(prefix_combine_file)!=1:
+        tb.close()
         tb.open(prefix_combine_file[i]+'.contsub/SPECTRAL_WINDOW')
     mincw=[mincw]+tb.getcol('CHAN_WIDTH')
-    tb.close
+    tb.close()
     mincw=np.min(mincw)
     
     if  uvcs==True and len(prefix_combine_file)==1:
@@ -698,19 +699,32 @@ if  len(prefix_combine_file)!=1 or prefix!=prefix_combine[0]:
             prefix_combine_inp[i]=prefix_combine_file[i]+loop
             delmod(vis=prefix_combine_inp[i],otf=True,scr=False)
         os.system('rm -rf '+srcfile+loop)
-       
-        default('concat')
-        vis=prefix_combine_inp
-        concatvis=srcfile+loop
-        freqtol=str(mincw/1.e6/4.)+'MHz'
-        if  freq_tol!='':
-            freqtol=freq_tol #'0.1MHz'
-        dirtol='1.arcsec' #'1.arcsec'
-        timesort=False
-        visweightscale=wt_scale
-        createmms=concat_mms
-        concat()
 
+        if  usevconcat==False:
+            default('concat')
+            vis=prefix_combine_inp
+            concatvis=srcfile+loop
+            freqtol=str(mincw/1.e6/4.)+'MHz'
+            if  freq_tol!='':
+                freqtol=freq_tol #'0.1MHz'
+            dirtol='1.arcsec' #'1.arcsec'
+            timesort=False
+            visweightscale=wt_scale
+            copypointing=True
+            concat()
+            
+        if  usevconcat==True:
+            default('virtualconcat')
+            vis=prefix_combine_inp
+            concatvis=srcfile+loop
+            freqtol=str(mincw/1.e6/4.)+'MHz'
+            if  freq_tol!='':
+                freqtol=freq_tol #'0.1MHz'
+            dirtol='1.arcsec' #'1.arcsec'
+            visweightscale=wt_scale
+            keepcopy=True
+            copypointing=True
+            virtualconcat()
     
 
 #----------------------------------------------------------------------------------------
@@ -777,19 +791,19 @@ news("")
 news("Total Continuum-subtraction and Merging Time: %10.1f" %(subima2time-startTime))
 news("")
 news("++")
-news("------------- End Task: IMERGE "+prefix+" -------------")
+news("------------- End Task: xmerge "+prefix+" -------------")
 news("++")
 news("")
 casa_log = open(casalog.logfile(),'r')
 stoplog = casa_log.readlines()
 casa_log.close()
-exportcasalog(startlog,stoplog, prefix+'.imerge.reduc.log')
+exportcasalog(startlog,stoplog, prefix+'.xmerge.reduc.log')
 
 if  sending==True:
     emailsender(myemail,\
-                "RUN IMERGE End: "+prefix,\
+                "RUN xmerge End: "+prefix,\
                 "This email was generated automatically by your successful reduction run.\nThe log files are attached",\
-                [prefix+'.imerge.reduc.log']+logflist)
+                [prefix+'.xmerge.reduc.log']+logflist)
                 
 #----------------------------------------------------------------------------------------
 #   Clean Global Variables
@@ -801,7 +815,7 @@ del uvcs_combine
 del logflist
 del srcfile
 del prefix_combine
-del concat_mms
+del usevconcat
 del wt_scale
 del wtstat
 del wtstat_fitspw
