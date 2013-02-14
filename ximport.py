@@ -60,7 +60,6 @@
 #       20100616    RX  baseline Correction was added, only useful for high-freq data
 #                       please check http://www.vla.nrao.edu/astro/archive/baselines/
 #                       for baseline solutions
-#                       related task: GENCAL
 #       20101101    RX  script clean
 #       20110528    RX  first step of modulizations: define the function exportlog in
 #                       libreduc.py
@@ -73,8 +72,7 @@
 #                       is 1.0; for vla data, the sigma&weight columns are NOT 1, but
 #                       with weight=1/sigma^2 (weights ~200-700 for raw HI data, ~250
 #                       after calibrations). Sigma is always not touched during the
-#                       calibration, and weight acts like a scratch column.
-#       20110921    RX  using gencal to get the evla gain/tsys calibration table.                       
+#                       calibration, and weight acts like a scratch column.                      
 #       20111120    RX  mir2ms was merged into this script / add timebin
 #		20130213	RX	added into a git repo.
 #
