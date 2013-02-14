@@ -422,7 +422,7 @@ except NameError:
 try:
     clean_mask
 except NameError:
-    clean_mask=0.25
+    clean_mask=0.2
 
 try:
     cell_size
@@ -512,7 +512,7 @@ except NameError:
     
     tb.open(prepvis+'/FIELD')
     nfield=len(tb.getcol('NAME'))
-    tb.close
+    tb.close()
     if  nfield>1:
         imager_mode = 'mosaic'    
     hetero=False
@@ -1463,18 +1463,18 @@ news("")
 news("do masking for all images")
 news("")
 
-mask0=prefix+'.line.flux'
-if 	imcs==True:
-	mask0=prefix+'.coli.flux'
-if	os.path.exists(mask0):
-	genmask0(mask0)
-	mask0clean(prefix+'.line_d',mask0+'.mask0')
-	mask0clean(prefix+'.line',mask0+'.mask0')
-	mask0clean(prefix+'.cont_d',mask0+'.mask0')
-	mask0clean(prefix+'.cont',mask0+'.mask0')
-	mask0clean(prefix+'.coli_d',mask0+'.mask0')
-	mask0clean(prefix+'.coli',mask0+'.mask0')
-	news("")
+#mask0=prefix+'.line.flux'
+#if 	imcs==True:
+#	mask0=prefix+'.coli.flux'
+#if	os.path.exists(mask0):
+#	genmask0(mask0)
+#	mask0clean(prefix+'.line_d',mask0+'.mask0')
+#	mask0clean(prefix+'.line',mask0+'.mask0')
+#	mask0clean(prefix+'.cont_d',mask0+'.mask0')
+#	mask0clean(prefix+'.cont',mask0+'.mask0')
+#	mask0clean(prefix+'.coli_d',mask0+'.mask0')
+#	mask0clean(prefix+'.coli',mask0+'.mask0')
+#	news("")
 
 news("")
 news("--exportfits--")
