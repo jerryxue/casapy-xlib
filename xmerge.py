@@ -434,7 +434,7 @@ except NameError:
 try:
     usevconcat
 except NameError:
-    usevconcat=False
+    usevconcat=True
 
 sending=True
 try:
@@ -722,7 +722,7 @@ if  len(prefix_combine_file)!=1 or prefix!=prefix_combine[0]:
                 freqtol=freq_tol #'0.1MHz'
             dirtol='1.arcsec' #'1.arcsec'
             visweightscale=wt_scale
-            keepcopy=True
+            keepcopy=False
             copypointing=True
             virtualconcat()
     

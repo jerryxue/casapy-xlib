@@ -358,7 +358,7 @@ casalog.filter('INFO')
 startTime=time.time()
 news("")
 news("++")
-news("------------- Begin Task: ICLEAN "+prefix+" -------------")
+news("------------- Begin Task: xclean "+prefix+" -------------")
 news("++")
 news("")
 casa_log = open(casalog.logfile(),'r')
@@ -1497,19 +1497,19 @@ news("")
 news("Total Imaging Time: %10.1f" %(subima2time-startTime))
 news("")
 news("++")
-news("------------- End Task: ICLEAN "+prefix+" -------------")
+news("------------- End Task: xclean "+prefix+" -------------")
 news("++")
 news("")
 casa_log = open(casalog.logfile(),'r')
 stoplog = casa_log.readlines()
 casa_log.close()
-exportcasalog(startlog,stoplog, prefix+'.iclean.reduc.log')
+exportcasalog(startlog,stoplog, prefix+'.xclean.reduc.log')
 
 if 	sending==True:
     emailsender(myemail,\
-                "RUN ICLEAN End: "+prefix,\
+                "RUN xclean End: "+prefix,\
                 "This email was generated automatically by your successful reduction run.\nThe log files are attached",\
-                [prefix+'.iclean.reduc.log']+logflist)
+                [prefix+'.xclean.reduc.log']+logflist)
                 
 #----------------------------------------------------------------------------------------
 #   Clean Global Variables
