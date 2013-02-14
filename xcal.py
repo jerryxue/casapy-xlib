@@ -1,8 +1,6 @@
 #########################################################################################
 #
-#   Script Name -- ICAL
-#
-#    Author
+#   Author
 #
 #        Rui Xue, Univeristy of Illinois
 #
@@ -194,6 +192,8 @@
 #                        fix a bug for dual-pol tracks
 #        20111125    RX    flagdata2 & flagcmd are used to speed up flagging
 #                        flagselect syntax changed
+#		20130214	RX	use <gencal> for gaincurve calibrations
+#						fix an bug related to baseline corrections 
 #
 #   WORKING FLOW
 #
@@ -335,11 +335,6 @@ try:
     noplot
 except NameError:
     noplot=True
-   
-try:
-    gaincurvecal
-except NameError:
-    gaincurvecal=True
 
 try:
     intflag
@@ -463,6 +458,30 @@ except NameError:
 logflist=[]
 
 
+#	gaincurvel will be turned on if:
+#		* data were from VLA
+#		* taken before 2001
+
+tb.open(msfile+"/OBSERVATION",nomodify=True)
+namelist=tb.getcol("TELESCOPE_NAME").tolist()
+obstime=tb.getcol("TIME_RANGE").tolist()
+tb.close()
+
+isvla=False
+isafter2001=False
+gaincurvecal=False
+utc2001=86400*(me.epoch('utc','2003/02/16')['m0']['value']+0./24.)
+for k in range(len(namelist)):
+	if	namelist[k]=='VLA':
+		isvla=True
+	if	obstime[k][0]>utc2001:
+		isafter2001=True
+if	isvla==True and isafter2001==True:
+	gaincurvecal=True
+
+news("")
+news("gaincurve calibration?: "+str(gaincurvecal))
+news("")
 
 #----------------------------------------------------------------------------------------
 #   MS Table Correction
@@ -497,7 +516,7 @@ for i in range(0,len(spwid)):
 
 tb.open(msfile+'/ANTENNA')
 num_ant=len(tb.getcol('NAME'))
-tb.close
+tb.close()
 news("")
 news("Number of Antenna: "+str(num_ant))
 news("")
@@ -715,6 +734,24 @@ if  bcant!='':
     parameter=bcpara
     gencal()
 
+
+#----------------------------------------------------------------------------------------
+#   Baseline Correction
+#----------------------------------------------------------------------------------------
+
+if  gaincurvecal==True:
+
+    news("")
+    news("--gencal--")
+    news("")
+    news("solve baseline correction solutions")
+    news("")
+    default('gencal')
+    vis=msfile
+    caltable=prefix+'.gccal'
+    caltype='gceff'
+    gencal()
+
 #----------------------------------------------------------------------------------------
 #   CALIBRATION BEGIN
 #   Fill the model column with the model visibilities of the flux calibrator
@@ -759,10 +796,13 @@ if evlacal==True:
    gaintable=gaintable+[prefix+'.tcal']
    gainfield=gainfield+['']
 if bcant!='':
-   gaintable=gainfield+[prefix+'.pcal']
+   gaintable=gaintable+[prefix+'.pcal']
    gainfield=gainfield+['']
+if gaincurvecal==True:
+   gaintable=gaintable+[prefix+'.gccal']
+   gainfield=gainfield+['']   
 ###
-gaincurve = gaincurvecal
+gaincurve = False
 gaincal()
 news("")
 
@@ -782,7 +822,7 @@ solint   = 'inf'
 solnorm  = True
 refant = ref_ant
 selectdata = False
-gaincurve = gaincurvecal
+gaincurve = False
 bandtype = 'B'
 combine='scan'
 uvrange=passcal_uvrange
@@ -792,8 +832,11 @@ if evlacal==True:
    gaintable=gaintable+[prefix+'.tcal']
    gainfield=gainfield+['']
 if bcant!='':
-   gaintable=gainfield+[prefix+'.pcal']
+   gaintable=gaintable+[prefix+'.pcal']
    gainfield=gainfield+['']
+if gaincurvecal==True:
+   gaintable=gaintable+[prefix+'.gccal']
+   gainfield=gainfield+['']      
 bandpass()
 news("")
 
@@ -826,18 +869,21 @@ if  len(spwid_passcal)==2*len(spwid_source):
         solnorm  = True
         refant = ref_ant
         selectdata = False
-        gaincurve = gaincurvecal
+        gaincurve = False
         bandtype = 'B'
         uvrange=passcal_uvrange
         combine='spw,scan'
         gaintable=[prefix+'.gcal_passcal']
         gainfield=['']
-        if evlacal==True:
-           gaintable=gaintable+[prefix+'.tcal']
-           gainfield=gainfield+['']
-        if bcant!='':
-           gaintable=gainfield+[prefix+'.pcal']
-           gainfield=gainfield+['']
+        if 	evlacal==True:
+           	gaintable=gaintable+[prefix+'.tcal']
+           	gainfield=gainfield+['']
+        if 	bcant!='':
+           	gaintable=gaintable+[prefix+'.pcal']
+           	gainfield=gainfield+['']
+        if 	gaincurvecal==True:
+         	gaintable=gaintable+[prefix+'.gccal']
+         	gainfield=gainfield+['']      
         append=True
         bandpass()
         news("")
@@ -912,10 +958,15 @@ for j in range(0,len(spwid_source)):
 	   gainfield  = gainfield+['']
 	   interp      = interp+['']
 	   spwmap      = spwmap+[[]] 
+	if gaincurvecal==True:
+   	   gaintable=gaintable+[prefix+'.gccal']
+   	   gainfield=gainfield+['']
+   	   interp      = interp+['']
+	   spwmap      = spwmap+[[]]       
 	###
 	selectdata = True
 	solint     = 'inf'
-	gaincurve=gaincurvecal
+	gaincurve=False
 	minsnr=3.0
 	minblperant = 2
 	refant     = ref_ant
@@ -1025,7 +1076,7 @@ default('applycal')
 
 vis=msfile
 calwt = wtcal
-gaincurve=gaincurvecal
+gaincurve=False
 flagbackup=False
 
 gaintable=[prefix+'.fcal',prefix+'.bcal']
@@ -1044,6 +1095,11 @@ if bcant!='':
    interp = interp+['']
    gainfield=gainfield+['']
    spwmap=spwmap+[[]]
+if gaincurvecal==True:
+   gaintable=gaintable+[prefix+'.gccal']
+   gainfield=gainfield+['']
+   interp      = interp+['']
+   spwmap      = spwmap+[[]]    
 field=source
 spw=spw_source
 news('')
@@ -1070,6 +1126,11 @@ if bcant!='':
    interp = interp+['']
    gainfield=gainfield+['']
    spwmap=spwmap+[[]]
+if gaincurvecal==True:
+   gaintable=gaintable+[prefix+'.gccal']
+   gainfield=gainfield+['']
+   interp      = interp+['']
+   spwmap      = spwmap+[[]]      
 field=phasecal
 spw=spw_phasecal
 news('')
@@ -1096,6 +1157,11 @@ if bcant!='':
    interp = interp+['']
    gainfield=gainfield+['']
    spwmap=spwmap+[[]]
+if gaincurvecal==True:
+   gaintable=gaintable+[prefix+'.gccal']
+   gainfield=gainfield+['']
+   interp      = interp+['']
+   spwmap      = spwmap+[[]]      
 field=fluxcal
 spw=spw_fluxcal
 news('')
@@ -1162,19 +1228,19 @@ news("")
 news("Total flagging and calibration time: %10.1f" %(flagcal2time-startTime))
 news("")
 news("++")
-news("------------- End Task: ICAL "+prefix+" -------------")
+news("------------- End Task: XCAL "+prefix+" -------------")
 news("++")
 news("")
 casa_log = open(casalog.logfile(),'r')
 stoplog = casa_log.readlines()
 casa_log.close()
-exportcasalog(startlog,stoplog, prefix+'.ical.reduc.log')
+exportcasalog(startlog,stoplog, prefix+'.xcal.reduc.log')
 
 if  sending==True:
     emailsender(myemail,\
-                "RUN ICAL End: "+prefix,\
+                "RUN XCAL End: "+prefix,\
                 "This email was generated automatically by your successful reduction run.\nThe log files are attached",\
-                [prefix+'.ical.reduc.log']+logflist)
+                [prefix+'.xcal.reduc.log']+logflist)
                 
 #----------------------------------------------------------------------------------------
 #   Clean Global Variables
