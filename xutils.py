@@ -1,43 +1,43 @@
 # Note:
-#	1) casapy --help for more CASA run options
-#	2) casapy -c test.py mode
+#    1) casapy --help for more CASA run options
+#    2) casapy -c test.py mode
 
 # Reduction Checking Note:
-#	1) ensure checking right channels for continuum substraction
-#	2) cell_size >1/2 Beam
-#	3) casaviewer & casaplotms for flagging checks
-#	5) uvcs_order=0 for spectra combined from different spws
-#	   uvcs_combine='spw' is also something you can tune.
-#	6) no regrdding smaller than intrinsic channle sizes
+#    1) ensure checking right channels for continuum substraction
+#    2) cell_size >1/2 Beam
+#    3) casaviewer & casaplotms for flagging checks
+#    5) uvcs_order=0 for spectra combined from different spws
+#       uvcs_combine='spw' is also something you can tune.
+#    6) no regrdding smaller than intrinsic channle sizes
 #
 # Current Known Bugs:
-#	1) imcontsub bug
-#	2) frame regridding bug in clean or cvel
+#    1) imcontsub bug
+#    2) frame regridding bug in clean or cvel
 #
 # extra tips:
-#	1) import pyfits lib:
-#		>sys.path=["/Library/Frameworks/Python.framework/Versions/7.0/lib/python2.7/site-packages/"]+sys.path
-#		>import pyfits
-#	2) ms vis history check:
-#		>listhistory
+#    1) import pyfits lib:
+#        >sys.path=["/Library/Frameworks/Python.framework/Versions/7.0/lib/python2.7/site-packages/"]+sys.path
+#        >import pyfits
+#    2) ms vis history check:
+#        >listhistory
 #
 # Batch Run:
-# 	`casapy -c testscript.inp` &
-# 	or
-# 	nohup `casapy -c testscript.inp` &
+#     `casapy -c testscript.inp` &
+#     or
+#     nohup `casapy -c testscript.inp` &
 
 # EVLA reduction
-#	---
-#	importmode='evla'  # using importevla() to import data from sdm (default: 'vla')
-#	evlacal=True		   # using gencal()+applycal() to add proper weights (estimated from syspower/caldevice tables) into MS
-#				   # (default: False)
-#	calwt=False		   # turn off weight re-calculating from sigma+gaincaltable when applying
-#				   # gain/bandpass tables (default: True)
-#	---
+#    ---
+#    importmode='evla'  # using importevla() to import data from sdm (default: 'vla')
+#    evlacal=True           # using gencal()+applycal() to add proper weights (estimated from syspower/caldevice tables) into MS
+#                   # (default: False)
+#    calwt=False           # turn off weight re-calculating from sigma+gaincaltable when applying
+#                   # gain/bandpass tables (default: True)
+#    ---
 
 # ToDo:
-#		optimze file handling
-#		cvel for single-track reduction
+#        optimze file handling
+#        cvel for single-track reduction
 #
 #       Reference:
 #           http://casaguides.nrao.edu/index.php?title=CARMA_spectral_line_mosaic_M99
@@ -47,15 +47,15 @@
 #           http://casa.nrao.edu/Tutorial/20081007/
 #           http://casa.nrao.edu/casatraining.shtml
 
-#	AS to 3.3, 	cleaning/cvel a file having multiple frames are not supported.
-#				so cvel each one -> concat -> clean
-#				
-#				spws with the same config but different corrs are considered
-#				as one spw. but uvcontsub & split will have trouble with it.
-#				so contsub in each one -> concat 
+#    AS to 3.3,     cleaning/cvel a file having multiple frames are not supported.
+#                so cvel each one -> concat -> clean
+#                
+#                spws with the same config but different corrs are considered
+#                as one spw. but uvcontsub & split will have trouble with it.
+#                so contsub in each one -> concat 
 #
-#	timesort=True was added into importmir:
-#		This will largly speed up cvel!!!
+#    timesort=True was added into importmir:
+#        This will largly speed up cvel!!!
 #
 
 """
@@ -249,10 +249,10 @@ prefix_combine_file=copy.deepcopy(prefix_combine)
 mincw=0
 srcfile=prefix+'.src.ms'
 prefix_srcfile=prefix+'.src'
-if	spwrgd==True:
-	srcfile=prefix+'.src_rgd.ms'
-	prefix_srcfile=prefix+'.src_rgd'
-	
+if    spwrgd==True:
+    srcfile=prefix+'.src_rgd.ms'
+    prefix_srcfile=prefix+'.src_rgd'
+    
 for i in range(len(prefix_combine)):
     
     prefix_combine_file[i]=prefix_combine[i]+'.src_rgd.ms'
@@ -280,8 +280,8 @@ for i in range(len(prefix_combine)):
         hanning=hs
         cvel()
     else:
-    	prefix_combine_file[i]=prefix_combine[i]+'.src.ms'
-    	
+        prefix_combine_file[i]=prefix_combine[i]+'.src.ms'
+        
     tb.open(prefix_combine_file[i]+'/SPECTRAL_WINDOW')
     mincw=[mincw]+tb.getcol('CHAN_WIDTH')
     tb.close
@@ -326,10 +326,10 @@ if  len(prefix_combine_file)>1:
         postfix=['.contsub','.cont']
     
     for loop in postfix:
-    	
-    	prefix_combine_inp=copy.deepcopy(prefix_combine_file)
-    	for i in range(len(prefix_combine_file)): 
-    	 	prefix_combine_inp[i]=prefix_combine_file[i]+loop
+        
+        prefix_combine_inp=copy.deepcopy(prefix_combine_file)
+        for i in range(len(prefix_combine_file)): 
+             prefix_combine_inp[i]=prefix_combine_file[i]+loop
         os.system('rm -rf '+srcfile+loop)
         default('concat')
         vis=prefix_combine_inp
@@ -349,8 +349,8 @@ news("--listobs--")
 news("")
 news("Use listobs to news(verbose summary of the MS:")
 postfix=''
-if	uvcs==True:
-	postfix='.contsub'
+if    uvcs==True:
+    postfix='.contsub'
 news(srcfile+postfix)
 news("")
 listobs(vis=srcfile+postfix,verbose = True)
@@ -380,6 +380,7 @@ from tasks import *
 from taskinit import *
 import socket
 import numpy as np
+import subprocess
 
 import smtplib
 from iplot_lib import *
@@ -390,86 +391,86 @@ from email.MIMEText import MIMEText
 from email import Encoders
 
 #----------------------------------------------------------------------------------------
-# 	this function will export task log to a plain text file
+#     this function will export task log to a plain text file
 #----------------------------------------------------------------------------------------
-def	exportlog(taskname,logname,extralog=[]):
+def    exportlog(taskname,logname,extralog=[]):
 
-	casa_log = open(casalog.logfile(),'r')
-	lines = casa_log.readlines()
-	casa_log.close()
-	
-	iswrite=False
-	task_log = open(logname,'w')
-	for line in lines:
-		if line.find('Begin Task: '+taskname) != -1 or iswrite==True:
-				if line.find('Begin Task: '+taskname) != -1:
-					task_log = open(logname,'w')
-				task_log.write(line)
-				iswrite=True
-		if line.find('End Task: '+taskname)!=-1:
-			if extralog!=[]:
-				for tmp in extralog:
-					task_log.write(tmp)
-			iswrite=False
-			task_log.close()
-	task_log.close()
+    casa_log = open(casalog.logfile(),'r')
+    lines = casa_log.readlines()
+    casa_log.close()
+    
+    iswrite=False
+    task_log = open(logname,'w')
+    for line in lines:
+        if line.find('Begin Task: '+taskname) != -1 or iswrite==True:
+                if line.find('Begin Task: '+taskname) != -1:
+                    task_log = open(logname,'w')
+                task_log.write(line)
+                iswrite=True
+        if line.find('End Task: '+taskname)!=-1:
+            if extralog!=[]:
+                for tmp in extralog:
+                    task_log.write(tmp)
+            iswrite=False
+            task_log.close()
+    task_log.close()
 
 def exportcasalog(blines, elines,logname):
-	
-	task_log = open(logname,'w')
-	for i in range(len(elines)):
-		if i>=len(blines):
-			task_log.write(elines[i])	
-	task_log.close()
+    
+    task_log = open(logname,'w')
+    for i in range(len(elines)):
+        if i>=len(blines):
+            task_log.write(elines[i])    
+    task_log.close()
 
 #----------------------------------------------------------------------------------------
 #   plot source u-v coverage and track antenna positions (not tested)
 #----------------------------------------------------------------------------------------
 def plconfig(msfile,plotformat='png',source='',spw_source=''):
 
-	news("")
-	news("--plotxy--")
-	news("")
-	news("plot the source uv coverage and antenna positions")
-	
-	plotuv(vis=msfile,field=source,\
-		figfile=msfile+'.sou.uvcoverage.'+plotformat,\
-		spw=spw_source,interactive=True)
-	plotants(vis=msfile,figfile=msfile+'.plotants.'+plotformat,interative=True)	
+    news("")
+    news("--plotxy--")
+    news("")
+    news("plot the source uv coverage and antenna positions")
+    
+    plotuv(vis=msfile,field=source,\
+        figfile=msfile+'.sou.uvcoverage.'+plotformat,\
+        spw=spw_source,interactive=True)
+    plotants(vis=msfile,figfile=msfile+'.plotants.'+plotformat,interative=True)    
 
 #----------------------------------------------------------------------------------------
 #   plot source visibilities (amp vs. time) (with interactive flagging) (not tested)
 #----------------------------------------------------------------------------------------
 def pl_amp_time(msfile,inp_field='',inp_spw='',plotformat='png',intflag=False):
-	news("")
-	news("--plotxy--")
-	news("")
-	news("plots calibrator visibilities: amp vs. time")
-	# inp_spw=spw_phasecal+','+spw_fluxcal+','+spw_passcal
-	# inp_field=fluxcal+','+phasecal+','+passcal
-	plotxy(
-	vis=msfile,
-	spw=inp_spw,
-	field=inp_field,
-	averagemode='vector',
-	timebin='0',
-	width='all',
-	plotsymbol='b,',
-	markersize=0.1,
-	fontsize=6.0,
-	figfile=msfile+'.plotxy.cal.time_amp.beforecal.'+plotformat,
-	interactive = True)
-	if  intflag==True:
-		user_check=raw_input('Interactive Flagging -- Hit Return to continue script\n')
-	news("")
+    news("")
+    news("--plotxy--")
+    news("")
+    news("plots calibrator visibilities: amp vs. time")
+    # inp_spw=spw_phasecal+','+spw_fluxcal+','+spw_passcal
+    # inp_field=fluxcal+','+phasecal+','+passcal
+    plotxy(
+    vis=msfile,
+    spw=inp_spw,
+    field=inp_field,
+    averagemode='vector',
+    timebin='0',
+    width='all',
+    plotsymbol='b,',
+    markersize=0.1,
+    fontsize=6.0,
+    figfile=msfile+'.plotxy.cal.time_amp.beforecal.'+plotformat,
+    interactive = True)
+    if  intflag==True:
+        user_check=raw_input('Interactive Flagging -- Hit Return to continue script\n')
+    news("")
 
 #----------------------------------------------------------------------------------------
 #   plot source visibilities (amp vs. uvdist) (not tested)
 #----------------------------------------------------------------------------------------
 def pl_amp_uvdist(msfile,inp_field='',inp_spw='',plotformat='png',intflag=False):
 
-	#spw=spw_phasecal+','+spw_fluxcal+','+spw_passcal
-	#field=fluxcal+','+phasecal+','+passcal
+    #spw=spw_phasecal+','+spw_fluxcal+','+spw_passcal
+    #field=fluxcal+','+phasecal+','+passcal
     news("")
     news("--plotxy--")
     news("")
@@ -533,7 +534,7 @@ def pl_sou_amp(msfile,source='',spw_source='',plotformat='png'):
     fontsize=6.0,
     figfile=msfile+'.plotxy.sou.uvdist_amp.beforecal.' +plotformat,
     interactive = True)
-    if 	intflag==True:
+    if     intflag==True:
         user_check=raw_input('Interactive Flagging -- Hit Return to continue script\n')
     news("")
 
@@ -551,7 +552,7 @@ def pl_bandpass(tbfile,passcal=''):
     
     merge_eps='gs -sDEVICE=pdfwrite -sOutputFile='+tbfile+'.bandpass.pdf'
     merge_eps=merge_eps+' -dNOPAUSE -dBATCH'
-	    
+        
     default('plotcal')
     caltable = tbfile
     field = passcal
@@ -574,7 +575,7 @@ def pl_bandpass(tbfile,passcal=''):
     news("")
     news("spwid: "+str(spwid_passcal))
     news("")
-	    
+        
     for i in range(0,num_ant-1):
         antenna=str(i)
         for j in range(0,len(spwid_passcal)):
@@ -943,46 +944,46 @@ def pl_source_after():
 
 # This function can convert the information in the log file of 
 # /uvlist options=spec/ to a python dictonary
-# 	updated for the old amiriad uvlist log style
+#     updated for the old amiriad uvlist log style
 def getuvlist(logname):
-	
-	uvlist_log = open(logname,'r')
-	lines = uvlist_log.readlines()
-	uvlist_log.close()
-	
-	nchan=0
+    
+    uvlist_log = open(logname,'r')
+    lines = uvlist_log.readlines()
+    uvlist_log.close()
+    
+    nchan=0
 
-	uvlist_dict={	'rest frequency': 		[],
-					'starting channel':		[],
-					'number of channels':	[],
-					'starting frequency':	[],
-					'frequency interval':	[],
-					'starting velocity':	[],
-					'ending velocity':		[],
-					'velocity interval':	[],
-	}
-	keys=uvlist_dict.keys()
-	for line in lines:
-		line = line.lower()
-		if	line.find(':') != -1:
-			[key, value] = line.split(':')
-			values=value.split()			
-			#values = map(float, values)
-			for tmp in keys:
-				if	key.find(tmp) != -1:
-					uvlist_dict[tmp]=uvlist_dict[tmp]+values
-		if  line.find('optical velocities') !=-1:
-			break
-			
-	return uvlist_dict
+    uvlist_dict={    'rest frequency':         [],
+                    'starting channel':        [],
+                    'number of channels':    [],
+                    'starting frequency':    [],
+                    'frequency interval':    [],
+                    'starting velocity':    [],
+                    'ending velocity':        [],
+                    'velocity interval':    [],
+    }
+    keys=uvlist_dict.keys()
+    for line in lines:
+        line = line.lower()
+        if    line.find(':') != -1:
+            [key, value] = line.split(':')
+            values=value.split()            
+            #values = map(float, values)
+            for tmp in keys:
+                if    key.find(tmp) != -1:
+                    uvlist_dict[tmp]=uvlist_dict[tmp]+values
+        if  line.find('optical velocities') !=-1:
+            break
+            
+    return uvlist_dict
 
 
 # This function can send an reduction run log email back to you
 #
 def emailsender(myemail,subject,maintext,attachs,\
-				smtpserver='smtp.gmail.com',\
-				eusrname='casareduc@gmail.com',\
-				epassword='astrouiuc'):
+                smtpserver='smtp.gmail.com',\
+                eusrname='casareduc@gmail.com',\
+                epassword='astrouiuc'):
 
    msg = MIMEMultipart()
 
@@ -993,18 +994,18 @@ def emailsender(myemail,subject,maintext,attachs,\
    msg.attach(MIMEText(maintext))
 
    if  type(attachs)==type('abc'):
-   	   attachs=[attachs]
+          attachs=[attachs]
    for attach in attachs:
-	   part = MIMEBase('application', 'octet-stream')
-	   part.set_payload(open(attach, 'rb').read())
-	   Encoders.encode_base64(part)
-	   postfix=attach.split('.')
-	   postfix=postfix[-1]
-	   if postfix=='log' or postfix=='py' :
-	   	  attach=attach+'.txt'
-	   part.add_header('Content-Disposition',
-    	       'attachment; filename="%s"' % os.path.basename(attach))
-	   msg.attach(part)
+       part = MIMEBase('application', 'octet-stream')
+       part.set_payload(open(attach, 'rb').read())
+       Encoders.encode_base64(part)
+       postfix=attach.split('.')
+       postfix=postfix[-1]
+       if postfix=='log' or postfix=='py' :
+             attach=attach+'.txt'
+       part.add_header('Content-Disposition',
+               'attachment; filename="%s"' % os.path.basename(attach))
+       msg.attach(part)
 
    mailServer = smtplib.SMTP(smtpserver,587)
    mailServer.ehlo()
@@ -1018,7 +1019,7 @@ def emailsender(myemail,subject,maintext,attachs,\
 #   File List: Read the data file name(s) from 'prefix'.list, if 'rawfiles' not defined
 #----------------------------------------------------------------------------------------
 def getprefixlist(prefix):
-	
+    
     rawfiles_list=open(prefix+'.list','r')
     lines=rawfiles_list.readlines()
     rawfiles_list.close()
@@ -1032,160 +1033,283 @@ def getprefixlist(prefix):
 
 # This function will import the data in a mir file into a CASA MS
 #
-def importmir(	mirfile='',
-				vis='',
-				telescope='CARMA',
-				win_list=[],
-				nocal=False,
-				mirbin=''	):
+def importmir(    mirfile='',
+                vis='',
+                telescope='CARMA',
+                win_list=[],
+                nocal=False,
+                mirbin=''    ):
 
-	machinename=socket.gethostname()
-	news('machinename:')
-	news(machinename)
-	if mirbin=='':
-		mirbin='/usr/local/miriad/bin/darwin/'
-		if machinename=='carma-data.astro.illinois.edu':
-			mirbin='/usr/local/miriad/miriad/bin/darwin/'
-		if machinename=='rui-macbookpro.local':
-			mirbin='/usr/local/miriad-carma/bin/darwin/'
-		if machinename=='mmwave.astro.illinois.edu':
-			mirbin='/usr/local/miriad/bin/darwin/'
+    machinename=socket.gethostname()
+    news('machinename:')
+    news(machinename)
+    if mirbin=='':
+        mirbin='/usr/local/miriad/bin/darwin/'
+        if machinename=='carma-data.astro.illinois.edu':
+            mirbin='/usr/local/miriad/miriad/bin/darwin/'
+        if machinename=='rui-macbookpro.local':
+            mirbin='/usr/local/miriad-carma/bin/darwin/'
+        if machinename=='mmwave.astro.illinois.edu':
+            mirbin='/usr/local/miriad/bin/darwin/'
         if machinename=='neon.astro.illinois.edu':
             mirbin='/usr/local/miriad-carma/bin/darwin/'            
-	news('mirpath:')
-	news(mirbin)
-	
-	cmd='uvlist options=spec vis='+mirfile+'>'+vis+'.uvlist.log'
-	tmp=os.popen(mirbin+cmd).read()
-	news(tmp,origin='miriad')
-	news('run miriad-uvlist',origin='miriad')
-	news(' ',origin='miriad')
-	
-	uvlist_dict = getuvlist(vis+'.uvlist.log')
-	spw_list = range(1,len(uvlist_dict['number of channels'])+1)
-	if win_list==[]:
-		win_list=spw_list
-	news('spectral windows list:')
-	news(str(win_list))
-		
-	win_combine=[]
-	for j in range(0,len(win_list)):
+    news('mirpath:')
+    news(mirbin)
+    
+    cmd='uvlist options=spec vis='+mirfile+'>'+vis+'.uvlist.log'
+    tmp=os.popen(mirbin+cmd).read()
+    news(tmp,origin='miriad')
+    news('run miriad-uvlist',origin='miriad')
+    news(' ',origin='miriad')
+    
+    uvlist_dict = getuvlist(vis+'.uvlist.log')
+    spw_list = range(1,len(uvlist_dict['number of channels'])+1)
+    if win_list==[]:
+        win_list=spw_list
+    news('spectral windows list:')
+    news(str(win_list))
+        
+    win_combine=[]
+    for j in range(0,len(win_list)):
 
-		fitspre=vis+'.win'+str(win_list[j])+'.fits'
-		mspre=vis+'.win'+str(win_list[j])
-		
-		news("")
-		news(">>>miriad-fits")
-		news("")
-		news("Use miriad-fits to export data from:")
-		news(mirfile)
-		news("to UVFITS:")
-		news(fitspre)
-		cmd=''
-		if nocal==True:
-			cmd=' options=nocal'
-		cmd="fits in="+mirfile+" op=uvout select='win("+str(win_list[j])+\
-			")' out="+fitspre+cmd
-		os.system('rm -rf '+fitspre)
-		tmp=os.popen(mirbin+cmd).read()
-		news(tmp,origin='miriad')
-		
-		news("")
-		news(">>>importuvfits")
-		news("")
-		news("Use importuvfits() to import data in the UVFITS file:")
-		news(fitspre)
-		news("Write the data into the Measurement Set (MS):")
-		news(mspre)
-		news("")
-		os.system('rm -rf '+mspre)
-		importuvfits(fitsfile=fitspre,vis=mspre)
-		win_combine.append(mspre)
-		os.system('rm -rf '+fitspre)
+        fitspre=vis+'.win'+str(win_list[j])+'.fits'
+        mspre=vis+'.win'+str(win_list[j])
+        
+        news("")
+        news(">>>miriad-fits")
+        news("")
+        news("Use miriad-fits to export data from:")
+        news(mirfile)
+        news("to UVFITS:")
+        news(fitspre)
+        cmd=''
+        if nocal==True:
+            cmd=' options=nocal'
+        cmd="fits in="+mirfile+" op=uvout select='win("+str(win_list[j])+\
+            ")' out="+fitspre+cmd
+        os.system('rm -rf '+fitspre)
+        tmp=os.popen(mirbin+cmd).read()
+        news(tmp,origin='miriad')
+        
+        news("")
+        news(">>>importuvfits")
+        news("")
+        news("Use importuvfits() to import data in the UVFITS file:")
+        news(fitspre)
+        news("Write the data into the Measurement Set (MS):")
+        news(mspre)
+        news("")
+        os.system('rm -rf '+mspre)
+        importuvfits(fitsfile=fitspre,vis=mspre)
+        win_combine.append(mspre)
+        os.system('rm -rf '+fitspre)
 
-	news("")
-	news(">>>concat")
-	news("")
-	news("Use concat to glue windows and create a new measurement set file:")
-	news(vis)
-	news("")
-	
-	os.system('rm -rf '+vis)
-	concat(vis=win_combine,concatvis=vis,freqtol='',dirtol='',timesort=True)
-	for tmp in win_combine:
-		os.system('rm -rf '+tmp+'*')
-	
-	news("")
-	news("Changing Antenna Names")
-	prefix_ant=''
-	if telescope=='CARMA' or telescope=='carma' :
-		prefix_ant='CA'
-		obsname='CARMA'
-	if telescope=='BIMA' or telescope=='bima' :
-		prefix_ant='BA'
-		obsname='BIMA'			
-	
-	tb.open(vis+"/ANTENNA",nomodify=False)
-	namelist=tb.getcol("NAME").tolist()
-	for k in range(len(namelist)):
-		name = prefix_ant+namelist[k]
-		news(' Changing '+namelist[k]+' to '+name)
-		namelist[k]=name
-	tb.putcol("NAME",namelist)
-	tb.close()
-	
-	tb.open(vis+"/OBSERVATION",nomodify=False)
-	namelist=tb.getcol("TELESCOPE_NAME").tolist()
-	for k in range(len(namelist)):
-		namelist[k]=obsname
-	tb.putcol("TELESCOPE_NAME",namelist)
-	tb.close()
-	
-	news("")
-	news("++")
-	news(mirfile+'-->'+vis+' done!')
-	news("++")
-	news("")
+    news("")
+    news(">>>concat")
+    news("")
+    news("Use concat to glue windows and create a new measurement set file:")
+    news(vis)
+    news("")
+    
+    os.system('rm -rf '+vis)
+    concat(vis=win_combine,concatvis=vis,freqtol='',dirtol='',timesort=True)
+    for tmp in win_combine:
+        os.system('rm -rf '+tmp+'*')
+    
+    news("")
+    news("Changing Antenna Names")
+    prefix_ant=''
+    if telescope=='CARMA' or telescope=='carma' :
+        prefix_ant='CA'
+        obsname='CARMA'
+    if telescope=='BIMA' or telescope=='bima' :
+        prefix_ant='BA'
+        obsname='BIMA'            
+    
+    tb.open(vis+"/ANTENNA",nomodify=False)
+    namelist=tb.getcol("NAME").tolist()
+    for k in range(len(namelist)):
+        name = prefix_ant+namelist[k]
+        news(' Changing '+namelist[k]+' to '+name)
+        namelist[k]=name
+    tb.putcol("NAME",namelist)
+    tb.close()
+    
+    tb.open(vis+"/OBSERVATION",nomodify=False)
+    namelist=tb.getcol("TELESCOPE_NAME").tolist()
+    for k in range(len(namelist)):
+        namelist[k]=obsname
+    tb.putcol("TELESCOPE_NAME",namelist)
+    tb.close()
+    
+    news("")
+    news("++")
+    news(mirfile+'-->'+vis+' done!')
+    news("++")
+    news("")
 
+# This function will import the data in a miriad file into a CASA MS
+def importmiriad(mirfile='',
+                vis='',
+                telescope='CARMA',
+                extenv=''    ):
+
+    if  extenv=='':
+        extenv={"PATH":"/usr/local/miriad-carma/bin/darwin:/usr/local/miriad-carma/opt/casa/bin:",
+                "DYLD_LIBRARY_PATH":"/usr/local/miriad-carma/opt/casa/lib",
+                "HOME":"~/"}
+
+    # FIX UV HEADR FOR BIMA DATA
+    if  telescope=='BIMA' or telescope=='bima' :
+        
+        news(' ',origin='miriad')
+        news('##########################################',origin='miriad')
+        news('##### Begin Task: UVPUTH             #####',origin='miriad')
+        os.system("rm -rf "+vis+'.bima')
+        cmd='uvputhd type=a varval=s hdvar=purpose vis='+mirfile+' out='+vis+'.bima'
+        p=subprocess.Popen(cmd,shell=True,env=extenv,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        output = p.stdout.read()
+        news(output,origin='miriad')
+        cmd='fix4bima '+vis+'.bima'
+        p=subprocess.Popen(cmd,shell=True,env=extenv,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        output = p.stdout.read()
+        news(output,origin='miriad')
+        news('##### END Task: UVPUTH               #####',origin='miriad')
+        news(' ',origin='miriad')
+        news('##########################################',origin='miriad')  
+        mirfile=vis+'.bima'
+    
+    # RECREAT WIDEBAND DATA
+    news(' ',origin='miriad')
+    news('##########################################',origin='miriad')
+    news('##### Begin Task: UVCAL              #####',origin='miriad')
+    os.system("rm -rf "+vis+'.mir')
+    cmd='uvcal options=avechan,nowide,unflagged vis='+mirfile+' out='+vis+'.mir'
+    p=subprocess.Popen(cmd,shell=True,env=extenv,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    output = p.stdout.read()
+    news(output,origin='miriad')
+    news('##### END Task: UVCAL                #####',origin='miriad')
+    news(' ',origin='miriad')
+    news('##########################################',origin='miriad')
+    
+    # RUN CARMAFILLER
+    news(' ',origin='miriad')
+    news('##########################################',origin='miriad')
+    news('##### Begin Task: CARMAFILLER        #####',origin='miriad')
+    os.system("rm -rf "+vis)
+    cmd='carmafiller tsys=True vis='+vis+'.mir'+' ms='+vis
+    p=subprocess.Popen(cmd,shell=True,env=extenv,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    output = p.stdout.read()
+    news(output,origin='miriad')
+    news('##### END Task: CARMAFILLER          #####',origin='miriad')
+    news('##########################################',origin='miriad')
+    
+    # FIX ANTENNA NAME & DISH SIZE
+    news("")
+    news("Changing Antenna Names")
+    prefix_ant=''
+    if  telescope=='CARMA' or telescope=='carma' :
+        prefix_ant='CA'
+        obsname='CARMA'
+    if  telescope=='BIMA' or telescope=='bima' :
+        prefix_ant='BA'
+        obsname='BIMA'            
+    tb.open(vis+"/ANTENNA",nomodify=False)
+    namelist=tb.getcol("NAME").tolist()
+    dialist=tb.getcol("DISH_DIAMETER").tolist()
+    for k in range(len(namelist)):
+        name = namelist[k].replace("C", prefix_ant)
+        news(' Changing '+namelist[k]+' to '+name)
+        namelist[k]=name
+        if  telescope=='BIMA' or telescope=='bima' :
+            dialist[k]=6.1
+    tb.putcol("NAME",namelist)
+    tb.putcol("DISH_DIAMETER",dialist)
+    tb.close()
+    
+    # UPDATE SCAN NUMBER TO START FROM 1
+    tb.open(vis+"",nomodify=False)
+    scanlist=tb.getcol("SCAN_NUMBER")
+    for k in range(len(scanlist)):
+        scan=scanlist[k]+1
+        scanlist[k]=str(scan)
+    tb.putcol("SCAN_NUMBER",scanlist)
+    tb.close()
+    
+    # FIX TELESCOPE NAME
+    tb.open(vis+"/OBSERVATION",nomodify=False)
+    namelist=tb.getcol("TELESCOPE_NAME").tolist()
+    for k in range(len(namelist)):
+        namelist[k]=obsname
+    tb.putcol("TELESCOPE_NAME",namelist)
+    tb.close()
+    
+    # FIX PROJECT 
+    tb.open(vis+"/OBSERVATION",nomodify=False)
+    prolist=tb.getcol("PROJECT").tolist()
+    for k in range(len(prolist)):
+        prolist[k]=vis
+    tb.putcol("PROJECT",prolist)
+    tb.close()
+    
+    # FIX TIMERANGE (zero number will cause troubles when concating MSs) 
+    ms_stat=visstat(vis=vis,axis='time')
+    timerange_max=ms_stat['TIME']['max']    # in s
+    timerange_min=ms_stat['TIME']['min']
+    timerange_mean=ms_stat['TIME']['mean']    # in s
+    tb.open(vis+"/OBSERVATION",nomodify=False)
+    prolist=tb.getcol("TIME_RANGE").tolist()
+    for k in range(len(prolist)/2):
+        prolist[0][k]=timerange_min
+        prolist[1][k]=timerange_max
+    tb.putcol("TIME_RANGE",prolist)
+    prolist=tb.getcol("RELEASE_DATE").tolist()
+    for k in range(len(prolist)):
+        prolist[k]=timerange_mean
+    tb.putcol("RELEASE_DATE",prolist) 
+    tb.close()
+    
+    
+    
 # This function will clean image products
 #
 def cleanup(outname,tag=''):
-	version=['mask','cm','residual','model','cmodel',
-			'psf','image','sen',
-			'flux.pbcoverage','flux.pbcoverage.thresh_mask',
-			'flux','flux.thresh_mask',
-			'flux.mask0']
-	for i in range(0,len(version)):
-		if	os.path.exists(outname+'.'+version[i]):
-			if 	tag=='':
-				os.system('rm -rf '+outname+'.'+version[i])
-			else:
-				os.system('rm -rf '+outname+'.'+tag+'.'+version[i])
-				os.system('mv '+outname+'.'+version[i]+' '\
-						+outname+'.'+tag+'.'+version[i])
+    version=['mask','cm','residual','model','cmodel',
+            'psf','image','sen',
+            'flux.pbcoverage','flux.pbcoverage.thresh_mask',
+            'flux','flux.thresh_mask',
+            'flux.mask0']
+    for i in range(0,len(version)):
+        if    os.path.exists(outname+'.'+version[i]):
+            if     tag=='':
+                os.system('rm -rf '+outname+'.'+version[i])
+            else:
+                os.system('rm -rf '+outname+'.'+tag+'.'+version[i])
+                os.system('mv '+outname+'.'+version[i]+' '\
+                        +outname+'.'+tag+'.'+version[i])
 
 def exportclean(outname):
-	version=['mask','cm','residual','model','cmodel',
-			'psf','image','sen',
-			'flux.pbcoverage','flux.pbcoverage.thresh_mask',
-			'flux','flux.thresh_mask',
-			'flux.mask0']
-	for i in range(0,len(version)):
-		if	os.path.exists(outname+'.'+version[i]):
-			exportfits(outname+'.'+version[i],
-					outname+'.'+version[i]+'.fits', 
-					velocity=True,
-					overwrite=True)
+    version=['mask','cm','residual','model','cmodel',
+            'psf','image','sen',
+            'flux.pbcoverage','flux.pbcoverage.thresh_mask',
+            'flux','flux.thresh_mask',
+            'flux.mask0']
+    for i in range(0,len(version)):
+        if    os.path.exists(outname+'.'+version[i]):
+            exportfits(outname+'.'+version[i],
+                    outname+'.'+version[i]+'.fits', 
+                    velocity=True,
+                    overwrite=True)
 
 
 def mask0clean(outname,mask0):
-	version=['mask','cm','residual','model','cmodel',
-			'psf','image','sen',
-			'flux.pbcoverage','flux.pbcoverage.thresh_mask',
-			'flux','flux.thresh_mask']
-	for i in range(0,len(version)):
-		if	os.path.exists(outname+'.'+version[i]):
-			immask(outname+'.'+version[i],mask0)
+    version=['mask','cm','residual','model','cmodel',
+            'psf','image','sen',
+            'flux.pbcoverage','flux.pbcoverage.thresh_mask',
+            'flux','flux.thresh_mask']
+    for i in range(0,len(version)):
+        if    os.path.exists(outname+'.'+version[i]):
+            immask(outname+'.'+version[i],mask0)
 
 
 
@@ -1193,221 +1317,221 @@ def mask0clean(outname,mask0):
 #
 # parameter:
 #
-# 	outname
-#	execfile('/Users/ruixue1/Worklib/casapy/checkpsf.py')
+#     outname
+#    execfile('/Users/ruixue1/Worklib/casapy/checkpsf.py')
 #
 # 
 
-def checkpsf(outname):	
-	
-	imhead(imagename=outname+'.psf',mode='put',hdkey='bunit',hdvalue='Jy/pixel')
-	psf_shape=imhead(outname+'.psf',mode='get',hdkey='shape')
-	psf_nx=psf_shape['value'][0]
-	psf_ny=psf_shape['value'][1]
-	psf_nz=psf_shape['value'][3]
-	
-	# get some info for the initial guessing
-	bmaj=imhead(	imagename=outname+'.image',
-					mode='get',
-					hdkey='beammajor')
-	bmin=imhead(	imagename=outname+'.image',
-					mode='get',		
-					hdkey='beamminor')
-	bpa=imhead(		imagename=outname+'.image',
-					mode='get',		
-					hdkey='beampa')
-	psf_psize=imhead(	imagename=outname+'.image',
-						mode='get',		
-						hdkey='cdelt1')
-	bmaj=bmaj['value']
-	bpa=bpa['value']
-	bmin=bmin['value']
-	psf_psize=abs(psf_psize['value']/(np.pi)*180*60*60)
-	
-	# write a file with initial guessing
-	estfile=open(outname+'.psf.imfit.est.log','w')
-	print >>estfile,'1, '+\
-			str(int(psf_nx/2))+', '+\
-			str(int(psf_ny/2))+', '+\
-			str(bmaj)+'arcsec, '+str(bmin)+'arcsec, '+str(bpa)+'deg, f'
-			# str(bmaj)+'arcsec, '+str(bmin)+'arcsec, '+str(bpa)+'deg' # without peak fixed to 1Jy/pixel
-	estfile.close()
-	
-	# setting fitbox
-	imfit_box=str(int(psf_nx/2-2*(bmaj/psf_psize)))+','+str(int(psf_ny/2-2*(bmaj/psf_psize)))+','\
-			+str(int(psf_nx/2+2*(bmaj/psf_psize)))+','+str(int(psf_ny/2+2*(bmaj/psf_psize))) 
-	imfit_log=imfit(imagename=outname+'.psf',box=imfit_box,excludepix=[-1e9,0],\
-		logfile=outname+'.psf.imfit.log',\
-		#estimates=outname+'.psf.imfit.est.log')
-		estimates='')
-	
-	psf_nchan=imfit_log['results']['nelements']    
-	psf_bmaj=np.arange(float(psf_nchan))
-	psf_bmin=np.arange(float(psf_nchan))
-	psf_bpa=np.arange(float(psf_nchan))
-	
-	for i in range(0,psf_nchan):
-		news("")
-		news('FRAME: %i' % i)
-		news("")
-		psf_bmaj[i]=imfit_log['results']['component'+str(i)]['shape']['majoraxis']['value']
-		psf_bmin[i]=imfit_log['results']['component'+str(i)]['shape']['minoraxis']['value']
-		psf_bpa[i]=imfit_log['results']['component'+str(i)]['shape']['positionangle']['value']
-		news('BMAJ %5.2f arcsec' % psf_bmaj[i])
-		news('BMIN %5.2f arcsec' % psf_bmin[i])
-		news('BPA  %5.2f deg' % psf_bpa[i])
-	
-	news("")
-	news("Initial Guessing")
-	news("")
-	news('BMAJ %5.2f arcsec' % bmaj)
-	news('BMIN %5.2f arcsec' % bmin)
-	news('BPA  %5.2f deg' % bpa)
-	news("")
-	news("--")
-	news("Beam Area Error: abs(barea/MEAN(barea)-1)")
-	psf_area=psf_bmaj*psf_bmin
-	mpsf_area=np.mean(psf_area)
-	dist=np.abs(psf_area/mpsf_area-1)
-	news(str(dist))
-	dist= np.where( dist >0.1, dist, 0)
-	
-	news("")
-	news("pass the psf consistancy test?")
-	news(str(np.sum(dist)==0))
-	news("")
-	news("How many frame has been fitted succesfully?")
-	news("orginal channels: %i " % psf_nz)
-	news("fitted channels:  %i " % psf_nchan)
-	
-	rbmaj= '%.2f' % np.mean(psf_bmaj)
-	rbmin= '%.2f' % np.mean(psf_bmin)
-	rbpa= '%.2f' % np.mean(psf_bpa)
-	rbmaj=rbmaj+'arcsec'
-	rbmin=rbmin+'arcsec'
-	rbpa=rbpa+'deg'
-	psf_restor_beam=[rbmaj,rbmin,rbpa]
-	news(str(psf_restor_beam))
-	
-	return psf_restor_beam
+def checkpsf(outname):    
+    
+    imhead(imagename=outname+'.psf',mode='put',hdkey='bunit',hdvalue='Jy/pixel')
+    psf_shape=imhead(outname+'.psf',mode='get',hdkey='shape')
+    psf_nx=psf_shape['value'][0]
+    psf_ny=psf_shape['value'][1]
+    psf_nz=psf_shape['value'][3]
+    
+    # get some info for the initial guessing
+    bmaj=imhead(    imagename=outname+'.image',
+                    mode='get',
+                    hdkey='beammajor')
+    bmin=imhead(    imagename=outname+'.image',
+                    mode='get',        
+                    hdkey='beamminor')
+    bpa=imhead(        imagename=outname+'.image',
+                    mode='get',        
+                    hdkey='beampa')
+    psf_psize=imhead(    imagename=outname+'.image',
+                        mode='get',        
+                        hdkey='cdelt1')
+    bmaj=bmaj['value']
+    bpa=bpa['value']
+    bmin=bmin['value']
+    psf_psize=abs(psf_psize['value']/(np.pi)*180*60*60)
+    
+    # write a file with initial guessing
+    estfile=open(outname+'.psf.imfit.est.log','w')
+    print >>estfile,'1, '+\
+            str(int(psf_nx/2))+', '+\
+            str(int(psf_ny/2))+', '+\
+            str(bmaj)+'arcsec, '+str(bmin)+'arcsec, '+str(bpa)+'deg, f'
+            # str(bmaj)+'arcsec, '+str(bmin)+'arcsec, '+str(bpa)+'deg' # without peak fixed to 1Jy/pixel
+    estfile.close()
+    
+    # setting fitbox
+    imfit_box=str(int(psf_nx/2-2*(bmaj/psf_psize)))+','+str(int(psf_ny/2-2*(bmaj/psf_psize)))+','\
+            +str(int(psf_nx/2+2*(bmaj/psf_psize)))+','+str(int(psf_ny/2+2*(bmaj/psf_psize))) 
+    imfit_log=imfit(imagename=outname+'.psf',box=imfit_box,excludepix=[-1e9,0],\
+        logfile=outname+'.psf.imfit.log',\
+        #estimates=outname+'.psf.imfit.est.log')
+        estimates='')
+    
+    psf_nchan=imfit_log['results']['nelements']    
+    psf_bmaj=np.arange(float(psf_nchan))
+    psf_bmin=np.arange(float(psf_nchan))
+    psf_bpa=np.arange(float(psf_nchan))
+    
+    for i in range(0,psf_nchan):
+        news("")
+        news('FRAME: %i' % i)
+        news("")
+        psf_bmaj[i]=imfit_log['results']['component'+str(i)]['shape']['majoraxis']['value']
+        psf_bmin[i]=imfit_log['results']['component'+str(i)]['shape']['minoraxis']['value']
+        psf_bpa[i]=imfit_log['results']['component'+str(i)]['shape']['positionangle']['value']
+        news('BMAJ %5.2f arcsec' % psf_bmaj[i])
+        news('BMIN %5.2f arcsec' % psf_bmin[i])
+        news('BPA  %5.2f deg' % psf_bpa[i])
+    
+    news("")
+    news("Initial Guessing")
+    news("")
+    news('BMAJ %5.2f arcsec' % bmaj)
+    news('BMIN %5.2f arcsec' % bmin)
+    news('BPA  %5.2f deg' % bpa)
+    news("")
+    news("--")
+    news("Beam Area Error: abs(barea/MEAN(barea)-1)")
+    psf_area=psf_bmaj*psf_bmin
+    mpsf_area=np.mean(psf_area)
+    dist=np.abs(psf_area/mpsf_area-1)
+    news(str(dist))
+    dist= np.where( dist >0.1, dist, 0)
+    
+    news("")
+    news("pass the psf consistancy test?")
+    news(str(np.sum(dist)==0))
+    news("")
+    news("How many frame has been fitted succesfully?")
+    news("orginal channels: %i " % psf_nz)
+    news("fitted channels:  %i " % psf_nchan)
+    
+    rbmaj= '%.2f' % np.mean(psf_bmaj)
+    rbmin= '%.2f' % np.mean(psf_bmin)
+    rbpa= '%.2f' % np.mean(psf_bpa)
+    rbmaj=rbmaj+'arcsec'
+    rbmin=rbmin+'arcsec'
+    rbpa=rbpa+'deg'
+    psf_restor_beam=[rbmaj,rbmin,rbpa]
+    news(str(psf_restor_beam))
+    
+    return psf_restor_beam
 
 def blsearch(logname=casalog.logfile()):
-	
-	news("")
-	news("----------- antfilter Begin: -----------")
-	news("")
-	
-	casa_log = open(logname,'r')
-	lines = casa_log.readlines()
-	casa_log.close()
-	lines.reverse()
-	
-	antlist=[]
-	lastfind=False
-	for line in lines:
-		if 	line.find('BL=')!=-1 and \
-			line.find("PlotMS::locate")!=-1 :
-			logline=line.split("PlotMS::locate+")
-			news(string.strip(logline[1]))
-			ant=line.split(' ')
-			for j in range(0,len(ant)):
-				if  ant[j]=='&':
-					ant1=ant[j-1]
-					ant1=ant1[3:]
-					ant2=ant[j+1]
-					ant2=ant2.split('[')
-					left=ant2[1]
-					ant2=ant2[0]
-              		news(ant1+'&'+ant2+' ['+left)
-              		news("")
-              		ant1=ant1.split('@')
-              		ant1=ant1[0]
-              		ant2=ant2.split('@')
-              		ant2=ant2[0]
-              		antlist.append("antenna='"+ant1+'&'+ant2+"'") 
-			lastfind=True
-		else:
-			if	lastfind==True:
-				break	
+    
+    news("")
+    news("----------- antfilter Begin: -----------")
+    news("")
+    
+    casa_log = open(logname,'r')
+    lines = casa_log.readlines()
+    casa_log.close()
+    lines.reverse()
+    
+    antlist=[]
+    lastfind=False
+    for line in lines:
+        if     line.find('BL=')!=-1 and \
+            line.find("PlotMS::locate")!=-1 :
+            logline=line.split("PlotMS::locate+")
+            news(string.strip(logline[1]))
+            ant=line.split(' ')
+            for j in range(0,len(ant)):
+                if  ant[j]=='&':
+                    ant1=ant[j-1]
+                    ant1=ant1[3:]
+                    ant2=ant[j+1]
+                    ant2=ant2.split('[')
+                    left=ant2[1]
+                    ant2=ant2[0]
+                    news(ant1+'&'+ant2+' ['+left)
+                    news("")
+                    ant1=ant1.split('@')
+                    ant1=ant1[0]
+                    ant2=ant2.split('@')
+                    ant2=ant2[0]
+                    antlist.append("antenna='"+ant1+'&'+ant2+"'") 
+                    lastfind=True
+        else:
+            if    lastfind==True:
+                break    
 
-	
-	antlist=list(set(antlist))
-	news("")
-	news("flagging command: "+str(len(antlist)))
-	news(str(antlist))
-	news("")
-	
-	return antlist
-	news("")
-	news("----------- antfilter End: -----------")
-	news("")
+    
+    antlist=list(set(antlist))
+    news("")
+    news("flagging command: "+str(len(antlist)))
+    news(str(antlist))
+    news("")
+    
+    return antlist
+    news("")
+    news("----------- antfilter End: -----------")
+    news("")
 
 # write out information to casalog
 
 def news(msg,origin='++++++'):
-	
-	msg=str(msg)
-	casalog.origin(origin)
-	casalog.post(msg)
-	
-	
-def pbmask(imfile):	
-	
-	rmtables(imfile+'.mask')
-	rmtables(imfile+'.mask1')
-	rmtables(imfile+'.mask2')
-	rmtables(imfile+'.mask3')
-	rmtables(imfile+'.mask4')
-	
-	immath(imagename=[imfile,imfile],\
-		expr='IM0/IM1',\
+    
+    msg=str(msg)
+    casalog.origin(origin)
+    casalog.post(msg)
+    
+    
+def pbmask(imfile):    
+    
+    rmtables(imfile+'.mask')
+    rmtables(imfile+'.mask1')
+    rmtables(imfile+'.mask2')
+    rmtables(imfile+'.mask3')
+    rmtables(imfile+'.mask4')
+    
+    immath(imagename=[imfile,imfile],\
+        expr='IM0/IM1',\
         outfile=imfile+'.mask0',\
         mask=imfile+'!=0')
-	immoments(imagename=imfile+'.mask0',moments=0,outfile=imfile+'.mask1')
-	stat=imstat(imfile+'.mask1')
-	cutoff=stat['max'][0]
-	print 'IM0/'+str(cutoff)
-	immath(imagename=imfile+'.mask1',expr='IM0/'+str(cutoff),outfile=imfile+'.mask2')
-	
-	immath(imagename=imfile+'.mask2',expr='IM0',outfile=imfile+'.mask3',mask='"'+imfile+'.mask2">=1.0')
-	#immath(imagename=[imfile,imfile+'.mask3',imfile+'.mask3'],expr='IM0*IM1*IM2',outfile=imfile+'.mask4')
-	immath(imagename=[imfile,imfile+'.mask3'],expr='IM0*IM1',outfile=imfile+'.mask4')
-	rmtables(imfile+'.mask0')
-	rmtables(imfile+'.mask1')
-	rmtables(imfile+'.mask2')
-	rmtables(imfile+'.mask3')
-	rmtables(imfile)
-	os.system('mv '+imfile+'.mask4 '+imfile)
-		
-def genmask0(imfile):	
-	# produce a mask image with unmask values=1
-	os.system('rm -rf '+imfile+'.mask0')
-	os.system('rm -rf tmp0')
-	os.system('rm -rf tmp1')
-	os.system('rm -rf tmp2')
-	os.system('rm -rf tmp3')
-	
-	os.system('cp -rf '+imfile+' tmp0')
-	immath(imagename=['tmp0','tmp0'],\
-		expr='IM0/IM1',\
+    immoments(imagename=imfile+'.mask0',moments=0,outfile=imfile+'.mask1')
+    stat=imstat(imfile+'.mask1')
+    cutoff=stat['max'][0]
+    print 'IM0/'+str(cutoff)
+    immath(imagename=imfile+'.mask1',expr='IM0/'+str(cutoff),outfile=imfile+'.mask2')
+    
+    immath(imagename=imfile+'.mask2',expr='IM0',outfile=imfile+'.mask3',mask='"'+imfile+'.mask2">=1.0')
+    #immath(imagename=[imfile,imfile+'.mask3',imfile+'.mask3'],expr='IM0*IM1*IM2',outfile=imfile+'.mask4')
+    immath(imagename=[imfile,imfile+'.mask3'],expr='IM0*IM1',outfile=imfile+'.mask4')
+    rmtables(imfile+'.mask0')
+    rmtables(imfile+'.mask1')
+    rmtables(imfile+'.mask2')
+    rmtables(imfile+'.mask3')
+    rmtables(imfile)
+    os.system('mv '+imfile+'.mask4 '+imfile)
+        
+def genmask0(imfile):    
+    # produce a mask image with unmask values=1
+    os.system('rm -rf '+imfile+'.mask0')
+    os.system('rm -rf tmp0')
+    os.system('rm -rf tmp1')
+    os.system('rm -rf tmp2')
+    os.system('rm -rf tmp3')
+    
+    os.system('cp -rf '+imfile+' tmp0')
+    immath(imagename=['tmp0','tmp0'],\
+        expr='IM0/IM1',\
         outfile='tmp1',\
         mask='"tmp0"!=0')
-	immoments(imagename='tmp1',moments=0,outfile='tmp2')
-	stat=imstat('tmp2')
-	cutoff=stat['max'][0]
-	immath(imagename='tmp2',expr='IM0/'+str(cutoff),
-		outfile='tmp3')
-	immath(imagename='tmp3',expr='IM0',outfile=imfile+'.mask0',
-		mask='"tmp3">=1.0')
-	
-	os.system('rm -rf tmp0')
-	os.system('rm -rf tmp1')
-	os.system('rm -rf tmp2')
-	os.system('rm -rf tmp3')
-	
-	
+    immoments(imagename='tmp1',moments=0,outfile='tmp2')
+    stat=imstat('tmp2')
+    cutoff=stat['max'][0]
+    immath(imagename='tmp2',expr='IM0/'+str(cutoff),
+        outfile='tmp3')
+    immath(imagename='tmp3',expr='IM0',outfile=imfile+'.mask0',
+        mask='"tmp3">=1.0')
+    
+    os.system('rm -rf tmp0')
+    os.system('rm -rf tmp1')
+    os.system('rm -rf tmp2')
+    os.system('rm -rf tmp3')
+    
+    
 def immask(imfile,maskfile):
-	# use an masking image to mask a cube, avoid edge channel missing effect
+    # use an masking image to mask a cube, avoid edge channel missing effect
     os.system('rm -rf '+imfile+'.tmp')
     immath(imagename=[imfile,maskfile],expr='IM0*IM1',outfile=imfile+'.tmp') 
     os.system('rm -rf '+imfile)
@@ -1415,295 +1539,295 @@ def immask(imfile,maskfile):
 
 def getuvrange(msfile):
 
-	news("")
-	news("--visstat--")
-	news("")
-	news("Use visstat to check the MS ready for imaging:")
-	news(msfile)
-	news("")
-	ms_stat=visstat(vis=msfile,axis='uvrange',
-				datacolumn='corrected',\
-				uvrange='>0')
+    news("")
+    news("--visstat--")
+    news("")
+    news("Use visstat to check the MS ready for imaging:")
+    news(msfile)
+    news("")
+    ms_stat=visstat(vis=msfile,axis='uvrange',
+                datacolumn='corrected',\
+                uvrange='>0')
 
-	uvdist_max=ms_stat['UVRANGE']['max']    # in meter
-	uvdist_min=ms_stat['UVRANGE']['min']    # in meter
-	uvdist_rms=ms_stat['UVRANGE']['rms'] 	# in meter
-	uvdist_mean=ms_stat['UVRANGE']['mean']  # in meter
-	
-	tb.open(msfile+'/SPECTRAL_WINDOW',nomodify=False)
-	header_para=tb.colnames()
-	obs_freq = tb.getcol('REF_FREQUENCY')
-	tb.close()
+    uvdist_max=ms_stat['UVRANGE']['max']    # in meter
+    uvdist_min=ms_stat['UVRANGE']['min']    # in meter
+    uvdist_rms=ms_stat['UVRANGE']['rms']     # in meter
+    uvdist_mean=ms_stat['UVRANGE']['mean']  # in meter
+    
+    tb.open(msfile+'/SPECTRAL_WINDOW',nomodify=False)
+    header_para=tb.colnames()
+    obs_freq = tb.getcol('REF_FREQUENCY')
+    tb.close()
 
-	obs_freq = obs_freq[0]
-	obs_wavelength = 3.e8/obs_freq
-	news('obs_freq      : '+str(obs_freq))
-	news('obs_wavelength: '+str(obs_wavelength))
+    obs_freq = obs_freq[0]
+    obs_wavelength = 3.e8/obs_freq
+    news('obs_freq      : '+str(obs_freq))
+    news('obs_wavelength: '+str(obs_wavelength))
 
-	theta_las=obs_wavelength/uvdist_min/3.1415*180.*60.*60./2.
-	theta_fwhm=obs_wavelength/(uvdist_mean)/3.1415*180.*60.*60./2.
-	news("")
-	news("")
-	news("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-	news("predicted sythesized beamwidth:  "+str(theta_fwhm)+' arcsec')
-	news("predicted largest angular scale: "+str(theta_las)+' arcsec')
-	news("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-	news("")
-	news("")
+    theta_las=obs_wavelength/uvdist_min/3.1415*180.*60.*60./2.
+    theta_fwhm=obs_wavelength/(uvdist_mean)/3.1415*180.*60.*60./2.
+    news("")
+    news("")
+    news("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    news("predicted sythesized beamwidth:  "+str(theta_fwhm)+' arcsec')
+    news("predicted largest angular scale: "+str(theta_las)+' arcsec')
+    news("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    news("")
+    news("")
 
 
 def uvspec(msfile,rest_freq='1420405752.0Hz'):
-	# just like miriad uvspec to plot an "integrated" spectrum.
- 	plotms(msfile,xaxis='velocity',yaxis='amp',avgtime='999999s',
-		avgscan=True,transform=True,restfreq=rest_freq,
-		xdatacolumn='corrected',ydatacolumn='corrected',
-		coloraxis='spw')
+    # just like miriad uvspec to plot an "integrated" spectrum.
+     plotms(msfile,xaxis='velocity',yaxis='amp',avgtime='999999s',
+        avgscan=True,transform=True,restfreq=rest_freq,
+        xdatacolumn='corrected',ydatacolumn='corrected',
+        coloraxis='spw')
 
 def uvplt(msfile):
-	plotms(msfile,xaxis='time',yaxis='amp',avgchannel='99999',
-		xdatacolumn='corrected',ydatacolumn='corrected',
-		coloraxis='field')
+    plotms(msfile,xaxis='time',yaxis='amp',avgchannel='99999',
+        xdatacolumn='corrected',ydatacolumn='corrected',
+        coloraxis='field')
 
 
  
 def checkcube(prefix): 
  
- 	cellsize=imhead(prefix+'.line.cm',mode='get',hdkey='cdelt1')
- 	cellsize=abs(cellsize['value']/np.pi*180*60*60)
- 	
- 	bmaj=imhead(prefix+'.line.cm',mode='get',hdkey='beammajor')
- 	bmin=imhead(prefix+'.line.cm',mode='get',hdkey='beamminor')
- 	bmaj=bmaj['value']
- 	bmin=bmin['value']
- 	
- 	restfreq=imhead(prefix+'.line.cm',mode='get',hdkey='restfreq')
- 	cdelt4=imhead(prefix+'.line.cm',mode='get',hdkey='cdelt4')
- 	restfreq=restfreq['value']
- 	cdelt4=cdelt4['value']
- 	chanwidth=cdelt4/restfreq[0]*300000.0
- 	
- 	shape=imhead(prefix+'.line.cm',mode='get',hdkey='shape')
- 	shape=shape['value']
- 	imsize=shape[0]
- 	
- 	msfile=prefix+'.src.ms'
- 	if not os.path.exists(msfile):
- 		msfile=prefix+'.src.ms.contsub'
-	ms_stat=visstat(vis=msfile,axis='uvrange',\
-				datacolumn='corrected',\
-				uvrange='>0')
+    cellsize=imhead(prefix+'.line.cm',mode='get',hdkey='cdelt1')
+    cellsize=abs(cellsize['value']/np.pi*180*60*60)
+     
+    bmaj=imhead(prefix+'.line.cm',mode='get',hdkey='beammajor')
+    bmin=imhead(prefix+'.line.cm',mode='get',hdkey='beamminor')
+    bmaj=bmaj['value']
+    bmin=bmin['value']
+     
+    restfreq=imhead(prefix+'.line.cm',mode='get',hdkey='restfreq')
+    cdelt4=imhead(prefix+'.line.cm',mode='get',hdkey='cdelt4')
+    restfreq=restfreq['value']
+    cdelt4=cdelt4['value']
+    chanwidth=cdelt4/restfreq[0]*300000.0
+     
+    shape=imhead(prefix+'.line.cm',mode='get',hdkey='shape')
+    shape=shape['value']
+    imsize=shape[0]
+     
+    msfile=prefix+'.src.ms'
+    if not os.path.exists(msfile):
+         msfile=prefix+'.src.ms.contsub'
+         ms_stat=visstat(vis=msfile,axis='uvrange',\
+                datacolumn='corrected',\
+                uvrange='>0')
 
-	uvdist_max=ms_stat['UVRANGE']['max']    # in meter
-	uvdist_min=ms_stat['UVRANGE']['min']    # in meter
-	uvdist_rms=ms_stat['UVRANGE']['rms'] 	# in meter
-	uvdist_mean=ms_stat['UVRANGE']['mean']  # in meter
-	
-	tb.open(msfile+'/SPECTRAL_WINDOW',nomodify=False)
-	header_para=tb.colnames()
-	obs_freq = tb.getcol('REF_FREQUENCY')
-	tb.close()
+    uvdist_max=ms_stat['UVRANGE']['max']    # in meter
+    uvdist_min=ms_stat['UVRANGE']['min']    # in meter
+    uvdist_rms=ms_stat['UVRANGE']['rms']     # in meter
+    uvdist_mean=ms_stat['UVRANGE']['mean']  # in meter
+    
+    tb.open(msfile+'/SPECTRAL_WINDOW',nomodify=False)
+    header_para=tb.colnames()
+    obs_freq = tb.getcol('REF_FREQUENCY')
+    tb.close()
 
-	obs_freq = obs_freq[0]
-	obs_wavelength = 3.e8/obs_freq
-	news('')
-	news('obs_freq      : '+str(obs_freq))
-	news('obs_wavelength: '+str(obs_wavelength))
+    obs_freq = obs_freq[0]
+    obs_wavelength = 3.e8/obs_freq
+    news('')
+    news('obs_freq      : '+str(obs_freq))
+    news('obs_wavelength: '+str(obs_wavelength))
 
-	theta_las=obs_wavelength/uvdist_min/3.1415*180.*60.*60./2.
-	theta_fwhm_mean=obs_wavelength/(uvdist_mean)/3.1415*180.*60.*60./2.
-	theta_fwhm_rms=obs_wavelength/(uvdist_rms)/3.1415*180.*60.*60./2.
-	news("")
-	news("")
-	news("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-	news("predicted sythesized beamwidth (mean):  "+str(theta_fwhm_mean)+' arcsec')
-	news("predicted sythesized beamwidth (rms) :  "+str(theta_fwhm_rms)+' arcsec')
-	news("predicted largest angular scale: "+str(theta_las)+' arcsec')
-	news("real sythesized beamwidth:  "+str(bmaj)+' X '+str(bmin)+' arcsec')
-	news("image cell size: "+str(cellsize)+' arcsec')
-	news("image size:      "+str(imsize)+' pixel')
-	news("channel width:   "+str(chanwidth)+' km/s')
-	news("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-	news("")
-	news("")
-	
+    theta_las=obs_wavelength/uvdist_min/3.1415*180.*60.*60./2.
+    theta_fwhm_mean=obs_wavelength/(uvdist_mean)/3.1415*180.*60.*60./2.
+    theta_fwhm_rms=obs_wavelength/(uvdist_rms)/3.1415*180.*60.*60./2.
+    news("")
+    news("")
+    news("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    news("predicted sythesized beamwidth (mean):  "+str(theta_fwhm_mean)+' arcsec')
+    news("predicted sythesized beamwidth (rms) :  "+str(theta_fwhm_rms)+' arcsec')
+    news("predicted largest angular scale: "+str(theta_las)+' arcsec')
+    news("real sythesized beamwidth:  "+str(bmaj)+' X '+str(bmin)+' arcsec')
+    news("image cell size: "+str(cellsize)+' arcsec')
+    news("image size:      "+str(imsize)+' pixel')
+    news("channel width:   "+str(chanwidth)+' km/s')
+    news("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    news("")
+    news("")
+    
 def immask2(im,region): 
- 	# region='box[[243pix,305pix].[702pix,714pix]]'
- 	# do masking based on region using ia.putregion
- 	
- 	ia.open(im)
- 	cs=ia.coordsys()
- 	
- 	rgi=rg.fromtext(text=region,
-					shape=list(np.shape(ia.getregion())),
-					csys=cs.torecord())
- 	region_val=ia.getregion(region=rgi)
- 	print region_val
- 	np.shape(region_val)
- 	ia.close()
- 	
+     # region='box[[243pix,305pix].[702pix,714pix]]'
+     # do masking based on region using ia.putregion
+     
+     ia.open(im)
+     cs=ia.coordsys()
+     
+     rgi=rg.fromtext(text=region,
+                    shape=list(np.shape(ia.getregion())),
+                    csys=cs.torecord())
+     region_val=ia.getregion(region=rgi)
+     print region_val
+     np.shape(region_val)
+     ia.close()
+     
 #def dbscale(outname):
-	
-def modelconv(outname,mode=''):	
+    
+def modelconv(outname,mode=''):    
 
-	# use *.residual *.image to get cmodel
-	os.system('rm -rf '+outname+'.cmodel')
-	os.system('rm -rf '+outname+'.cmodel2')
-	
-	# mode=''
-	if 	mode=="":	
-		immath(imagename=[outname+'.image',outname+'.residual'],
-		expr='IM0-IM1',outfile=outname+'.cmodel')
-	
-	# mode='conv'
-	if 	mode=="conv":
-		bmaj=imhead(imagename=outname+'.image',mode='get',hdkey='beammajor')
-		bmin=imhead(imagename=outname+'.image',mode='get',hdkey='beamminor')
-		bpa=imhead(imagename=outname+'.image',mode='get',hdkey='beampa')
-		print np.float(bmaj['value'])
-		print np.float(bmin['value'])
-		print np.float(bpa['value'])
-		imsmooth(imagename=outname+'.model', kernel='gauss', \
-				major=str(bmaj['value'])+'arcsec', \
-				minor=str(bmin['value'])+'arcsec',\
-				pa=str(bpa['value'])+'deg',\
-				outfile=outname+'.cmodel2')
-		immath(imagename=[outname+'.cmodel2',outname+'.image'],\
-		expr='IM0+IM1-IM1',outfile=outname+'.cmodel')
-		os.system('rm -rf '+outname+'.cmodel2')	
+    # use *.residual *.image to get cmodel
+    os.system('rm -rf '+outname+'.cmodel')
+    os.system('rm -rf '+outname+'.cmodel2')
+    
+    # mode=''
+    if     mode=="":    
+        immath(imagename=[outname+'.image',outname+'.residual'],
+        expr='IM0-IM1',outfile=outname+'.cmodel')
+    
+    # mode='conv'
+    if     mode=="conv":
+        bmaj=imhead(imagename=outname+'.image',mode='get',hdkey='beammajor')
+        bmin=imhead(imagename=outname+'.image',mode='get',hdkey='beamminor')
+        bpa=imhead(imagename=outname+'.image',mode='get',hdkey='beampa')
+        print np.float(bmaj['value'])
+        print np.float(bmin['value'])
+        print np.float(bpa['value'])
+        imsmooth(imagename=outname+'.model', kernel='gauss', \
+                major=str(bmaj['value'])+'arcsec', \
+                minor=str(bmin['value'])+'arcsec',\
+                pa=str(bpa['value'])+'deg',\
+                outfile=outname+'.cmodel2')
+        immath(imagename=[outname+'.cmodel2',outname+'.image'],\
+        expr='IM0+IM1-IM1',outfile=outname+'.cmodel')
+        os.system('rm -rf '+outname+'.cmodel2')    
 
 def calc_db_area(outname,ichan=''):
-	
-	psf_stat=imstat(imagename=outname+'.psf',chans=ichan)
-	
-	bmaj=imhead(	imagename=outname+'.image',
-					mode='get',
-					hdkey='beammajor')
-	bmin=imhead(	imagename=outname+'.image',
-					mode='get',		
-					hdkey='beamminor')
-	bpa=imhead(		imagename=outname+'.image',
-					mode='get',		
-					hdkey='beampa')
-	psf_psize=imhead(	imagename=outname+'.image',
-						mode='get',		
-						hdkey='cdelt1')
-	bmaj=bmaj['value']
-	bpa=bpa['value']
-	bmin=bmin['value']
-	psf_psize=abs(psf_psize['value']/(np.pi)*180*60*60)
-	
-	dbeam_area=psf_stat['sum'][0]*psf_psize**2/psf_stat['max'][0]
-	
-	print dbeam_area
-	print 1.133*bmaj*bmin
-	
-def calcscale(outname):	
-	# calculate the scaling factor for the residual map
+    
+    psf_stat=imstat(imagename=outname+'.psf',chans=ichan)
+    
+    bmaj=imhead(    imagename=outname+'.image',
+                    mode='get',
+                    hdkey='beammajor')
+    bmin=imhead(    imagename=outname+'.image',
+                    mode='get',        
+                    hdkey='beamminor')
+    bpa=imhead(        imagename=outname+'.image',
+                    mode='get',        
+                    hdkey='beampa')
+    psf_psize=imhead(    imagename=outname+'.image',
+                        mode='get',        
+                        hdkey='cdelt1')
+    bmaj=bmaj['value']
+    bpa=bpa['value']
+    bmin=bmin['value']
+    psf_psize=abs(psf_psize['value']/(np.pi)*180*60*60)
+    
+    dbeam_area=psf_stat['sum'][0]*psf_psize**2/psf_stat['max'][0]
+    
+    print dbeam_area
+    print 1.133*bmaj*bmin
+    
+def calcscale(outname):    
+    # calculate the scaling factor for the residual map
 
-	#os.system('rm -rf '+outname+'.cmodel')
-	#immath(imagename=[outname+'.image',outname+'.residual'],
-	#	expr='IM0-IM1',outfile=outname+'.cmodel')
-	
-	shape=imhead(outname+'.image',mode='get',hdkey='shape')
- 	shape=shape['value']
- 	nchan=shape[-1]
- 	#print nchan
- 	
- 	cmodel_flux=np.arange(float(nchan))
- 	dmap_flux=np.arange(float(nchan))
- 	rmap_flux=np.arange(float(nchan))
- 	res_scale=np.arange(float(nchan))
- 	
- 	for i in range(0,nchan):
- 			
-		rmap_stat=imstat(imagename=outname+'.residual',chans=str(i))
-		dmap_stat=imstat(imagename=outname+'_d.residual',chans=str(i))
-		cmodel_stat=imstat(imagename=outname+'.cmodel',chans=str(i))
-		eff=cmodel_stat['sum'][0]/(dmap_stat['sum'][0]-rmap_stat['sum'][0])
-		
-		res_scale[i]=eff
-		cmodel_flux[i]=cmodel_stat['sum'][0]
-		dmap_flux[i]=dmap_stat['sum'][0]
-		rmap_flux[i]=rmap_stat['sum'][0]
+    #os.system('rm -rf '+outname+'.cmodel')
+    #immath(imagename=[outname+'.image',outname+'.residual'],
+    #    expr='IM0-IM1',outfile=outname+'.cmodel')
+    
+     shape=imhead(outname+'.image',mode='get',hdkey='shape')
+     shape=shape['value']
+     nchan=shape[-1]
+     #print nchan
+     
+     cmodel_flux=np.arange(float(nchan))
+     dmap_flux=np.arange(float(nchan))
+     rmap_flux=np.arange(float(nchan))
+     res_scale=np.arange(float(nchan))
+     
+     for i in range(0,nchan):
+             
+        rmap_stat=imstat(imagename=outname+'.residual',chans=str(i))
+        dmap_stat=imstat(imagename=outname+'_d.residual',chans=str(i))
+        cmodel_stat=imstat(imagename=outname+'.cmodel',chans=str(i))
+        eff=cmodel_stat['sum'][0]/(dmap_stat['sum'][0]-rmap_stat['sum'][0])
+        
+        res_scale[i]=eff
+        cmodel_flux[i]=cmodel_stat['sum'][0]
+        dmap_flux[i]=dmap_stat['sum'][0]
+        rmap_flux[i]=rmap_stat['sum'][0]
 
-		
-	for i in range(0,nchan):
-		print "---"
-		print res_scale[i]
-		print 'model flux: '+str(cmodel_flux[i])
-		print 'dmap flux:  '+str(dmap_flux[i])
-		print 'res flux:   '+str(rmap_flux[i])
+        
+        for i in range(0,nchan):
+            print "---"
+            print res_scale[i]
+            print 'model flux: '+str(cmodel_flux[i])
+            print 'dmap flux:  '+str(dmap_flux[i])
+            print 'res flux:   '+str(rmap_flux[i])
 
 
 
 def testmask(imfile):
-	
-	os.system('rm -rf '+imfile+'.masked')
-	immath(imagename=imfile,expr='IM0',outfile=imfile+'.masked')
-		#mask='"'+imfile+'">=1.0')	
-	
+    
+    os.system('rm -rf '+imfile+'.masked')
+    immath(imagename=imfile,expr='IM0',outfile=imfile+'.masked')
+        #mask='"'+imfile+'">=1.0')    
+    
 
 
 def checkstatwt(srcfile,statwt_fitspw=''):
-	
-	#srcfile='n0337d03.src.ms'
-	#statwt_fitspw='1:7~17,0:46~56'
+    
+    #srcfile='n0337d03.src.ms'
+    #statwt_fitspw='1:7~17,0:46~56'
 
-	oldsrcfile=srcfile
-	srcfile=srcfile+'.rewt'
-	
-	os.system("rm -rf "+srcfile)
-	os.system("cp -rf "+oldsrcfile+" "+srcfile)
-	
-	news("+++++++++++++++++++++++++++++++++++++++++++++++")
-	news("+++++++++++++++++++++++++++++++++++++++++++++++")
-	news("")
-	news("--check weight column before recalculating--")
-	news("")
-	wt_before=visstat(vis=oldsrcfile,axis='weight')
-	news("")
-	news("")
-	
-	news("")
-	news("--statwt--")
-	news("")
-	news("Use statwt to recalculate the WEIGHT & SIGMA columns:")
-	news("Useful for early-stage JVLA data")
-	news("")
-	statwt(vis=srcfile,fitspw=statwt_fitspw)
-	
-	news("")
-	news("--check weight column after recalculating--")
-	news("")
-	wt_after=visstat(vis=srcfile,axis='weight')
-	news("")
-	news("")
-	news("+++++++++++++++++++++++++++++++++++++++++++++++")
-	news("+++++++++++++++++++++++++++++++++++++++++++++++")
+    oldsrcfile=srcfile
+    srcfile=srcfile+'.rewt'
+    
+    os.system("rm -rf "+srcfile)
+    os.system("cp -rf "+oldsrcfile+" "+srcfile)
+    
+    news("+++++++++++++++++++++++++++++++++++++++++++++++")
+    news("+++++++++++++++++++++++++++++++++++++++++++++++")
+    news("")
+    news("--check weight column before recalculating--")
+    news("")
+    wt_before=visstat(vis=oldsrcfile,axis='weight')
+    news("")
+    news("")
+    
+    news("")
+    news("--statwt--")
+    news("")
+    news("Use statwt to recalculate the WEIGHT & SIGMA columns:")
+    news("Useful for early-stage JVLA data")
+    news("")
+    statwt(vis=srcfile,fitspw=statwt_fitspw)
+    
+    news("")
+    news("--check weight column after recalculating--")
+    news("")
+    wt_after=visstat(vis=srcfile,axis='weight')
+    news("")
+    news("")
+    news("+++++++++++++++++++++++++++++++++++++++++++++++")
+    news("+++++++++++++++++++++++++++++++++++++++++++++++")
 
-		
-	ipl_statwt(oldsrcfile,srcfile)
+        
+    ipl_statwt(oldsrcfile,srcfile)
 
 def wtplt(msfile):
-	plotms(msfile,xaxis='uvdist',yaxis='wt',
-		coloraxis='field',showmajorgrid=True,
-		plotfile=msfile+'.wt_uvdist.png',overwrite=True) 
-	
-	#	plotms(vis=oldsrcfile,xaxis='uvdist',yaxis='wt',
-#		showmajorgrid=True,coloraxis='field',
-#		plotfile=oldsrcfile+'.statwt.wt_uvdist.png',overwrite=True)
+    plotms(msfile,xaxis='uvdist',yaxis='wt',
+        coloraxis='field',showmajorgrid=True,
+        plotfile=msfile+'.wt_uvdist.png',overwrite=True) 
+    
+    #    plotms(vis=oldsrcfile,xaxis='uvdist',yaxis='wt',
+#        showmajorgrid=True,coloraxis='field',
+#        plotfile=oldsrcfile+'.statwt.wt_uvdist.png',overwrite=True)
 #else:
-	
-#	iplotxy(vis=oldsrcfile,xaxis='uvdist',yaxis='amp',
-#		figfile=oldsrcfile+'.statwt.wt_uvdist.png',interactive=False,
-#		title='Calibrated Visibility',ylabels='Amp',
-#		selectplot=True,subplot=311,width='all')
-#	iplotxy(vis=oldsrcfile,xaxis='uvdist',yaxis='weight',
-#		figfile=oldsrcfile+'.statwt.wt_uvdist.png',interactive=False,
-#		title='Before STATWT',ylabels='Weights',
-#		selectplot=True,subplot=312)
-#	iplotxy(vis=srcfile,xaxis='uvdist',yaxis='weight',
-#		figfile=oldsrcfile+'.statwt.wt_uvdist.png',interactive=False,
-#		title='After STATWT',ylabels='Weights',
-#		selectplot=True,subplot=313)	
-	
+    
+#    iplotxy(vis=oldsrcfile,xaxis='uvdist',yaxis='amp',
+#        figfile=oldsrcfile+'.statwt.wt_uvdist.png',interactive=False,
+#        title='Calibrated Visibility',ylabels='Amp',
+#        selectplot=True,subplot=311,width='all')
+#    iplotxy(vis=oldsrcfile,xaxis='uvdist',yaxis='weight',
+#        figfile=oldsrcfile+'.statwt.wt_uvdist.png',interactive=False,
+#        title='Before STATWT',ylabels='Weights',
+#        selectplot=True,subplot=312)
+#    iplotxy(vis=srcfile,xaxis='uvdist',yaxis='weight',
+#        figfile=oldsrcfile+'.statwt.wt_uvdist.png',interactive=False,
+#        title='After STATWT',ylabels='Weights',
+#        selectplot=True,subplot=313)    
+    
