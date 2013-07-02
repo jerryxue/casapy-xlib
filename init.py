@@ -44,13 +44,17 @@ gspath='/opt/local/bin:'
 mirbin='/usr/local/miriad-carma/bin/darwin/'
 if  machinename.find('carma-data')!=-1:
     script_home='/Users/ruixue1/Worklib/casapy/'
-    gspath='/opt/local/bin/'
+    gspath='/opt/local/bin:'
     mirbin='/usr/local/miriad/miriad/bin/darwin/'
 if  machinename.find('neon')!=-1:
     script_home='/Users/Rui/Dropbox/Worklib/casapy/'
-    gspath='/opt/local/bin/'
+    gspath='/opt/local/bin:'
     mirbin='/usr/local/miriad-carma/bin/darwin/'
 
+extenv={"PATH":"/usr/local/miriad-carma/bin/darwin:/usr/local/miriad-carma/opt/casa/bin:",
+        "DYLD_LIBRARY_PATH":"/usr/local/miriad-carma/opt/casa/lib",
+        "HOME":"~/"}
+            
 # add scripts path
 print ""
 print ">>>> reduction script path:"
