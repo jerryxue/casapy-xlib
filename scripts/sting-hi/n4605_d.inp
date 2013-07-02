@@ -1,0 +1,27 @@
+
+# ---------- D ARRAY REDUCTION
+prefix   = 'n4254d' 
+rawfiles = ['../raw/AC168_1']
+
+
+# TRACK INFORMATION
+source = 'NGC4254'
+fluxcal = '1331+305'
+phasecal = '1221+282'
+
+spw_source = '0'
+spw_edge = '0:0~3;58~63'
+
+# CALIBRATION & OPTIONS
+flagselect=	[	"timerange='10:29:30~10:30:00'"
+			]
+
+
+# CLEANING, IMAGING, & ANALYSIS
+fit_spw    = '0:4~6;55~57'
+fit_order  = 1
+
+n_iter=0
+
+
+

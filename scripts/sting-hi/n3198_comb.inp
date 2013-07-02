@@ -1,0 +1,34 @@
+"""
+Project     Data    Config  Comment
+AT0285      02      C5.15   Good. 
+							The Spectral Window Setting of file1,2,3 were strange (don't cover
+							whole velocity range)
+AT0285		03		D5.15
+AW0605		04		D5.15
+AW0605		05		B5.15 
+
+CONCAT
+"""
+
+# ---------- C+D ARRAY COMBINATION 
+prefix_combine=['../d04a/n3198d04a',
+				'../d03b/n3198d03b',
+				'../d03a/n3198d03a',
+				'../c02d/n3198c02d',
+				'../c02c/n3198c02c',
+				'../c02b/n3198c02b',
+				'../c02a/n3198c02a',
+				'../b05/n3198b05']
+prefix='n3198hi'
+
+# CLEANING, IMAGING, & ANALYSIS
+
+im_size=1024+256
+cell_size='2arcsec'
+
+multi_scale=[0,4,12]
+clean_gain=0.3
+cycle_factor=5.0
+
+min_pb=0.1
+

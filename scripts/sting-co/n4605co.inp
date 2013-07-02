@@ -1,0 +1,51 @@
+# ---------- B+C+D ARRAY COMBINATION 
+
+track_list=['C0','C1','C2','C3','C4','C5','C6','B1','B2','B3','B4','B5']
+mirfile_list=[  '../../sdi/bima/n4605/n4605/00jun16/n4605.lc.usb',
+    '../../sdi/bima/n4605/n4605_C/00dec09/n4605.lc.usb',
+    '../../sdi/bima/n4605/n4605_C/01mar09/n4605.usb',
+    '../../sdi/bima/n4605/n4605_C/01mar10/n4605.usb',
+    '../../sdi/bima/n4605/n4605_C/01mar12/n4605.usb',
+    '../../sdi/bima/n4605/n4605_C/01mar15/n4605.usb',
+    '../../sdi/bima/n4605/n4605_C/01mar16/n4605.usb',
+    '../../sdi/bima/n4605/n4605_B/01feb07/n4605.lc.usb',
+    '../../sdi/bima/n4605/n4605_B/01feb20/n4605.lc.usb',
+    '../../sdi/bima/n4605/n4605_B/01feb24/n4605.lc.usb',
+    '../../sdi/bima/n4605/n4605_B/01feb26/n4605.lc.usb',
+    '../../sdi/bima/n4605/n4605_B/01jan27/n4605.lc.usb']
+telescopes=list('BIMA' for i in track_list)  
+
+for i in range(0,len(mirfile_list)):
+	rawfiles=mirfile_list[i]
+ 	prefix=track_list[i]+'.src'
+ 	telescope=telescopes[i]
+ 	importmode='mir'
+ 	#execfile(script_home+'ximport'+script_version+'.py')
+ 	
+# ---------- IMAGE DATA
+
+prefix_combine=track_list
+prefix='n4605co'
+
+# CLEANING, IMAGING, & ANALYSIS
+clean_mode = 'velocity'
+clean_start='55km/s'
+clean_nchan=44
+clean_width='5km/s'
+rest_freq='115.2712GHz'
+out_frame='LSRK'
+
+phase_center='J2000 12h40m00.0 +61d36m31.01'
+im_size=256
+cell_size='1arcsec'
+clean_mask='circle[[128pix,128pix],100pix]'
+
+cleanweight='natural'
+multi_scale=[0,4,12]
+clean_gain=0.3
+cycle_factor=5.0
+neg_component=0
+
+# RUN SCRIPTS
+execfile(script_home+'xmerge'+script_version+'.py')
+execfile(script_home+'xclean'+script_version+'.py')

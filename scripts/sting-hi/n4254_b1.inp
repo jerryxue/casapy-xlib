@@ -1,0 +1,35 @@
+# ---------- B ARRAY REDUCTION
+prefix   = 'n4254b1' 
+rawfiles = ['../raw/AL731_E090505.xp1']
+
+# TRACK INFORMATION
+source = 'NGC4254'
+
+fluxcal = '1331+305'
+phasecal = '1254+116'
+
+spw_source = '0'
+spw_edge = '*:0~14;122~126'
+
+# CALIBRATION & OPTION
+ref_ant='EA19'
+flagselect	=	[	"antenna='EA09&VA22'",
+					"antenna='EA09'",
+					"antenna='VA12&EA18'",
+					"antenna='VA20&EA24' timerange='2009/05/05/03:57:00~03:57:30'",
+					"antenna='VA20&EA11' timerange='2009/05/05/03:13:30~03:14:60'",
+					"antenna='EA02&VA20' timerange='2009/05/05/03:04:00~03:04:30'",
+					"antenna='EA13&EA17' timerange='2009/05/05/02:54:50~02:55:20'",
+					"timerange='02:50:00~02:55:50' field='1254+116'",
+					"field='1411+522'"
+				]
+
+
+# CLEANING, IMAGING, & ANALYSIS
+fit_spw    = '0:15~30'
+fit_order  = 0
+
+n_iter=0
+
+
+

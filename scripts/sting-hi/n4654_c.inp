@@ -1,0 +1,26 @@
+
+# ---------- C ARRAY REDUCTION
+prefix   = 'n4654c' 
+rawfiles = ['../raw/AP206_2']
+
+# TRACK INFORMATION
+source = 'NGC4654'
+
+fluxcal = '1331+305'
+phasecal = '1221+282'
+
+spw_source = '0'
+spw_edge = '*:0~5;58~62'
+
+# CALIBRATION & OPTIONS
+flagselect=	[	"timerange='1992/03/12/04:03:20~1992/03/12/04:06:40'",
+				"timerange='1992/03/12/10:16:25.0~1992/03/12/10:16:35.0'"
+			]
+
+
+# CLEANING, IMAGING, & ANALYSIS
+fit_spw    = '0:6~19;55~57'
+fit_order  = 1
+
+n_iter=0
+

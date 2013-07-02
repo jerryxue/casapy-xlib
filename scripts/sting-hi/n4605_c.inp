@@ -1,0 +1,37 @@
+
+# ---------- C ARRAY REDUCTION
+prefix   = 'n4605c' 
+rawfiles = ['../raw/AB1038_8',
+		'../raw/AB1038_9',
+		'../raw/AB1038_10']
+import_starttime='2002/12/19/07:54:45'
+import_stoptime='2002/12/19/11:45:15'
+import_spw='0'
+
+# TRACK INFORMATION
+source = 'NGC4605'
+
+fluxcal = '1331+305'
+phasecal = '1313+675' 
+
+spw_source = '0'
+spw_edge = '*:0~4;57~62'
+
+# CALIBRATION & OPTIONS
+flagselect = ["antenna='VA20'",
+			"antenna='VA07&VA08'",
+			"antenna='VA08&VA10'",
+			"antenna='VA15&VA28'",
+			"antenna='VA14&VA16'"]
+
+
+# CLEANING, IMAGING, & ANALYSIS
+fit_spw    = '0:5~7;54~56'
+fit_order  = 1
+
+n_iter=0
+min_pb=0.1
+
+
+
+

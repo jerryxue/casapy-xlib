@@ -1,0 +1,10 @@
+clean_mode = 'velocity'
+clean_start='-215km/s'
+clean_nchan=50
+clean_width='5.2km/s'
+
+phase_center='J2000 04h30m49.06 64d50m52.61'
+
+uvcs=True
+
+line_vrange=[-170,5]

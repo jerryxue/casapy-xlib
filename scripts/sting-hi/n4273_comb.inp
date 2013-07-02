@@ -1,0 +1,37 @@
+
+# ---------- D 87Jun ARRAY REDUCTION
+
+prefix   = 'n4273hi' 
+rawfiles = ['../raw/AT259_A010714.xp1']
+import_spw='0'
+
+# TRACK INFORMATION
+source = 'NGC5371'
+fluxcal = '1409+524'
+phasecal = '1419+419'
+
+spw_source = '2'
+spw_fluxcal= '1'
+spw_phasecal='2'
+
+spw_edge = '*:0~20;58~62'
+
+# CALIBRATION & OPTIONS
+flagselect=["antenna='VA02'","antenna='VA06&VA17'"]
+
+
+# CLEANING, IMAGING, & ANALYSIS
+fit_spw    = '0:21~23;55~57'
+fit_order  = 1
+
+
+im_size=512+128
+
+multi_scale=[0,4,12]
+clean_gain=0.3
+cycle_factor=5.0
+
+min_pb=0.25
+
+
+

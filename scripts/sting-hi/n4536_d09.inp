@@ -1,0 +1,41 @@
+# ---------- C 04Mar ARRAY REDUCTION
+
+prefix   = 'n4536d09' 
+rawfiles = ['../raw/AL735_3']
+import_spw='0'
+import_scan='34~43'
+# TRACK INFORMATION
+source = 'NGC4536'
+spw_source='0'
+
+fluxcal = '1331+305'
+fluxcal_uvrange=''
+phasecal = '1254+116'
+phasecal_uvrange=''
+
+spw_edge = "*:0~10;122~126"
+
+# CALIBRATION & OPTIONS
+#flagselect = [		"antenna='EA08'",
+#					"timerange='00:00:01~01:10:20' field='1150-003'",
+#					"timerange='02:26:45.0~02:27:05.0' antenna='EA14&EA23'",
+#					"timerange='01:30:45.0' antenna='VA20&EA24'",
+#					"timerange='2009/05/17/01:32:05.0~2009/05/17/01:32:25.0' antenna='EA15&VA20'",
+#					"timerange='2009/05/17/02:13:15.0~2009/05/17/02:13:35.0' antenna='EA11&VA20'",
+#					"timerange='2009/05/17/02:36:25.0~2009/05/17/02:36:45.0' antenna='EA14&VA20'",
+#					"timerange='2009/05/17/05:27:55.0~2009/05/17/05:28:15.0' antenna='EA01&VA20'",
+#					"timerange='2009/05/17/06:02:35.0~2009/05/17/06:02:55.0' antenna='EA16&VA20'",
+#					"timerange='2009/05/17/06:23:05.0~2009/05/17/06:23:25.0' antenna='EA04&EA17'",
+#					"timerange='06:16:40~06:17:10'",
+#					"timerange='06:42:55~06:43:10'",
+#					"field='1411+522'"
+#				]
+# !EA07&EA08;!EA07&EA27;!EA08&EA27;!EA07&EA15
+
+
+
+# CLEANING, IMAGING, & ANALYSIS
+fit_spw    = '0:12~26;116~120'
+fit_order  = 1
+
+#n_iter=0

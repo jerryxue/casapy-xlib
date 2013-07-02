@@ -1,0 +1,35 @@
+# ---------- C 02Oct ARRAY REDUCTION
+
+prefix   = 'n6951c02' 
+rawfiles = ['../raw/AM737_1','../raw/AM737_2']
+
+# TRACK INFORMATION
+source = 'NGC6951'
+
+fluxcal = '0542+498'
+fluxcal_uvrange=''
+phasecal = '2022+616'
+phasecal_uvrange=''
+
+spw_source = '0,1'
+spw_edge = '0:0~10;28~30,1:0~2;21~30'
+
+# CALIBRATION & OPTIONS
+flagselect = [  "timerange='2002/10/18/00:31:45.0~2002/10/20/00:31:45.0'",
+                "antenna='VA10'",
+                "timerange='2002/10/20/02:56:35~2002/10/20/02:56:55'",
+                "timerange='2002/10/20/04:03:35~2002/10/20/04:03:55'",
+                "timerange='27:46:20~27:47:00'",
+                "timerange='26:37:00~30:00:00' field='NGC6951'",
+                "timerange='26:37:00~30:00:00' field='2022+616'"
+			 	]
+ 
+
+# CLEANING, IMAGING, & ANALYSIS
+fit_spw    = '0:11~17,1:14~20'
+fit_order  = 1
+
+n_iter=0
+
+
+

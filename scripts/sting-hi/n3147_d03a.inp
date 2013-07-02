@@ -1,0 +1,31 @@
+# ---------- D 03Mar ARRAY REDUCTION
+prefix   = 'n3147d03a' 
+rawfiles = ['../raw/AB1069_4','../raw/AB1069_5','../raw/AB1069_6']
+import_starttime="1989/12/15/05:48:45"
+import_stoptime="2003/03/04/06:09:25"
+
+# TRACK INFORMATION
+source = 'NGC3147'
+
+fluxcal = '0134+329'
+fluxcal_uvrange='<40klambda'
+phasecal = '0836+710'
+phasecal_uvrange='<20klambda'
+
+spw_source = '0'
+spw_edge = "*:0~9;55~62"
+
+# CALIBRATION & OPTIONS
+flagselect=[	"timerange='03:43:40~03:44:00'",
+				"timerange='01:58:55~01:59:15'",
+				"mode='quack' quackinterval='5.0'",
+				"antenna='VA17' timerange='02:07:40~02:07:50'"
+				]
+
+
+# CLEANING, IMAGING, & ANALYSIS
+fit_spw    = '0:10~17;44~54'
+fit_order  = 1
+
+n_iter=0
+

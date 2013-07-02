@@ -1,0 +1,39 @@
+# IMPORTING
+prefix   = 'n0337d03' 
+rawfiles = '../raw/AT285_1'
+import_scan='2~5'
+
+# TRACK INFORMATION
+source = 'NGC0337'
+
+fluxcal = '0137+331'
+fluxcal_uvrange='<40klambda'
+phasecal = '0059+001'
+phasecal_uvrange=''
+
+spw_source = '0,1'
+spw_edge = '*:0~6;57~62'
+
+# CALIBRATION & OPTIONS
+flagselect = [  "timerange='2003/02/16/22:06:02~22:06:30' field='0137+331'",
+				"antenna='VA08&VA11'",
+				"antenna='VA20&VA11'",
+				"antenna='VA03&VA08'",
+				"antenna='VA03&VA09'",
+				"antenna='VA03&VA10'",
+				"antenna='VA14&VA27'",
+				"antenna='VA08&VA14'",
+				"antenna='VA08&VA10'",
+				"antenna='VA04&VA20'",
+				"antenna='VA10&VA15'",
+				"antenna='VA09&VA19'",
+				"antenna='VA02&VA03'"]
+
+
+# CLEANING, IMAGING, & ANALYSIS
+fit_spw='1:7~10,0:52~56'
+
+im_size=256+128+64
+cell_size='8.0arcsec'
+imstat_box_spec = '42,103,117,175'
+n_iter=0
