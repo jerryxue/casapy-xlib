@@ -268,6 +268,22 @@ if  importmode=='mir':
                 win_list=import_win,
                 mirbin=mirbin)
 
+if  importmode=='miriad':
+    
+    news("")
+    news("--importmiriad--")
+    news("")
+    news("Use importmiriad() to import data in the MIRIAD file:")
+    news(str(rawfiles))
+    news("Write the data into the Measurement Set (MS):")
+    news(str(msfile))
+    news("")
+    importmiriad(  mirfile=rawfiles,
+                vis=msfile,
+                telescope=telescope,
+                extenv=extenv)
+
+
 #----------------------------------------------------------------------------------------
 #   Additional Data Selection
 #----------------------------------------------------------------------------------------
