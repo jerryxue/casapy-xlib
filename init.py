@@ -93,10 +93,10 @@ script_version=''
 print script_version
 print ""
 
-print ">>>> notification email:"
-myemail='jerryxue@gmail.com'
-print myemail
-print ""
+# print ">>>> notification email:"
+# myemail='jerryxue@gmail.com'
+# print myemail
+# print ""
 
 print ">>>> Additional Variable Settings:"
 stinghi=script_home+'scripts/sting-hi/'
