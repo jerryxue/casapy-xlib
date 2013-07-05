@@ -377,12 +377,12 @@ except NameError:
 try:
     threshold_spec
 except NameError:
-    threshold_spec='0.0mJy/beam'
+    threshold_spec='0.0mJy'
 
 try:
     threshold_cont
 except NameError:
-    threshold_cont='0.0mJy/beam'
+    threshold_cont='0.0mJy'
 
 try:
     noplot
@@ -422,7 +422,7 @@ except NameError:
 try:
     clean_mask
 except NameError:
-    clean_mask=0.2
+    clean_mask=0.3333
 
 try:
     cell_size
@@ -437,12 +437,12 @@ except NameError:
 try:
     sigcutoff_spec
 except NameError:
-    sigcutoff_spec=2.5
+    sigcutoff_spec=2.0
 
 try:
     sigcutoff_cont
 except NameError:
-    sigcutoff_cont=2.5
+    sigcutoff_cont=2.0
 
 try:
     cycle_factor
@@ -683,13 +683,14 @@ cleanup(prefix+'.coli_d')
 cleanup(prefix+'.coli')
 cleanup(prefix+'.cont_d')
 cleanup(prefix+'.cont')
+default_restor_beam=['']
 
 #----------------------------------------------------------------------------------------
 #   Make a dirty spectral cube, and determine the cube sigma level
 #----------------------------------------------------------------------------------------
 if  cleanspec==True:
 
-    if  (threshold_spec=='0.0mJy/beam' and n_iter!=0):
+    if  (threshold_spec=='0.0mJy' and n_iter!=0):
     
         news("")
         news("--clean--")
@@ -758,10 +759,11 @@ if  cleanspec==True:
         default('imstat')
         imagename = outname+'.image'
         box       = imstat_box_spec
-        chans     = imstat_chan
+        chans     = "" #imstat_chan
+        axes=[0,1]
         region    = imstat_rg_spec
         ds_stat     = imstat()
-        sigjy     = ds_stat['sigma'][0]
+        sigjy     = np.median(ds_stat['sigma'])
         sigmjy    = 1000 * sigjy
         news("")
         news("-------------------------------------------------------------------------")
@@ -769,12 +771,20 @@ if  cleanspec==True:
         news("-------------------------------------------------------------------------")
         news("")
         
-        threshold_spec=str(sigmjy*sigcutoff_spec)+'mJy/beam'
-                   
+        threshold_spec=str(sigmjy*sigcutoff_spec)+'mJy'
+        
+        default_restor_beam=checkbeam(outname,method='maximum')
+
 #----------------------------------------------------------------------------------------
 #   Make a clean spectral cube
 #----------------------------------------------------------------------------------------
 
+    spec_restor_beam=['']
+    if  restor_beam==['']:
+        spec_restor_beam=default_restor_beam
+    else:
+        spec_restor_beam=restor_beam
+        
     news("")
     news("--clean--")
     news("")
@@ -825,7 +835,7 @@ if  cleanspec==True:
     uvtaper=True,
     outertaper=outer_taper,
     cyclefactor=cycle_factor,
-    restoringbeam=restor_beam,
+    restoringbeam=spec_restor_beam,
     gain=clean_gain,
     stokes='I',
     chaniter=iterchan,    
@@ -965,7 +975,7 @@ if  cleanspec==True:
 #----------------------------------------------------------------------------------------
 if  cleancont==True:
 
-    if  (threshold_cont=='0.0mJy/beam' and n_iter!=0):
+    if  (threshold_cont=='0.0mJy' and n_iter!=0):
 
         news("")
         news("--clean--")
@@ -1036,7 +1046,7 @@ if  cleancont==True:
         news("-------------------------------------------------------------------------")
         news("")
         
-        threshold_cont=str(sigmjy*sigcutoff_cont)+'mJy/beam'
+        threshold_cont=str(sigmjy*sigcutoff_cont)+'mJy'
 		
 #----------------------------------------------------------------------------------------
 #   Make a clean cont image
