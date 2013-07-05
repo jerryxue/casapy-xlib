@@ -1312,6 +1312,69 @@ def mask0clean(outname,mask0):
             immask(outname+'.'+version[i],mask0)
 
 
+def checkbeam(outname,method='maximum'):
+
+    bmaj=imhead(imagename=outname+'.image',mode='get',hdkey='beammajor')
+    
+    if  type(bmaj['value'])==type('abc'):
+    
+        imhdlist=imhead(outname+'.image',mode='list')
+        nchan=imhdlist['perplanebeams']['perplanebeams']['nChannels']
+        
+        psf_bmaj=np.arange(float(nchan))
+        psf_bmin=np.arange(float(nchan))
+        psf_bpa=np.arange(float(nchan))
+        psf_size=np.arange(float(nchan))
+            
+        for i in range(0,nchan):
+            
+            news("")
+            news('FRAME: %i' % i)
+            news("")
+            psf_bmaj[i]=imhdlist['perplanebeams']['perplanebeams']['*'+str(i)]['major']['value']
+            psf_bmin[i]=imhdlist['perplanebeams']['perplanebeams']['*'+str(i)]['minor']['value']
+            psf_bpa[i]=imhdlist['perplanebeams']['perplanebeams']['*'+str(i)]['positionangle']['value']
+            psf_size[i]=psf_bmaj[i]*psf_bmin[i]
+            news('BMAJ       %5.2f arcsec' % psf_bmaj[i])
+            news('BMIN       %5.2f arcsec' % psf_bmin[i])
+            news('BPA        %5.2f deg' % psf_bpa[i])
+            news('BMAJXBMIN  %5.2f arcsec^2' % psf_size[i])
+        
+        
+        psf_size_median=np.median(psf_size)
+        sortindex=sorted(range(len(psf_size)),key=lambda x:psf_size[x])
+        index_median=sortindex[nchan/2]
+        index_max=max(enumerate(psf_size),key=lambda x: x[1])[0]
+        news("")
+        news([psf_size[index_median],psf_bmaj[index_median],psf_bmin[index_median],psf_bpa[index_median]])
+        news([psf_size[index_max],psf_bmaj[index_max],psf_bmin[index_max],psf_bpa[index_max]])
+        news("")
+        if  method=='maximum':
+            index_choice=index_max
+        if  method=='median':
+            index_choice=index_median
+            
+        rbmaj= '%.2f' % psf_bmaj[index_choice]
+        rbmin= '%.2f' % psf_bmin[index_choice]
+        rbpa= '%.2f' % psf_bpa[index_choice]
+    
+    if  type(bmaj['value'])==type(1.0):
+        
+        bmaj=imhead(imagename=outname+'.image',mode='get',hdkey='beammajor')
+        bmin=imhead(imagename=outname+'.image',mode='get',hdkey='beamminor')
+        bpa=imhead(imagename=outname+'.image',mode='get',hdkey='beampa')
+        rbmaj= '%.2f' % bmaj['value']
+        rbmin= '%.2f' % bmin['value']
+        rbpa= '%.2f' % bpa['value']
+
+    rbmaj=rbmaj+'arcsec'
+    rbmin=rbmin+'arcsec'
+    rbpa=rbpa+'deg'
+    psf_restor_beam=[rbmaj,rbmin,rbpa]
+    news("return restoring beam:")
+    news(str(psf_restor_beam))
+    return psf_restor_beam
+
 
 # This function can check the psf at diffrent 
 #
@@ -1319,8 +1382,8 @@ def mask0clean(outname,mask0):
 #
 #     outname
 #    execfile('/Users/ruixue1/Worklib/casapy/checkpsf.py')
-#
-# 
+
+    
 
 def checkpsf(outname):    
     
@@ -1553,7 +1616,7 @@ def getuvrange(msfile):
     uvdist_min=ms_stat['UVRANGE']['min']    # in meter
     uvdist_rms=ms_stat['UVRANGE']['rms']     # in meter
     uvdist_mean=ms_stat['UVRANGE']['mean']  # in meter
-    
+
     tb.open(msfile+'/SPECTRAL_WINDOW',nomodify=False)
     header_para=tb.colnames()
     obs_freq = tb.getcol('REF_FREQUENCY')
@@ -1564,13 +1627,14 @@ def getuvrange(msfile):
     news('obs_freq      : '+str(obs_freq))
     news('obs_wavelength: '+str(obs_wavelength))
 
-    theta_las=obs_wavelength/uvdist_min/3.1415*180.*60.*60./2.
-    theta_fwhm=obs_wavelength/(uvdist_mean)/3.1415*180.*60.*60./2.
+    # Synthesis Image in Radio Astronomy II P137
+    theta_las=obs_wavelength/uvdist_min/3.1415*180.*60.*60*0.77/2.0
+    theta_fwhm=obs_wavelength/(uvdist_rms)/3.1415*180.*60.*60*0.77/2.0
     news("")
     news("")
     news("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    news("predicted sythesized beamwidth:  "+str(theta_fwhm)+' arcsec')
-    news("predicted largest angular scale: "+str(theta_las)+' arcsec')
+    news("predicted beamwidth (uniform weighted)  : "+str(theta_fwhm)+' arcsec')
+    news("predicted largest senstive angular scale: "+str(theta_las)+' arcsec')
     news("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     news("")
     news("")
