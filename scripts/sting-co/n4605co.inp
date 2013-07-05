@@ -36,15 +36,15 @@ rest_freq='115.2712GHz'
 out_frame='LSRK'
 
 phase_center='J2000 12h40m00.0 +61d36m31.01'
-im_size=256
+im_size=300
 cell_size='1arcsec'
-clean_mask='circle[[128pix,128pix],100pix]'
+clean_mask='circle[[150pix,150pix],100pix]'
 
-cleanweight='natural'
 multi_scale=[0,4,12]
 clean_gain=0.3
 cycle_factor=5.0
 neg_component=0
+usevconcat=False
 
 # RUN SCRIPTS
 execfile(script_home+'xmerge'+script_version+'.py')

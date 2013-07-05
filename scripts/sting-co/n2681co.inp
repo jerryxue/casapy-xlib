@@ -9,7 +9,7 @@ for i in range(0,len(mirfile_list)):
  	prefix=track_list[i]+'.src'
  	telescope=telescopes[i]
  	importmode='mir'
- 	#execfile(script_home+'ximport'+script_version+'.py')
+ 	execfile(script_home+'ximport'+script_version+'.py')
  	
 # ---------- IMAGE DATA 
 
@@ -18,23 +18,22 @@ prefix='n2681co'
 
 # CLEANING, IMAGING, & ANALYSIS
 clean_mode = 'velocity'
-clean_start='580km/s'
-clean_nchan=(820-580)/10+1 
+clean_start='560km/s'
+clean_nchan=(820-560)/10+1 
 clean_width='10km/s'
 rest_freq='115.2712GHz'
 out_frame='LSRK'
 
 phase_center='J2000 8h53m32.7 +51d18m48.99'
-im_size=256
+im_size=350
 cell_size='1arcsec'
 clean_mask=0.5
 
-cleanweight='natural'
 multi_scale=[0,3,9]
 clean_gain=0.3
 cycle_factor=5.0
 neg_component=0
 
 # RUN SCRIPTS
-#execfile(script_home+'xmerge'+script_version+'.py')
+execfile(script_home+'xmerge'+script_version+'.py')
 execfile(script_home+'xclean'+script_version+'.py')

@@ -16,7 +16,7 @@ for i in range(0,len(mirfile_list)):
  	prefix=track_list[i]+'.src'
  	telescope=telescopes[i]
  	importmode='mir'
- 	#execfile(script_home+'ximport'+script_version+'.py')
+ 	execfile(script_home+'ximport'+script_version+'.py')
  	
 # ---------- IMAGE DATA 
 
@@ -26,17 +26,15 @@ prefix='n5713co'
 # CLEANING, IMAGING, & ANALYSIS
 clean_mode = 'velocity'
 clean_start='1760km/s'
-clean_nchan=(2020-1760)/10+1
+clean_nchan=(2040-1760)/10+1
 clean_width='10km/s'
 rest_freq='115.2712GHz'
 out_frame='LSRK'
 
 phase_center='J2000 14h40m11.5 -00d17m20.3'
-im_size=256
+im_size=350
 cell_size='1arcsec'
-clean_mask=0.5
 
-cleanweight='natural'
 multi_scale=[0,4,12]
 clean_gain=0.3
 neg_component=0

@@ -22,7 +22,7 @@ for i in range(0,len(mirfile_list)):
  	prefix=track_list[i]+'.src'
  	telescope=telescopes[i]
  	importmode='mir'
- 	#execfile(script_home+'ximport'+script_version+'.py')
+ 	execfile(script_home+'ximport'+script_version+'.py')
 
 
 # ---------- IMAGE DATA
@@ -39,11 +39,10 @@ rest_freq='115.2712GHz'
 out_frame='LSRK'
 
 phase_center='J2000 0h59m50.1 -07d34m41.00'
-im_size=256
+im_size=300
 cell_size='1arcsec'
-clean_mask='circle[[128pix,128pix],60pix]'
+clean_mask='circle[[150pix,150pix],60pix]'
 
-cleanweight='natural'
 multi_scale=[0,3,9]
 clean_gain=0.3
 cycle_factor=5.0

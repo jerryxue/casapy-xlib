@@ -37,11 +37,9 @@ rest_freq='115.2712GHz'
 out_frame='LSRK'
 
 phase_center='J2000 10h16m53.60 +73d24m03.00'
-im_size=256
+im_size=350
 cell_size='1arcsec'
-clean_mask=0.333
 
-cleanweight='natural'
 multi_scale=[0,4,12]
 clean_gain=0.3
 cycle_factor=5.0
