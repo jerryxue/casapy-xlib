@@ -1413,7 +1413,7 @@ def checkpsf(outname):
     
     # write a file with initial guessing
     estfile=open(outname+'.psf.imfit.est.log','w')
-    print >>estfile,'1, '+\
+    print >>estfile,'1.0, '+\
             str(int(psf_nx/2))+', '+\
             str(int(psf_ny/2))+', '+\
             str(bmaj)+'arcsec, '+str(bmin)+'arcsec, '+str(bpa)+'deg, f'
@@ -1421,9 +1421,10 @@ def checkpsf(outname):
     estfile.close()
     
     # setting fitbox
-    imfit_box=str(int(psf_nx/2-2*(bmaj/psf_psize)))+','+str(int(psf_ny/2-2*(bmaj/psf_psize)))+','\
-            +str(int(psf_nx/2+2*(bmaj/psf_psize)))+','+str(int(psf_ny/2+2*(bmaj/psf_psize))) 
-    imfit_log=imfit(imagename=outname+'.psf',box=imfit_box,excludepix=[-1e9,0],\
+    imfit_box=str(int(psf_nx/2-3*(bmaj/psf_psize)))+','+str(int(psf_ny/2-3*(bmaj/psf_psize)))+','\
+            +str(int(psf_nx/2+3*(bmaj/psf_psize)))+','+str(int(psf_ny/2+3*(bmaj/psf_psize))) 
+    print imfit_box
+    imfit_log=imfit(imagename=outname+'.psf',box=imfit_box,\
         logfile=outname+'.psf.imfit.log',\
         #estimates=outname+'.psf.imfit.est.log')
         estimates='')
