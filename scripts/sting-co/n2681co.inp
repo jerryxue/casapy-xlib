@@ -35,5 +35,4 @@ cycle_factor=5.0
 neg_component=0
 
 # RUN SCRIPTS
-execfile(script_home+'xmerge'+script_version+'.py')
 execfile(script_home+'xclean'+script_version+'.py')

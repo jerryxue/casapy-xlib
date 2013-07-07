@@ -20,7 +20,7 @@ for i in range(0,len(mirfile_list)):
  	prefix=track_list[i]+'.src'
  	telescope=telescopes[i]
  	importmode='mir'
- 	#execfile(script_home+'ximport'+script_version+'.py')
+ 	execfile(script_home+'ximport'+script_version+'.py')
  	
 # ---------- IMAGE DATA
 

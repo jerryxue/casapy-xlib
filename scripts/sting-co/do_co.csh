@@ -14,7 +14,7 @@
 
 set pdir="/Volumes/Scratch/reduc/sting-co"
 set sdir="/Users/Rui/Dropbox/Worklib/casapy/scripts/sting-co"
-foreach source (    n0772 n1156 n1569 n1637 n2681 \
+foreach source (    n1569 n1637 n2681 \
                     n2782 n2976 n3147 n3198 n3486 n3593 \
                     n3949 n4151 n4273 n4536 n4605 \
                     n4654 n5371 n5713 n6503 n6951 )
