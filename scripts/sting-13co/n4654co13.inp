@@ -1,0 +1,42 @@
+# ---------- B+C+D ARRAY COMBINATION 
+
+track_list=['C1','D1','D2','D3','D4']
+mirfile_list=[	'~/workspace/maps/n4654/vis/ngc4654_C1_10MAR20.13co.cal',
+				'~/workspace/maps/n4654/vis/ngc4654_D1_10APR23.13co.cal',
+				'~/workspace/maps/n4654/vis/ngc4654_D2_10MAY09.13co.cal',
+				'~/workspace/maps/n4654/vis/ngc4654_D3_10MAY10.13co.cal',
+				'~/workspace/maps/n4654/vis/ngc4654_D4_10MAY12.13co.cal']
+telescopes=list('CARMA' for i in track_list)
+
+for i in range(0,len(mirfile_list)):
+	rawfiles=mirfile_list[i]
+ 	prefix=track_list[i]+'.src'
+ 	telescope=telescopes[i]
+ 	importmode='mir'
+ 	execfile(script_home+'ximport'+script_version+'.py')
+ 	
+# ---------- IMAGE DATA 
+
+prefix_combine=track_list
+prefix='n4654co13'
+
+# CLEANING, IMAGING, & ANALYSIS
+clean_mode = 'velocity'
+clean_start='850km/s'
+clean_nchan=(1240-850)/5+1
+clean_width='5km/s'
+rest_freq='110.201353GHz'
+out_frame='LSRK'
+
+phase_center='J2000 12h43m56.6 +13d07m36.0'
+im_size=350
+cell_size='1arcsec'
+
+multi_scale=[0,3,9]
+clean_gain=0.3
+cycle_factor=5.0
+neg_component=0
+
+# RUN SCRIPTS
+execfile(script_home+'xmerge'+script_version+'.py')
+execfile(script_home+'xclean'+script_version+'.py')
