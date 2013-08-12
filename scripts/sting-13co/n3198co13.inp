@@ -1,13 +1,13 @@
 # ---------- B+C+D ARRAY COMBINATION 
 
 track_list=['C1','C2','D2','D3','D4','D5','D6']
-mirfile_list=['~/workspace/maps/n3198/vis/ngc3198_C1_09apr13.13co.cal',
-			'~/workspace/maps/n3198/vis/ngc3198_C2_10MAR02.13co.cal',
-			'~/workspace/maps/n3198/vis/ngc3198_D2_09aug24.13co.cal',
-			'~/workspace/maps/n3198/vis/ngc3198_D3_09aug29.13co.cal',
-			'~/workspace/maps/n3198/vis/ngc3198_D4_09aug31.13co.cal',
-			'~/workspace/maps/n3198/vis/ngc3198_D5_10APR16.13co.cal',
-			'~/workspace/maps/n3198/vis/ngc3198_D6_10APR21.13co.cal']
+mirfile_list=['../../sdi/n3198/vis/ngc3198_C1_09apr13.13co.cal',
+			'../../sdi/n3198/vis/ngc3198_C2_10MAR02.13co.cal',
+			'../../sdi/n3198/vis/ngc3198_D2_09aug24.13co.cal',
+			'../../sdi/n3198/vis/ngc3198_D3_09aug29.13co.cal',
+			'../../sdi/n3198/vis/ngc3198_D4_09aug31.13co.cal',
+			'../../sdi/n3198/vis/ngc3198_D5_10APR16.13co.cal',
+			'../../sdi/n3198/vis/ngc3198_D6_10APR21.13co.cal']
 telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):

@@ -1,17 +1,17 @@
 # ---------- B+C+D ARRAY COMBINATION 
 
 track_list=['C1','C2','C3','C4','C5','D1','D2','D3','D4','D5','D6']
-mirfile_list=[	'~/workspace/maps/n5371/vis/ngc5371_C1_09may11.13co.cal',
-				'~/workspace/maps/n5371/vis/ngc5371_C2_09may12.13co.cal',
-				'~/workspace/maps/n5371/vis/ngc5371_C3_09may13.13co.cal',
-				'~/workspace/maps/n5371/vis/ngc5371_C4_09may14.13co.cal',
-				'~/workspace/maps/n5371/vis/ngc5371_C5_09may18.13co.cal',
-				'~/workspace/maps/n5371/vis/ngc5371_D1_10APR16.13co.cal',
-				'~/workspace/maps/n5371/vis/ngc5371_D2_10APR17.13co.cal',
-				'~/workspace/maps/n5371/vis/ngc5371_D3_10APR18.13co.cal',
-				'~/workspace/maps/n5371/vis/ngc5371_D4_10APR21.13co.cal',
-				'~/workspace/maps/n5371/vis/ngc5371_D5_10MAY06.13co.cal',
-				'~/workspace/maps/n5371/vis/ngc5371_D6_10MAY11.13co.cal']
+mirfile_list=[	'../../sdi/n5371/vis/ngc5371_C1_09may11.13co.cal',
+				'../../sdi/n5371/vis/ngc5371_C2_09may12.13co.cal',
+				'../../sdi/n5371/vis/ngc5371_C3_09may13.13co.cal',
+				'../../sdi/n5371/vis/ngc5371_C4_09may14.13co.cal',
+				'../../sdi/n5371/vis/ngc5371_C5_09may18.13co.cal',
+				'../../sdi/n5371/vis/ngc5371_D1_10APR16.13co.cal',
+				'../../sdi/n5371/vis/ngc5371_D2_10APR17.13co.cal',
+				'../../sdi/n5371/vis/ngc5371_D3_10APR18.13co.cal',
+				'../../sdi/n5371/vis/ngc5371_D4_10APR21.13co.cal',
+				'../../sdi/n5371/vis/ngc5371_D5_10MAY06.13co.cal',
+				'../../sdi/n5371/vis/ngc5371_D6_10MAY11.13co.cal']
 telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):

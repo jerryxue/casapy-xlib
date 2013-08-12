@@ -2,13 +2,13 @@
 
 track_list=['C1','C3','E1','E2','D1','D2','D3']
 mirfile_list=[
-				'~/workspace/maps/n5713/vis/ngc5713_C1_09may14.13co.cal',
-				'~/workspace/maps/n5713/vis/ngc5713_C3_09jun03.13co.cal',
-				'~/workspace/maps/n5713/vis/ngc5713_E1_09jun13.13co.cal',
-				'~/workspace/maps/n5713/vis/ngc5713_E2_09jun23.13co.cal',
-				'~/workspace/maps/n5713/vis/ngc5713_D1_10APR20.13co.cal',
-				'~/workspace/maps/n5713/vis/ngc5713_D2_10MAY19.13co.cal',
-				'~/workspace/maps/n5713/vis/ngc5713_D3_10MAY20.13co.cal']
+				'../../sdi/n5713/vis/ngc5713_C1_09may14.13co.cal',
+				'../../sdi/n5713/vis/ngc5713_C3_09jun03.13co.cal',
+				'../../sdi/n5713/vis/ngc5713_E1_09jun13.13co.cal',
+				'../../sdi/n5713/vis/ngc5713_E2_09jun23.13co.cal',
+				'../../sdi/n5713/vis/ngc5713_D1_10APR20.13co.cal',
+				'../../sdi/n5713/vis/ngc5713_D2_10MAY19.13co.cal',
+				'../../sdi/n5713/vis/ngc5713_D3_10MAY20.13co.cal']
 telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):

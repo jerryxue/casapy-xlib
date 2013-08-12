@@ -1,14 +1,14 @@
 # ---------- B+C+D ARRAY COMBINATION 
 
 track_list=['C1','C2','C3','C4','C5','D1','D2','D3']
-mirfile_list=['~/workspace/maps/n3486/vis/ngc3486_C1_08may07.13co.cal',
-			'~/workspace/maps/n3486/vis/ngc3486_C2_08may15.13co.cal',
-			'~/workspace/maps/n3486/vis/ngc3486_C3_08may21.13co.cal',
-			'~/workspace/maps/n3486/vis/ngc3486_C4_08may23.13co.cal',
-			'~/workspace/maps/n3486/vis/ngc3486_C5_08may25.13co.cal',
-			'~/workspace/maps/n3486/vis/ngc3486_D1_10APR26.13co.cal',
-			'~/workspace/maps/n3486/vis/ngc3486_D2_10MAY14.13co.cal',
-			'~/workspace/maps/n3486/vis/ngc3486_D3_10MAY15.13co.cal']
+mirfile_list=['../../sdi/n3486/vis/ngc3486_C1_08may07.13co.cal',
+			'../../sdi/n3486/vis/ngc3486_C2_08may15.13co.cal',
+			'../../sdi/n3486/vis/ngc3486_C3_08may21.13co.cal',
+			'../../sdi/n3486/vis/ngc3486_C4_08may23.13co.cal',
+			'../../sdi/n3486/vis/ngc3486_C5_08may25.13co.cal',
+			'../../sdi/n3486/vis/ngc3486_D1_10APR26.13co.cal',
+			'../../sdi/n3486/vis/ngc3486_D2_10MAY14.13co.cal',
+			'../../sdi/n3486/vis/ngc3486_D3_10MAY15.13co.cal']
 telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):

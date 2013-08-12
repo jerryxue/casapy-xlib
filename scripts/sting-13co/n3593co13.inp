@@ -1,12 +1,12 @@
 # ---------- B+C+D ARRAY COMBINATION 
 
 track_list=['C1','C2','C3','D1','D2','D3']
-mirfile_list=['~/workspace/maps/n3593/vis/ngc3593_C1_09oct11.13co.cal',
-			'~/workspace/maps/n3593/vis/ngc3593_C2_09oct15.13co.cal',
-			'~/workspace/maps/n3593/vis/ngc3593_C3_09oct16.13co.cal',
-			'~/workspace/maps/n3593/vis/ngc3593_D1_10APR10.13co.cal',
-			'~/workspace/maps/n3593/vis/ngc3593_D2_10APR17.13co.cal',
-			'~/workspace/maps/n3593/vis/ngc3593_D3_10APR22.13co.cal']
+mirfile_list=['../../sdi/n3593/vis/ngc3593_C1_09oct11.13co.cal',
+			'../../sdi/n3593/vis/ngc3593_C2_09oct15.13co.cal',
+			'../../sdi/n3593/vis/ngc3593_C3_09oct16.13co.cal',
+			'../../sdi/n3593/vis/ngc3593_D1_10APR10.13co.cal',
+			'../../sdi/n3593/vis/ngc3593_D2_10APR17.13co.cal',
+			'../../sdi/n3593/vis/ngc3593_D3_10APR22.13co.cal']
 telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):

@@ -1,14 +1,14 @@
 # ---------- B+C+D ARRAY COMBINATION 
 
 track_list=['C1','C2','C3','D1','D2','D3','D4','D5']
-mirfile_list=['~/workspace/maps/n1637/vis/ngc1637_C1_09oct18.13co.cal',
-			'~/workspace/maps/n1637/vis/ngc1637_C2_09nov08.13co.cal',
-			'~/workspace/maps/n1637/vis/ngc1637_C3_09nov10.13co.cal',
-			'~/workspace/maps/n1637/vis/ngc1637_D1_09aug03.13co.cal',
-			'~/workspace/maps/n1637/vis/ngc1637_D2_09aug07.13co.cal',
-			'~/workspace/maps/n1637/vis/ngc1637_D3_09aug18.13co.cal',
-			'~/workspace/maps/n1637/vis/ngc1637_D4_09aug20.13co.cal',
-			'~/workspace/maps/n1637/vis/ngc1637_D5_09aug25.13co.cal']
+mirfile_list=['../../sdi/n1637/vis/ngc1637_C1_09oct18.13co.cal',
+			'../../sdi/n1637/vis/ngc1637_C2_09nov08.13co.cal',
+			'../../sdi/n1637/vis/ngc1637_C3_09nov10.13co.cal',
+			'../../sdi/n1637/vis/ngc1637_D1_09aug03.13co.cal',
+			'../../sdi/n1637/vis/ngc1637_D2_09aug07.13co.cal',
+			'../../sdi/n1637/vis/ngc1637_D3_09aug18.13co.cal',
+			'../../sdi/n1637/vis/ngc1637_D4_09aug20.13co.cal',
+			'../../sdi/n1637/vis/ngc1637_D5_09aug25.13co.cal']
 telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):

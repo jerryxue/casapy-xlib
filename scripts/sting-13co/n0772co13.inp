@@ -1,22 +1,23 @@
 # ---------- IMPORT DATA
 
 track_list=['D1','D2','D3','D4','C1','C2','C3','C4','C5','C6','C7','E1']
-mirfile_list=[			'~/workspace/maps/n0772/vis/ngc772_D1_09feb22.13co.cal',
-				'~/workspace/maps/n0772/vis/ngc772_D2_09feb23.13co.cal',
-				'~/workspace/maps/n0772/vis/ngc772_D3_09feb27.13co.cal',
-				'~/workspace/maps/n0772/vis/ngc772b_D4v2_09mar01.13co.cal',
-				'~/workspace/maps/n0772/vis/ngc772c_C1_09apr13.13co.cal',
-				'~/workspace/maps/n0772/vis/ngc772c_C2_09apr21.13co.cal',
-				'~/workspace/maps/n0772/vis/ngc772c_C3_09apr25.13co.cal',
-				'~/workspace/maps/n0772/vis/ngc772c_C4_09apr27.13co.cal',
-				'~/workspace/maps/n0772/vis/ngc772c_C5_09may03.13co.cal',
-				'~/workspace/maps/n0772/vis/ngc772c_C6_09may05.13co.cal',
-				'~/workspace/maps/n0772/vis/ngc772c_C7_09may07.13co.cal',
-				'~/workspace/maps/n0772/vis/ngc772c_E1_09jul21.13co.cal' ]
+mirfile_list=[  'ngc772_D1_09feb22.13co.cal',
+				'ngc772_D2_09feb23.13co.cal',
+				'ngc772_D3_09feb27.13co.cal',
+				'ngc772b_D4v2_09mar01.13co.cal',
+				'ngc772c_C1_09apr13.13co.cal',
+				'ngc772c_C2_09apr21.13co.cal',
+				'ngc772c_C3_09apr25.13co.cal',
+				'ngc772c_C4_09apr27.13co.cal',
+				'ngc772c_C5_09may03.13co.cal',
+				'ngc772c_C6_09may05.13co.cal',
+				'ngc772c_C7_09may07.13co.cal',
+				'ngc772c_E1_09jul21.13co.cal' ]
+repo='../../sdi/n0772/vis/'
 telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):
-	rawfiles=mirfile_list[i]
+	rawfiles=repo+mirfile_list[i]
  	prefix=track_list[i]+'.src'
  	telescope=telescopes[i]
  	importmode='mir'

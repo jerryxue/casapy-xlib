@@ -1,10 +1,10 @@
 # ---------- B+C+D ARRAY COMBINATION 
 
-track_list=['C1','C2','C3','C4']
-mirfile_list=['../../sdi/n2782/vis/ngc2782_C1_08may19.13co.cal',
-			'../../sdi/n2782/vis/ngc2782_C2_08may31.13co.cal',
-			'../../sdi/n2782/vis/ngc2782_C3_08jun01.13co.cal',
-			'../../sdi/n2782/vis/ngc2782_C4_08jun03.13co.cal']
+track_list=['C1','C2','D1','D2']
+mirfile_list=['../../sdi/n4151/vis/ngc4151_C1_08apr26.13co.cal',
+			'../../sdi/n4151/vis/ngc4151_C2_08apr28.13co.cal',
+			'../../sdi/n4151/vis/ngc4151_D1_08mar01.13co.cal',
+			'../../sdi/n4151/vis/ngc4151_D2_08mar02.13co.cal']
 telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):
@@ -13,21 +13,21 @@ for i in range(0,len(mirfile_list)):
  	telescope=telescopes[i]
  	importmode='mir'
  	execfile(script_home+'ximport'+script_version+'.py')
-
+ 	
 # ---------- IMAGE DATA 
 
 prefix_combine=track_list
-prefix='n2782co13'
+prefix='n4151co13'
 
 # CLEANING, IMAGING, & ANALYSIS
 clean_mode = 'velocity'
-clean_start='2410km/s'
-clean_nchan=(2670-2410)/10+1
-clean_width='10km'
+clean_start='870km/s'
+clean_nchan=(1130-870)/10+1
+clean_width='10km/s'
 rest_freq='110.201353GHz'
 out_frame='LSRK'
 
-phase_center='J2000 09h14m05.10 40d06m49.00'
+phase_center='J2000 12h10m32.60 +39d24m21.00'
 im_size=350
 cell_size='1arcsec'
 clean_mask=0.5

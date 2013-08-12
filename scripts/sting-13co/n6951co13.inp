@@ -1,14 +1,14 @@
 # ---------- IMPORT DATA
 
 track_list=['C1','C2','D1','D2','D3','D4','D5','E1']
-mirfile_list=[	'~/workspace/maps/n6951/vis/ngc6951_C1_08apr15.13co.cal',
-				'~/workspace/maps/n6951/vis/ngc6951_C2_08apr17.13co.cal',
-				'~/workspace/maps/n6951/vis/ngc6951_D1_08jul02.13co.cal',
-				'~/workspace/maps/n6951/vis/ngc6951_D2_08jul07.13co.cal',
-				'~/workspace/maps/n6951/vis/ngc6951_D3_08jul12.13co.cal',
-				'~/workspace/maps/n6951/vis/ngc6951_D4_08jul14.13co.cal',
-				'~/workspace/maps/n6951/vis/ngc6951_D5_08jul15.13co.cal',
-				'~/workspace/maps/n6951/vis/ngc6951_E1_09jul20.13co.cal']
+mirfile_list=[	'../../sdi/n6951/vis/ngc6951_C1_08apr15.13co.cal',
+				'../../sdi/n6951/vis/ngc6951_C2_08apr17.13co.cal',
+				'../../sdi/n6951/vis/ngc6951_D1_08jul02.13co.cal',
+				'../../sdi/n6951/vis/ngc6951_D2_08jul07.13co.cal',
+				'../../sdi/n6951/vis/ngc6951_D3_08jul12.13co.cal',
+				'../../sdi/n6951/vis/ngc6951_D4_08jul14.13co.cal',
+				'../../sdi/n6951/vis/ngc6951_D5_08jul15.13co.cal',
+				'../../sdi/n6951/vis/ngc6951_E1_09jul20.13co.cal']
 telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):
@@ -41,5 +41,5 @@ cycle_factor=5.0
 neg_component=0
 
 # RUN SCRIPTS
-#execfile(script_home+'xmerge'+script_version+'.py')
+execfile(script_home+'xmerge'+script_version+'.py')
 execfile(script_home+'xclean'+script_version+'.py')

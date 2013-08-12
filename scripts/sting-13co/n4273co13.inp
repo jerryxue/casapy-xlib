@@ -1,14 +1,14 @@
 # ---------- B+C+D ARRAY COMBINATION 
 
 track_list=['C1','C2','C3','C5','C6','D1','D2','D3']
-mirfile_list=['~/workspace/maps/n4273/vis/ngc4273_C1_10MAR10.13co.cal',
-			'~/workspace/maps/n4273/vis/ngc4273_C2_10MAR11.13co.cal',
-			'~/workspace/maps/n4273/vis/ngc4273_C3_10MAR13.13co.cal',
-			'~/workspace/maps/n4273/vis/ngc4273_C5_10MAR18.13co.cal',
-			'~/workspace/maps/n4273/vis/ngc4273_C6_10MAR19.13co.cal',
-			'~/workspace/maps/n4273/vis/ngc4273_D1_10MAY17.13co.cal',
-			'~/workspace/maps/n4273/vis/ngc4273_D2_10MAY27.13co.cal',
-			'~/workspace/maps/n4273/vis/ngc4273_D3_10MAY28.13co.cal']
+mirfile_list=['../../sdi/n4273/vis/ngc4273_C1_10MAR10.13co.cal',
+			'../../sdi/n4273/vis/ngc4273_C2_10MAR11.13co.cal',
+			'../../sdi/n4273/vis/ngc4273_C3_10MAR13.13co.cal',
+			'../../sdi/n4273/vis/ngc4273_C5_10MAR18.13co.cal',
+			'../../sdi/n4273/vis/ngc4273_C6_10MAR19.13co.cal',
+			'../../sdi/n4273/vis/ngc4273_D1_10MAY17.13co.cal',
+			'../../sdi/n4273/vis/ngc4273_D2_10MAY27.13co.cal',
+			'../../sdi/n4273/vis/ngc4273_D3_10MAY28.13co.cal']
 telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):

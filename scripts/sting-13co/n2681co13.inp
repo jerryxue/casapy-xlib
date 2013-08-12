@@ -1,10 +1,7 @@
 # ---------- B+C+D ARRAY COMBINATION 
 
-track_list=['C1','C2','C3','C4']
-mirfile_list=['../../sdi/n2782/vis/ngc2782_C1_08may19.13co.cal',
-			'../../sdi/n2782/vis/ngc2782_C2_08may31.13co.cal',
-			'../../sdi/n2782/vis/ngc2782_C3_08jun01.13co.cal',
-			'../../sdi/n2782/vis/ngc2782_C4_08jun03.13co.cal']
+track_list=['n2681co']
+mirfile_list=[	'../../sdi/n2681/vis/ngc2681_C1_08may13.13co.cal'	]
 telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):
@@ -13,21 +10,21 @@ for i in range(0,len(mirfile_list)):
  	telescope=telescopes[i]
  	importmode='mir'
  	execfile(script_home+'ximport'+script_version+'.py')
-
+ 	
 # ---------- IMAGE DATA 
 
 prefix_combine=track_list
-prefix='n2782co13'
+prefix='n2681co13'
 
 # CLEANING, IMAGING, & ANALYSIS
 clean_mode = 'velocity'
-clean_start='2410km/s'
-clean_nchan=(2670-2410)/10+1
-clean_width='10km'
+clean_start='560km/s'
+clean_nchan=(820-560)/10+1 
+clean_width='10km/s'
 rest_freq='110.201353GHz'
 out_frame='LSRK'
 
-phase_center='J2000 09h14m05.10 40d06m49.00'
+phase_center='J2000 8h53m32.7 +51d18m48.99'
 im_size=350
 cell_size='1arcsec'
 clean_mask=0.5
@@ -38,5 +35,4 @@ cycle_factor=5.0
 neg_component=0
 
 # RUN SCRIPTS
-execfile(script_home+'xmerge'+script_version+'.py')
 execfile(script_home+'xclean'+script_version+'.py')

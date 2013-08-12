@@ -2,12 +2,12 @@
 
 
 track_list=['C1','C2','C3','C4','C5','C6']
-mirfile_list=[			'~/workspace/maps/n0337/vis/ngc337_C1_08oct24.13co.cal',
-				'~/workspace/maps/n0337/vis/ngc337_C2_08oct26.13co.cal',
-				'~/workspace/maps/n0337/vis/ngc337_C3_09may10.13co.cal',
-				'~/workspace/maps/n0337/vis/ngc337_C4_09may12.13co.cal',
-				'~/workspace/maps/n0337/vis/ngc337_C5_09may18.13co.cal',
-				'~/workspace/maps/n0337/vis/ngc337_C6_09may23.13co.cal'
+mirfile_list=[  'ngc337_C1_08oct24.13co.cal',
+				'ngc337_C2_08oct26.13co.cal',
+				'ngc337_C3_09may10.13co.cal',
+				'ngc337_C4_09may12.13co.cal',
+				'ngc337_C5_09may18.13co.cal',
+				'ngc337_C6_09may23.13co.cal'
 				]
 repo='../../sdi/n0337/vis/'
 telescopes=list('CARMA' for i in track_list)
@@ -43,5 +43,5 @@ clean_gain=0.3
 cycle_factor=5.0
 neg_component=0
 
-#execfile(script_home+'xmerge'+script_version+'.py')
+execfile(script_home+'xmerge'+script_version+'.py')
 execfile(script_home+'xclean'+script_version+'.py')

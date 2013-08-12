@@ -2,15 +2,15 @@
 
 track_list=['D1','D2','C1','C2','C3','C4','E2','E3','E4']
 
-mirfile_list=[  '~/workspace/maps/n4254/vis/ngc4254_D1_08jun08.13co.cal',
-				'~/workspace/maps/n4254/vis/ngc4254_D2_08jun09.13co.cal',
-			    '~/workspace/maps/n4254/vis/n4254_C1_08OCT20.13co.cal',
-				'~/workspace/maps/n4254/vis/n4254_C2_08OCT24.13co.cal',
-				'~/workspace/maps/n4254/vis/n4254_C3_08OCT25.13co.cal',
-				'~/workspace/maps/n4254/vis/n4254_C4_08OCT28.13co.cal',
-				'~/workspace/maps/n4254/vis/ngc4254_E2_09jul02.13co.cal',
-				'~/workspace/maps/n4254/vis/ngc4254_E3_09jul05.13co.cal',
-				'~/workspace/maps/n4254/vis/ngc4254_E4_09jul19.13co.cal'	]
+mirfile_list=[  '../../sdi/n4254/vis/ngc4254_D1_08jun08.13co.cal',
+				'../../sdi/n4254/vis/ngc4254_D2_08jun09.13co.cal',
+			    '../../sdi/n4254/vis/n4254_C1_08OCT20.13co.cal',
+				'../../sdi/n4254/vis/n4254_C2_08OCT24.13co.cal',
+				'../../sdi/n4254/vis/n4254_C3_08OCT25.13co.cal',
+				'../../sdi/n4254/vis/n4254_C4_08OCT28.13co.cal',
+				'../../sdi/n4254/vis/ngc4254_E2_09jul02.13co.cal',
+				'../../sdi/n4254/vis/ngc4254_E3_09jul05.13co.cal',
+				'../../sdi/n4254/vis/ngc4254_E4_09jul19.13co.cal'	]
 
 telescopes=list('CARMA' for i in track_list)
 
@@ -29,8 +29,8 @@ prefix='n4254co13'
 # CLEANING, IMAGING, & ANALYSIS
 clean_mode = 'velocity'
 clean_start='2265km/s'
-clean_nchan=(2525-2265)/10+1
-clean_width='10km/s'
+clean_nchan=(2525-2265)/5+1
+clean_width='5km/s'
 rest_freq='110.201353GHz'
 out_frame='LSRK'
 
