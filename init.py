@@ -22,6 +22,7 @@ from sets import Set
 import math
 import copy
 import numpy as np
+from glob import glob as filesearch
 
 machinename=socket.gethostname()
 
@@ -94,7 +95,7 @@ print script_version
 print ""
 
 # print ">>>> notification email:"
-# myemail='jerryxue@gmail.com'
+# myemail='aaaa@gmail.com'
 # print myemail
 # print ""
 

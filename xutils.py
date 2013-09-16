@@ -1314,12 +1314,12 @@ def mask0clean(outname,mask0):
 
 def checkbeam(outname,method='maximum'):
 
-    bmaj=imhead(imagename=outname+'.image',mode='get',hdkey='beammajor')
+    outnamelist=imhead(imagename=outname+'.image',mode='list')
     
-    if  type(bmaj['value'])==type('abc'):
+    if  'perplanebeams' in outnamelist.keys():
     
         imhdlist=imhead(outname+'.image',mode='list')
-        nchan=imhdlist['perplanebeams']['perplanebeams']['nChannels']
+        nchan=imhdlist['perplanebeams']['nChannels']
         
         psf_bmaj=np.arange(float(nchan))
         psf_bmin=np.arange(float(nchan))
@@ -1331,14 +1331,14 @@ def checkbeam(outname,method='maximum'):
             news("")
             news('FRAME: %i' % i)
             news("")
-            psf_bmaj[i]=imhdlist['perplanebeams']['perplanebeams']['*'+str(i)]['major']['value']
-            psf_bmin[i]=imhdlist['perplanebeams']['perplanebeams']['*'+str(i)]['minor']['value']
-            psf_bpa[i]=imhdlist['perplanebeams']['perplanebeams']['*'+str(i)]['positionangle']['value']
+            psf_bmaj[i]=imhdlist['perplanebeams']['*'+str(i)]['major']['value']
+            psf_bmin[i]=imhdlist['perplanebeams']['*'+str(i)]['minor']['value']
+            psf_bpa[i]=imhdlist['perplanebeams']['*'+str(i)]['positionangle']['value']
             psf_size[i]=psf_bmaj[i]*psf_bmin[i]
-            news('BMAJ       %5.2f arcsec' % psf_bmaj[i])
-            news('BMIN       %5.2f arcsec' % psf_bmin[i])
-            news('BPA        %5.2f deg' % psf_bpa[i])
-            news('BMAJXBMIN  %5.2f arcsec^2' % psf_size[i])
+            news('BMAJ       %7.2f arcsec' % psf_bmaj[i])
+            news('BMIN       %7.2f arcsec' % psf_bmin[i])
+            news('BPA        %7.2f deg' % psf_bpa[i])
+            news('BMAJXBMIN  %7.2f arcsec^2' % psf_size[i])
         
         
         psf_size_median=np.median(psf_size)
@@ -1358,7 +1358,7 @@ def checkbeam(outname,method='maximum'):
         rbmin= '%.2f' % psf_bmin[index_choice]
         rbpa= '%.2f' % psf_bpa[index_choice]
     
-    if  type(bmaj['value'])==type(1.0):
+    if  'beammajor' in outnamelist.keys():
         
         bmaj=imhead(imagename=outname+'.image',mode='get',hdkey='beammajor')
         bmin=imhead(imagename=outname+'.image',mode='get',hdkey='beamminor')

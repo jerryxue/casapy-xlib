@@ -911,7 +911,6 @@ if  cleanspec==True:
     bpa=imhead()
     hdkey='bunit'
     bunit=imhead()
-    bunit=bunit['value']
     imhead(imagename=outname+'.sen',mode='put',hdkey='beammajor',hdvalue=bmaj)
     imhead(imagename=outname+'.sen',mode='put',hdkey='beamminor',hdvalue=bmin)
     imhead(imagename=outname+'.sen',mode='put',hdkey='beampa',hdvalue=bpa)
@@ -1167,7 +1166,6 @@ if  cleancont==True:
     bpa=imhead()
     hdkey='bunit'
     bunit=imhead()
-    bunit=bunit['value']
     imhead(imagename=outname+'.sen',mode='put',hdkey='beammajor',hdvalue=bmaj)
     imhead(imagename=outname+'.sen',mode='put',hdkey='beamminor',hdvalue=bmin)
     imhead(imagename=outname+'.sen',mode='put',hdkey='beampa',hdvalue=bpa)
@@ -1315,7 +1313,6 @@ if  imcs == True:
     bpa=imhead()
     hdkey='bunit'
     bunit=imhead()
-    bunit=bunit['value']
     imhead(imagename=outname+'.line.sen',mode='put',hdkey='beammajor',hdvalue=bmaj)
     imhead(imagename=outname+'.line.sen',mode='put',hdkey='beamminor',hdvalue=bmin)
     imhead(imagename=outname+'.line.sen',mode='put',hdkey='beampa',hdvalue=bpa)
@@ -1409,7 +1406,6 @@ if  imcs == True:
     bpa=imhead()
     hdkey='bunit'
     bunit=imhead()
-    bunit=bunit['value']
     imhead(imagename=outname+'.cont.sen',mode='put',hdkey='beammajor',hdvalue=bmaj)
     imhead(imagename=outname+'.cont.sen',mode='put',hdkey='beamminor',hdvalue=bmin)
     imhead(imagename=outname+'.cont.sen',mode='put',hdkey='beampa',hdvalue=bpa)

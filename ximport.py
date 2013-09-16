@@ -33,6 +33,7 @@
 #                              'uvfits': import data from ONE uvfits file
 #                              'evla':   import EVLA data from ONE ASDM file
 #                              'mir':    import MIRIAD data
+#                              'ms':     read data from a MS file
 #       >>>vla:
 #       [import_starttime|'']: Start time to search for data
 #       [import_stoptime|'']:  End time to search for data
@@ -47,6 +48,7 @@
 #       [import_timerange|'']: Select the timerange to be imported
 #       [import_field|'']:     Select the fields to be imported
 #       [import_band|'']:      Band to be imported, default: '' all bands
+#       [import_width|'']:     Channel Averaging during Splitting 
 #       
 
 #
@@ -157,6 +159,11 @@ try:
 except NameError:
     import_win=[]
 
+try:
+    import_width
+except NameError:
+    import_width='1'
+    
 try:
     telescope
 except NameError:
@@ -288,7 +295,7 @@ if  importmode=='miriad':
 #   Additional Data Selection
 #----------------------------------------------------------------------------------------
 if  (import_scan!='' or import_spw!='' or import_timerange!='' \
-    or import_field!='' or time_bin!='0s' or importmode=='ms') :
+    or import_field!='' or time_bin!='0s' or import_width!='1' or importmode=='ms') :
     
     if  importmode=='ms':
     	prepfile=rawfiles
@@ -321,6 +328,7 @@ if  (import_scan!='' or import_spw!='' or import_timerange!='' \
     timebin=time_bin
     datacolumn='data'
     keepflags=True
+    width=import_width
     combine=''
     split()
     os.system('rm -rf '+msfile)
@@ -403,6 +411,7 @@ del import_field
 del import_band
 del importmode
 del import_win
+del import_width
 del telescope
 del nocal
 del logflist
