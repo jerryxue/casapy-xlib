@@ -49,6 +49,7 @@
 #       [import_field|'']:     Select the fields to be imported
 #       [import_band|'']:      Band to be imported, default: '' all bands
 #       [import_width|'']:     Channel Averaging during Splitting 
+#       [import_corr|'']:      import correlation
 #       
 
 #
@@ -163,6 +164,10 @@ try:
     import_width
 except NameError:
     import_width='1'
+try:
+    import_corr
+except NameError:
+    import_corr=''
     
 try:
     telescope
@@ -329,6 +334,7 @@ if  (import_scan!='' or import_spw!='' or import_timerange!='' \
     datacolumn='data'
     keepflags=True
     width=import_width
+    correlation=import_corr
     combine=''
     split()
     os.system('rm -rf '+msfile)
@@ -407,6 +413,7 @@ del rawfiles
 del import_scan
 del import_spw
 del import_timerange
+del import_corr
 del import_field
 del import_band
 del importmode
