@@ -433,7 +433,7 @@ def exportclean(outname,keepcasaimage=True):
     #    export imaging products into fits files
     #
     version=['mask','cm','residual','model','cmodel',
-            'psf','image','sen',
+            'psf','cpsf','image','sen',
             'flux.pbcoverage','flux.pbcoverage.thresh_mask',
             'flux','flux.thresh_mask',
             'flux.mask0']
@@ -446,18 +446,6 @@ def exportclean(outname,keepcasaimage=True):
             if  keepcasaimage==False:
                 os.system("rm -rf "+outname+'.'+version[i])
 
-
-def mask0clean(outname,mask0):
-    #
-    #    cube trimmer for masking out pixels with partial coverage
-    #
-    version=['mask','cm','residual','model','cmodel',
-            'psf','image','sen',
-            'flux.pbcoverage','flux.pbcoverage.thresh_mask',
-            'flux','flux.thresh_mask']
-    for i in range(0,len(version)):
-        if  os.path.exists(outname+'.'+version[i]):
-            immask(outname+'.'+version[i],mask0)
 
 
 def checkbeam(outname,method='maximum'):
@@ -524,34 +512,89 @@ def checkbeam(outname,method='maximum'):
     news(str(psf_restor_beam))
     return psf_restor_beam
 
+def resmoothpsf(outname):
+    #
+    #    calculate the "ultimate" psf when resmooth='common' 
+    #
+    os.system('rm -rf cpsf.tmp')
+    os.system('cp -r '+outname+'.psf cpsf.tmp')
+    
+    imhead(imagename='cpsf.tmp',mode='add',hdkey='bunit',hdvalue='Jy/beam')
+    
+    ia.open(outname+'_d.image')
+    rb=ia.restoringbeam()
+    ia.close()
+    ia.open('cpsf.tmp')
+    for i in range(0,rb['nStokes']):
+        for j in range(0,rb['nChannels']):
+            ia.setrestoringbeam(beam=rb['beams']['*'+str(j)]['*'+str(i)],channel=j,polarization=i)
+    rb2=ia.restoringbeam()
+    ia.close()
+    
+    hdcim=imhead(outname+'.image',mode='list')
+    imsmooth(imagename='cpsf.tmp',targetres=True,
+            major=str(hdcim['beammajor']['value'])+hdcim['beammajor']['unit'],
+            minor=str(hdcim['beamminor']['value'])+hdcim['beamminor']['unit'],
+            pa=str(hdcim['beampa']['value'])+hdcim['beampa']['unit'],
+            outfile=outname+'.cpsf',
+            overwrite=True)
+    os.system('rm -rf cpsf.tmp')
+    
+    # im2=ia.convolve2d(  outfile=outname+'.cpsf',
+    #                     axes=[0,1],
+    #                     type='gaussian',
+    #                     targetres=True,
+    #                     major=str(hdcim['beammajor']['value'])+hdcim['beammajor']['unit'],
+    #                     minor=str(hdcim['beamminor']['value'])+hdcim['beamminor']['unit'],
+    #                     pa=str(hdcim['beampa']['value'])+hdcim['beampa']['unit'],  
+    #                     overwrite=true);
 
 def checkpsf(outname):    
     #
-    #    check the psf at diffrent planes
+    #    check the psf at diffrent planes (out of date!)
     #
     imhead(imagename=outname+'.psf',mode='put',hdkey='bunit',hdvalue='Jy/pixel')
-    psf_shape=imhead(outname+'.psf',mode='get',hdkey='shape')
-    psf_nx=psf_shape['value'][0]
-    psf_ny=psf_shape['value'][1]
-    psf_nz=psf_shape['value'][3]
+    hd=imhead(outname+'.image',mode='list')
+    psf_nx=hd['shape'][0]
+    psf_ny=hd['shape'][1]
+    psf_nz=hd['shape'][3]
     
     # get some info for the initial guessing
-    bmaj=imhead(    imagename=outname+'.image',
-                    mode='get',
-                    hdkey='beammajor')
-    bmin=imhead(    imagename=outname+'.image',
-                    mode='get',        
-                    hdkey='beamminor')
-    bpa=imhead(        imagename=outname+'.image',
-                    mode='get',        
-                    hdkey='beampa')
-    psf_psize=imhead(    imagename=outname+'.image',
-                        mode='get',        
-                        hdkey='cdelt1')
-    bmaj=bmaj['value']
-    bpa=bpa['value']
-    bmin=bmin['value']
-    psf_psize=abs(psf_psize['value']/(np.pi)*180*60*60)
+    if  'perplanebeams' in hd.keys():
+        nchan=psf_nz
+        psf_bmaj=np.arange(float(nchan))
+        psf_bmin=np.arange(float(nchan))
+        psf_bpa=np.arange(float(nchan))
+        psf_size=np.arange(float(nchan))
+        for i in range(0,nchan):
+            psf_bmaj[i]=hd['perplanebeams']['*'+str(i)]['major']['value']
+            psf_bmin[i]=hd['perplanebeams']['*'+str(i)]['minor']['value']
+            psf_bpa[i]=hd['perplanebeams']['*'+str(i)]['positionangle']['value']
+            psf_size[i]=psf_bmaj[i]*psf_bmin[i]
+            news('BMAJ       %7.2f arcsec' % psf_bmaj[i])
+            news('BMIN       %7.2f arcsec' % psf_bmin[i])
+            news('BPA        %7.2f deg' % psf_bpa[i])
+            news('BMAJXBMIN  %7.2f arcsec^2' % psf_size[i])
+        
+        psf_size_median=np.median(psf_size)
+        sortindex=sorted(range(len(psf_size)),key=lambda x:psf_size[x])
+        index_median=sortindex[nchan/2]
+        index_max=max(enumerate(psf_size),key=lambda x: x[1])[0]
+        news("")
+        news([psf_bmaj[index_median],psf_bmin[index_median],psf_bpa[index_median]])
+        news([psf_bmaj[index_max],psf_bmin[index_max],psf_bpa[index_max]])
+        news("")
+        index_choice=index_max
+        bmaj=psf_bmaj[index_choice]
+        bmin=psf_bmin[index_choice]
+        bpa=psf_bpa[index_choice]
+    else:
+        bmaj=hd['beammajor']['value']
+        bpa=hd['beampa']['value']
+        bmin=hd['beamminor']['value']
+    
+    
+    psize=abs(hd['cdelt1']/(np.pi)*180.*60.*60.)
     
     # write a file with initial guessing
     estfile=open(outname+'.psf.imfit.est.log','w')
@@ -563,13 +606,16 @@ def checkpsf(outname):
     estfile.close()
     
     # setting fitbox
-    imfit_box=str(int(psf_nx/2-3*(bmaj/psf_psize)))+','+str(int(psf_ny/2-3*(bmaj/psf_psize)))+','\
-            +str(int(psf_nx/2+3*(bmaj/psf_psize)))+','+str(int(psf_ny/2+3*(bmaj/psf_psize))) 
+    imfit_box=  str(int(psf_nx/2-3*(bmaj/psize)))+','+\
+                str(int(psf_ny/2-3*(bmaj/psize)))+','+\
+                str(int(psf_nx/2+3*(bmaj/psize)))+','+\
+                str(int(psf_ny/2+3*(bmaj/psize))) 
     print imfit_box
-    imfit_log=imfit(imagename=outname+'.psf',box=imfit_box,\
-        logfile=outname+'.psf.imfit.log',\
-        #estimates=outname+'.psf.imfit.est.log')
-        estimates='')
+    imfit_log=imfit(imagename=outname+'.psf',
+                    box=imfit_box,
+                    logfile=outname+'.psf.imfit.log',
+                    estimates=outname+'.psf.imfit.est.log')
+                    #estimates='')
     
     psf_nchan=imfit_log['results']['nelements']    
     psf_bmaj=np.arange(float(psf_nchan))
@@ -608,7 +654,7 @@ def checkpsf(outname):
     news("")
     news("How many frame has been fitted succesfully?")
     news("orginal channels: %i " % psf_nz)
-    news("fitted channels:  %i " % psf_nchan)
+    news("fitted  channels:  %i " % psf_nchan)
     
     rbmaj= '%.2f' % np.mean(psf_bmaj)
     rbmin= '%.2f' % np.mean(psf_bmin)
@@ -711,15 +757,24 @@ def genmask0(imfile):
     os.system('rm -rf tmp2')
     os.system('rm -rf tmp3')
     
-    
-def immask(imfile,maskfile):
+
+def mask0clean(outname,mask0):
     #
-    #    use an masking image to mask a cube, avoid edge channel missing effect
+    # mask a cube using a mask image 
+    # note: used as a trimmer for masking out x-y pixels with partial coverages   
     #
-    os.system('rm -rf '+imfile+'.tmp')
-    immath(imagename=[imfile,maskfile],expr='IM0*IM1',outfile=imfile+'.tmp') 
-    os.system('rm -rf '+imfile)
-    os.system('mv '+imfile+'.tmp '+imfile)
+    version=['mask','cm','residual','model','cmodel',
+            'psf','image','sen',
+            'flux.pbcoverage','flux.pbcoverage.thresh_mask',
+            'flux','flux.thresh_mask']
+    for i in range(0,len(version)):
+        if  os.path.exists(outname+'.'+version[i]):
+            os.system('rm -rf '+outname+'.'+version[i]+'.tmp')
+            immath(imagename=[outname+'.'+version[i],mask0],
+                   expr='IM0*IM1',outfile=outname+'.'+version[i]+'.tmp')
+            os.system('rm -rf '+outname+'.'+version[i])
+            os.system('mv '+outname+'.'+version[i]+'.tmp '+outname+'.'+version[i])
+
 
 def getuvrange(msfile):
     #
