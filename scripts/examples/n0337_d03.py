@@ -37,7 +37,6 @@ xp['fitorder']          =1
 
 # IMAGING
 xp['cleanspec']         =True
-xp['cleancont']         =True
 
 xp['imsize']            =256+128+64
 xp['cell']              ='8.0arcsec'

@@ -43,7 +43,6 @@ xp['fitorder']          =1
 
 # IMAGING
 xp['cleanspec']         =True
-xp['cleancont']         =True
 
 xp['imsize']            =512+256+128
 xp['cell']              ='4.0arcsec'
@@ -55,6 +54,7 @@ xp['clean_start']       ='1450.00km/s'
 xp['clean_width']       ='5.2km/s'
 xp['clean_nchan']       =78
 xp['phase_center']      ='J2000 00h59m50.1 -07d34m41.0'
+xp['niter']             =0
 
 # RUN SCRIPTS:
 execfile(xlib+'ximport.py')

@@ -2,14 +2,13 @@ execfile(xlib+'xinit.py')
 
 # CONSOLIDATING
 xp['prefix']            ='n0337hi'
-xp['prefix_comn']       =['n0337d03','n0337c06']
+xp['prefix_comb']       =['n0337d03','n0337c06']
 xp['imcs']              =True
 xp['fitchans']          ='0~4;69~77'
 xp['fitorder']          =1
 
 # IMAGING
 xp['cleanspec']         =True
-xp['cleancont']         =True
 
 xp['imsize']            =384
 xp['cell']              ='8.0arcsec'
