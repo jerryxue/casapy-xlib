@@ -53,7 +53,7 @@ pathlist=[mir_path,gs_path,carmafiller_path]
 libpathlist=[carmafiller_libpath]
 #use subprocess+env rather than modifying os.environ
 #os.environ["PATH"] += os.pathsep + os.pathsep.join(pathlist) 
-extenv={ "PATH":os.pathsep.join(pathlist),
+extenv={"PATH":os.pathsep.join(pathlist),
         "DYLD_LIBRARY_PATH":os.pathsep.join(libpathlist),
         "HOME":"~/"}
 
@@ -62,7 +62,7 @@ import xutils as xu                 # xlib modules
 import xexp as xe                   # exlib-exp modules
 
 sys.path.insert(1,borrow_path+os.sep+'analysis_scripts')
-import analysisUtils as au          # borrowed modules
+#import analysisUtils as au          # borrowed modules
 
 print '>>>> MachineName:'
 machinename=socket.gethostname()

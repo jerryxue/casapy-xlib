@@ -171,7 +171,7 @@ if  xp['imagermode']==None:
     for obsname in obsnamelist:
         if  obsname=='ALMA' or obsname=='CARMA':
             xp['imagermode']='mosaic'
-            xp['ft_machine']='mosaic'
+            xp['ftmachine']='mosaic'
     tb.close()
     xu.news("imagermode -> "+xp['imagermode'])
     xu.news("ftmachine  -> "+xp['ftmachine'])
@@ -191,6 +191,8 @@ threshold_loop=[]
 cleanmode_loop=[]
 cleanspw_loop=[]
 restorbeam_loop=[]
+resmooth_loop=[]
+multiscale_loop=[]
 
 if  xp['cleanspec']==True:
     
@@ -211,6 +213,8 @@ if  xp['cleanspec']==True:
         cleanmode_loop+=[xp['cleanmode']]
         cleanspw_loop+=[xp['cleanspw']]
         restorbeam_loop+=[xp['restorbeam']]
+        resmooth_loop+=['']
+        multiscale_loop+=[[]]
 
     vis_loop+=[vis]
     outname_loop+=[outname]
@@ -219,6 +223,8 @@ if  xp['cleanspec']==True:
     cleanmode_loop+=[xp['cleanmode']]
     cleanspw_loop+=[xp['cleanspw']]
     restorbeam_loop+=[xp['restorbeam']]
+    resmooth_loop+=[xp['resmooth']]
+    multiscale_loop+=[xp['multiscale']]
 
 if  xp['cleancont']==True:
     
@@ -236,6 +242,8 @@ if  xp['cleancont']==True:
         cleanmode_loop+=['mfs']
         cleanspw_loop+=[spw]
         restorbeam_loop+=[xp['restorbeam']]
+        resmooth_loop+=['']
+        multiscale_loop+=[[]]
 
     vis_loop+=[vis]
     outname_loop+=[outname]
@@ -244,6 +252,8 @@ if  xp['cleancont']==True:
     cleanmode_loop+=['mfs']
     cleanspw_loop+=[spw]
     restorbeam_loop+=[xp['restorbeam']]
+    resmooth_loop+=['']
+    multiscale_loop+=[xp['multiscale']]
 
 for i in range(0,len(vis_loop)):
     
@@ -269,7 +279,9 @@ for i in range(0,len(vis_loop)):
           start=start,
           width=width,
           niter=niter_loop[i],
-          multiscale=xp['multiscale'],
+          intent="",
+          resmooth=resmooth_loop[i],
+          multiscale=multiscale_loop[i],
           negcomponent=xp['negcomponent'],
           interpolation=xp['spinterpmode'],
           threshold=threshold_loop[i],
@@ -317,9 +329,12 @@ for i in range(0,len(vis_loop)):
         if  outname_loop[i][-2:]=='_d':
             if  threshold_loop[i+1]=='0.0mJy':
                 threshold_loop[i+1]=str(sigmjy*xp['sigcutoff_spec'])+'mJy'
-            if  restorbeam_loop[i+1]==['']:
-                restorbeam_loop[i+1]=\
-                    xu.checkbeam(outname_loop[i],method=xp['restorbeam_method'])
+            #    resmooth='common' might be better than hacking <restorbeam> on 
+            #    maching flux scales in model & residual
+            #
+            #if  restorbeam_loop[i+1]==['']:
+            #    restorbeam_loop[i+1]=\
+            #        xu.checkbeam(outname_loop[i],method=xp['restorbeam_method'])
     else:
         dc_stat=imstat(imagename=outname_loop[i]+'.image',
                        box=xp['imstat_box_cont'],
@@ -328,9 +343,12 @@ for i in range(0,len(vis_loop)):
         if  outname_loop[i][-2:]=='_d':
             if  threshold_loop[i+1]=='0.0mJy':
                 threshold_loop[i+1]=str(sigmjy*xp['sigcutoff_cont'])+'mJy'
-            if  restorbeam_loop[i+1]==['']:
-                restorbeam_loop[i+1]=\
-                    xu.checkbeam(outname_loop[i],method=xp['restorbeam_method'])
+            #    resmooth='common' might be better than hacking <restorbeam> on 
+            #    maching flux scales in model & residual
+            #
+            #if  restorbeam_loop[i+1]==['']:
+            #    restorbeam_loop[i+1]=\
+            #        xu.checkbeam(outname_loop[i],method=xp['restorbeam_method'])
     
     xu.news("")
     xu.news("-------------------------------------------------------------------------")
@@ -362,6 +380,10 @@ if  xp['imcs']==True:
     outname = xp['prefix']
     os.system('rm -rf '+outname+'.cont.* ')
     os.system('rm -rf '+outname+'.line.* ')
+ 
+    mask0=outname+'.coli.flux'
+    xu.genmask0(mask0)
+    xu.mask0clean(outname+'.coli',mask0+'.mask0')
     
     imcontsub(imagename=outname+'.coli.cm',
               linefile=outname+'.line.cm',
@@ -427,9 +449,7 @@ if  xp['imcs']==True:
     xu.news(" Found the normalized sigma = "+str(sigmjy)+"mJy/beam")
     xu.news("-------------------------------------------------------------------------")
     xu.news("")
-    xp['threshold_spec']=str(sigmjy*xp['sigcutoff_spec'])+'mJy'
-    xp['restor_beam']=checkbeam(outname_loop[i],method='maximum')
-    
+
     imhead(imagename=outname+'.line.image')
     xu.exporttasklog('imhead',outname+'.line.image.imhead.log')
     xu.exporttasklog('imstat',outname+'.line.image.imstat.log')
@@ -445,8 +465,6 @@ if  xp['imcs']==True:
     xu.news(" Found the normalized sigma = "+str(sigmjy)+"mJy/beam")
     xu.news("-------------------------------------------------------------------------")
     xu.news("")
-    xp['threshold_cont']=str(sigmjy*xp['sigcutoff_cont'])+'mJy'
-    xp['restor_beam']=checkbeam(outname_loop[i],method='maximum')
     
     imhead(imagename=outname+'.cont.image')
     xu.exporttasklog('imhead',outname+'.cont.image.imhead.log')

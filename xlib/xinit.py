@@ -85,6 +85,7 @@ xp={
 
 # CLEANing
 'restorbeam':[''],
+'resmooth':'common',
 'restorbeam_default':[''],
 'restorbeam_method':'maximum',
 
@@ -148,5 +149,5 @@ xp={
 'email':'',  # NOTIFICATION EMAIL ADDRESS
 'version':'', # SCRIPT VERSION
 'log_listobs_msfile':'',
-'keepcasaimage':False
+'keepcasaimage':True
 }
