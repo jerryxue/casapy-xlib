@@ -31,7 +31,10 @@ xlib_path=os.path.dirname(os.path.realpath(inspect.stack()[0][1]))  # pipeline s
 xlibp_path=os.path.dirname(xlib_path)
 borrow_path=xlibp_path+'/borrow'                    # borrowed modules location
 #     SHELL PATH
-mir_path=os.environ['MIRBIN']                                       # MIRIAD task location
+if  'MIRBIN' in os.environ.keys():
+    mir_path=os.environ['MIRBIN']                                       # MIRIAD task location
+else:
+    mir_path='/unknown'
 gs_path='/opt/local/bin'                                            # GhostScript location
 carmafiller_path='/usr/local/miriad-carma/opt/casa/bin'
 carmafiller_libpath='/usr/local/miriad-carma/opt/casa/lib'

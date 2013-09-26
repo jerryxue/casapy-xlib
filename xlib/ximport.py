@@ -159,7 +159,8 @@ if  xp['importmode']=='mir':
                  vis=xp['msfile'],
                  telescope=xp['importmirarray'],
                  nocal=xp['importmirnocal'],
-                 win_list=xp['importspw'])
+                 win_list=xp['importspw'],
+                 mirbin=mir_path)
 
 if  xp['importmode']=='miriad':
     

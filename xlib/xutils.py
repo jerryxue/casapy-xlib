@@ -30,9 +30,13 @@ def importmir(mirfile='',
     #
     #    import data in a mir file into a CASA MS
     #
-    news(mirbin)
     if  mirbin=='':
         mirbin=os.environ['MIRBIN']+os.sep
+    else:
+        mirbin=mirbin+os.sep
+    
+    news("mirbin:")
+    news(mirbin)
     
     cmd='uvlist options=spec vis='+mirfile+'>'+vis+'.uvlist.log'
     tmp=os.popen(mirbin+cmd).read()
