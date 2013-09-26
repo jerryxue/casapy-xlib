@@ -1,8 +1,5 @@
 # PIPELINE DEFAULT PARAMETER SETTING
-# xp is the dictionary containing pipeline setup parameters
-
-# Default Values for Optional Keywords
-
+# xp is the dict containing pipeline setup parameters
 
 xp={
 # FILES NAME
