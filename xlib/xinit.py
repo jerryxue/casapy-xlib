@@ -143,8 +143,9 @@ xp={
 'plotformat':'png',
 
 # INFOMATIVE
-'email':'',  # NOTIFICATION EMAIL ADDRESS
-'version':'', # SCRIPT VERSION
+'email':'',     # NOTIFICATION EMAIL ADDRESS
+'password':'',  # NOTIFICATION EMAIL PASSWORD
+'version':'',   # SCRIPT VERSION
 'log_listobs_msfile':'',
 'keepcasaimage':True
 }

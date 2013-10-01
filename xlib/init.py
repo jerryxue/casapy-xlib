@@ -29,13 +29,14 @@ print ""
 #     PYTHON PATH
 xlib_path=os.path.dirname(os.path.realpath(inspect.stack()[0][1]))  # pipeline script location
 xlibp_path=os.path.dirname(xlib_path)
-borrow_path=xlibp_path+'/borrow'                    # borrowed modules location
+borrow_path=xlibp_path+'/borrow'                                    # borrowed modules location
 #     SHELL PATH
 if  'MIRBIN' in os.environ.keys():
-    mir_path=os.environ['MIRBIN']                                       # MIRIAD task location
+    mir_path=os.environ['MIRBIN']                                   # MIRIAD task location
 else:
     mir_path='/unknown'
 gs_path='/opt/local/bin'                                            # GhostScript location
+wget_path='/opt/local/bin'                                          # Wget location
 carmafiller_path='/usr/local/miriad-carma/opt/casa/bin'
 carmafiller_libpath='/usr/local/miriad-carma/opt/casa/lib'
 
@@ -52,7 +53,7 @@ examples=xlibp_path+'/scripts/examples/'    # shortcut for examples script path
 testing=xlibp_path+'/scripts/testing/'      # shortcut for testing script path
 
 # ADD PATH & LOAD MODULES 
-pathlist=[mir_path,gs_path,carmafiller_path]
+pathlist=list(set([mir_path,gs_path,wget_path,carmafiller_path]))
 libpathlist=[carmafiller_libpath]
 #use subprocess+env rather than modifying os.environ
 #os.environ["PATH"] += os.pathsep + os.pathsep.join(pathlist) 

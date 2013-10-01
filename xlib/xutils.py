@@ -1,4 +1,3 @@
-
 import time
 import os
 import string
@@ -244,14 +243,16 @@ def exportcasalog(blines,elines,logname):
 
 def emailsender(myemail,subject,maintext,attachs,\
                 smtpserver='smtp.gmail.com',\
-                eusrname='casareduc@gmail.com',\
-                epassword='astrouiuc'):
+                eusrname='yourname@gmail.com',\
+                epassword='yourpassword'):
     #
     #send an reduction run log email back to you
     #
     msg = MIMEMultipart()
     
     msg['From'] = eusrname
+    if  eusername=='yourname@gmail.com':
+        msg['From']=myemail
     msg['To'] = myemail
     msg['Subject'] = subject
     
@@ -909,4 +910,71 @@ def checkstatwt(srcfile,fitspw=''):
     news("+++++++++++++++++++++++++++++++++++++++++++++++")
     news("+++++++++++++++++++++++++++++++++++++++++++++++")
 
+def simmoments(imagename,
+               smfac=[3.0,3.0],
+               th=3.0,
+               errfile='',
+               box='',
+               chans='',
+               region=''):
+    # imagename: root name of clean products
+
+    if  errfile=='':
+        errfile=imagename+'.flux'
     
+    if  type(smfac)!=type([]):
+        smfac=[smfac,0]
+    
+    
+    hd=imhead(imagename+'.image',mode='list')
+    ia.open(imagename+'.image') 
+    sm2d=ia.convolve2d(outfile='__sm2d',axes=[0,1],
+                  type='gaussian',
+                  targetres=True,
+                  major=str(hd['beammajor']['value']*smfac[0])+hd['beammajor']['unit'],
+                  minor=str(hd['beamminor']['value']*smfac[0])+hd['beamminor']['unit'],
+                  pa=str(hd['beampa']['value'])+hd['beampa']['unit'],  
+                  overwrite=True)
+    sm2d.done()
+    ia.close()
+    sfile='__sm2d'
+    
+    if  smfac[1]!=0.0:
+        ia.open('__sm2d')
+        sm3d=ia.sepconvolve(outfile='__sm3d',axes=[0,1,3],
+                       types=['gaussian']*3,
+                       widths=[1,1,smfac[1]],stretch=True,overwrite=True)
+        sm3d.done()
+        ia.close()
+        sfile='__sm3d'
+    
+    exportfits(imagename=sfile,fitsimage='test.fits',velocity=True,overwrite=True)
+    stat=imstat(imagename=sfile,box=box,chans=chans,axes=[0,1],region=region)
+    sigma=np.median(stat['sigma'])
+    
+    os.system("rm -rf "+imagename+'.cm_masked')
+    os.system("rm -rf "+imagename+'.cm.moms*')
+    immath(imagename=[imagename+'.cm',sfile],
+           expr="iif(IM1>="+str(th*sigma)+",IM0,0.0)",
+           outfile=imagename+'.cm_masked')
+    os.system("rm -rf __sm3d __sm2d")
+    
+    immoments(imagename+'.cm_masked',
+              axis="spec",
+              moments=[0],
+              outfile=imagename+'.cm.moms0')
+    
+    immoments(imagename+'.cm_masked',
+              axis="spec",
+              moments=[1],
+              outfile=imagename+'.cm.moms1')
+    
+def getevladata(url,user='',password='',extenv={}):
+    
+    cmd="wget -r -w 2 -nH -c --cut-dirs=2 --no-check-certificate --user="+\
+        user+" --password="+password+" -e robots=off "+url
+    
+    p=subprocess.Popen(cmd,shell=True,env=extenv,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    for line in iter(p.stdout.readline,''):
+        news(line,origin='wget')
+ 
