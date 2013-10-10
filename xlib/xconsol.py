@@ -239,7 +239,7 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
         
         os.system('rm -rf '+xp['srcfile']+loop)
         
-        freqtol=str(mincw/1.e6/4.)+'MHz'
+        #freqtol=str(mincw/1.e6/4.)+'MHz'
         if  xp['freqtol']!='':
             freqtol=xp['freqtol']
         if  xp['usevconcat']==False:
