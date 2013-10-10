@@ -228,14 +228,14 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
     
     for loop in postfix:
         
-        mincw=0
-        for i in range(len(xp['prefix_comb'])): 
-            xp['srcfile_comb'][i]=xp['prefix_comb'][i]+'.src.ms'+loop
-            delmod(vis=xp['srcfile_comb'][i],otf=True,scr=False)
-            tb.open(xp['srcfile_comb'][i]+'/SPECTRAL_WINDOW')
-            mincw=[mincw]+tb.getcol('CHAN_WIDTH')
-            tb.close()
-            mincw=np.min(mincw)
+        #mincw=0
+        #for i in range(len(xp['prefix_comb'])): 
+        #    xp['srcfile_comb'][i]=xp['prefix_comb'][i]+'.src.ms'+loop
+        #    delmod(vis=xp['srcfile_comb'][i],otf=True,scr=False)
+        #    tb.open(xp['srcfile_comb'][i]+'/SPECTRAL_WINDOW')
+        #    mincw=[mincw]+tb.getcol('CHAN_WIDTH')
+        #    tb.close()
+        #    mincw=np.min(mincw)
         
         os.system('rm -rf '+xp['srcfile']+loop)
         
@@ -245,7 +245,7 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
         if  xp['usevconcat']==False:
             concat(vis=xp['srcfile_comb'],
                    concatvis=xp['srcfile']+loop,
-                   freqtol=freqtol,
+                   freqtol='',
                    dirtol='1.arcsec',
                    timesort=False,
                    visweightscale=xp['wtscale'],
@@ -253,7 +253,7 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
         else:
             virtualconcat(vis=xp['srcfile_comb'],
                    concatvis=xp['srcfile']+loop,
-                   freqtol=freqtol,
+                   freqtol='',
                    dirtol='1.arcsec',
                    visweightscale=xp['wtscale'],
                    keepcopy=False,
