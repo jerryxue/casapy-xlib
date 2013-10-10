@@ -229,9 +229,9 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
     for loop in postfix:
         
         #mincw=0
-        #for i in range(len(xp['prefix_comb'])): 
-        #    xp['srcfile_comb'][i]=xp['prefix_comb'][i]+'.src.ms'+loop
-        #    delmod(vis=xp['srcfile_comb'][i],otf=True,scr=False)
+        for i in range(len(xp['prefix_comb'])): 
+            xp['srcfile_comb'][i]=xp['prefix_comb'][i]+'.src.ms'+loop
+            delmod(vis=xp['srcfile_comb'][i],otf=True,scr=False)
         #    tb.open(xp['srcfile_comb'][i]+'/SPECTRAL_WINDOW')
         #    mincw=[mincw]+tb.getcol('CHAN_WIDTH')
         #    tb.close()
