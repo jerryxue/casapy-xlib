@@ -12,6 +12,7 @@ xp={
 # IMPORT DATA
 'prefix':'test',
 'importspw':'',
+'importmirspw':'',
 'importscan':'',  
 'importcorr':'',
 'importtimerange':'',
