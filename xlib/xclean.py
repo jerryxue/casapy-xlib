@@ -119,32 +119,28 @@ casa_log.close()
 #----------------------------------------------------------------------------------------
 #   Default Values for Optional Inputs
 #----------------------------------------------------------------------------------------
+if  type(xp['imsize'])==type(0):
+    imsize=[xp['imsize'],xp['imsize']]
+if  type(xp['imsize'])==type([]):
+    imsize=xp['imsize']
 
+
+innerquarter=str(int(imsize[0]/4))+','+str(int(imsize[1]/4))+','\
+            +str(int(imsize[0]*3/4))+','+str(int(imsize[1]*3/4))
+outerquarter=str(0)+','+str(0)+','\
+            +str(int(imsize[0]*1/4))+','+str(int(imsize[1]*1/4))+','\
+            +str(0)+','+str(int(imsize[1]*3/4))+','\
+            +str(int(imsize[0]*1/4))+','+str(int(imsize[1]-1))+','\
+            +str(int(imsize[0]*3/4))+','+str(0)+','\
+            +str(int(imsize[0]-1))+','+str(int(imsize[1]*1/4))+','\
+            +str(int(imsize[0]*3/4))+','+str(int(imsize[1]*3/4))+','\
+            +str(int(imsize[0]-1))+','+str(int(imsize[1]-1))    
 if  xp['imstat_box_spec']=='':
-    xp['imstat_box_spec']=str(int(xp['imsize']/4))+','+str(int(xp['imsize']/4))+','\
-                +str(int(xp['imsize']*3/4))+','+str(int(xp['imsize']*3/4))        
+    xp['imstat_box_spec']=innerquarter    
     if  xp['imcs']==True:
-        xp['imstat_box_spec']=\
-        str(0)+','+str(0)+','\
-        +str(int(xp['imsize']*1/4))+','+str(int(xp['imsize']*1/4))+','\
-        +str(0)+','+str(int(xp['imsize']*3/4))+','\
-        +str(int(xp['imsize']*1/4))+','+str(int(xp['imsize']-1))+','\
-        +str(int(xp['imsize']*3/4))+','+str(0)+','\
-        +str(int(xp['imsize']-1))+','+str(int(xp['imsize']*1/4))+','\
-        +str(int(xp['imsize']*3/4))+','+str(int(xp['imsize']*3/4))+','\
-        +str(int(xp['imsize']-1))+','+str(int(xp['imsize']-1))    
-
-
+        xp['imstat_box_spec']=outerquarter
 if  xp['imstat_box_cont']=='':
-    xp['imstat_box_cont']=\
-        str(0)+','+str(0)+','\
-        +str(int(xp['imsize']*1/4))+','+str(int(xp['imsize']*1/4))+','\
-        +str(0)+','+str(int(xp['imsize']*3/4))+','\
-        +str(int(xp['imsize']*1/4))+','+str(int(xp['imsize']-1))+','\
-        +str(int(xp['imsize']*3/4))+','+str(0)+','\
-        +str(int(xp['imsize']-1))+','+str(int(xp['imsize']*1/4))+','\
-        +str(int(xp['imsize']*3/4))+','+str(int(xp['imsize']*3/4))+','\
-        +str(int(xp['imsize']-1))+','+str(int(xp['imsize']-1))    
+    xp['imstat_box_cont']=outerquarter
 
 
 xp['srcfile']=xp['prefix']+'.src.ms'
