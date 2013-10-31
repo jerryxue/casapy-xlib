@@ -10,6 +10,7 @@ import numpy as np
 import subprocess
 import smtplib
 import scipy.constants as sci_const
+import matplotlib.pyplot as plt
 
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
@@ -411,8 +412,6 @@ def importmiriad(mirfile='',
         prolist[k]=timerange_mean
     tb.putcol("RELEASE_DATE",prolist) 
     tb.close()
-    
-    
     
 
 def cleanup(outname,tag=''):
@@ -977,4 +976,91 @@ def getevladata(url,user='',password='',extenv={}):
     p=subprocess.Popen(cmd,shell=True,env=extenv,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for line in iter(p.stdout.readline,''):
         news(line,origin='wget')
+        
+
+def xplotcal(tbfile,iterant=False,
+             amprange='',pharange=''):
+
+    news("")
+    news("--xplotcal--")
+    news("")
+    news("Plot Gain Tables")
+    
+    tb.open(tbfile)
+    tbtype=tb.getkeyword('VisCal')
+    tb.close()
+    
+    if  amprange=='':
+        if  tbtype=='B Jones':
+            amprange=[-1,-1,0.2,1.4]
+        if  tbtype=='G Jones':
+            amprange=[-1,-1,-1,-1]
+    if  pharange=='':
+        if  tbtype=='B Jones':
+            pharange=[-1,-1,-20,20]
+        if  tbtype=='G Jones':
+            pharange=[-1,-1,-180,180]
+    
+    tb.open(tbfile+'/ANTENNA')
+    ant_name=tb.getcol('NAME')
+    ant_stat=tb.getcol('STATION')
+    ant_code=range(0,len(tb.getcol('NAME')))
+    tb.close()
+    
+    tb.open(tbfile)
+    spw_name=np.unique(tb.getcol('SPECTRAL_WINDOW_ID'))
+    spw_name=sorted(list(set(spw_name)))
+    spw_name=[str(i) for i in spw_name]
+    tb.close()
+    
+    news("")
+    news("Antenna Name:   "+str(ant_name))
+    news("SPW     Name:   "+str(spw_name))
+    news("")
+    
+    if  iterant==False:
+        ant_name=['']
+        ant_stat=['all']
+        ant_code=['all']
+    
+    merge_pdf='gs -sDEVICE=pdfwrite -sOutputFile='+tbfile+'.antall.pdf'
+    merge_pdf=merge_pdf+' -dNOPAUSE -dBATCH'
+    all_pdf=''
+    
+    for i in range(0,len(ant_name)):
+        one_pdf=tbfile+'.ant'+str(ant_code[i])+'.pdf'
+        ant_str='Ant'+str(ant_code[i])+'/'+ant_name[i]+'/'+ant_stat[i]
+        if  iterant==False:
+            ant_str='All Ants'
+        for j in range(0,len(spw_name)):
+            for k in range(0,2):
+                figfile_loop=['','']
+                if  j==len(spw_name)-1 and k==1:
+                    figfile_loop[1]=one_pdf
+                yaxis_loop=['amp','phase']
+                plotrange_loop=[amprange,pharange]
+                plotcal(caltable=tbfile,
+                    antenna=ant_name[i],
+                    field='',
+                    plotsymbol='o',
+                    plotcolor='blue',
+                    markersize=5.0,
+                    fontsize=10.0,
+                    showgui = False,
+                    spw=spw_name[j],
+                    plotrange=plotrange_loop[k],
+                    subplot=2*100+len(spw_name)*10+1+j+k*len(spw_name),
+                    yaxis=yaxis_loop[k],
+                    figfile=figfile_loop[k])
+                if  k==0:
+                    subtitle='Solution: '+ant_str+' SpwID '+str(spw_name[j])
+                    plt.title(subtitle,fontsize=10)
+        merge_pdf=merge_pdf+' '+one_pdf
+        all_pdf=all_pdf+' '+one_pdf
+        
+    if  iterant==True:
+        p=subprocess.Popen(merge_pdf,shell=True,env=extenv,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        output = p.stdout.read()
+        os.system('rm '+all_pdf)
+
  
