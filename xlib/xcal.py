@@ -1,6 +1,5 @@
 #########################################################################################
 #
-
 #   PURPOSE
 #
 #       Inspect, flag, and calibrate data
@@ -199,7 +198,8 @@ if  type(xp['flagselect'])==type(''):
     xp['flagselect']=[xp['flagselect']]
 if  xp['flagspw']!='':
     xp['flagselect']=xp['flagselect']+["spw='"+xp['flagspw']+"'"]
-xp['flagselect']=xp['flagselect']+["antenna='*&&&'","mode='shadow'"]
+
+xp['flagselect']=xp['flagselect']+["antenna='*&&&'"]+xp['flagselect_default']
 os.system('rm -rf '+xp['msfile']+'.flagcmd.log')
 
 flagcmd(vis=xp['msfile'],

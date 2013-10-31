@@ -256,8 +256,6 @@ for i in range(0,len(vis_loop)):
     xu.news("")
     xu.news("--clean--")
     xu.news("")
-    xu.news("Make a line cube (pb uncorreted)")
-    xu.news("")
     
     xu.cleanup(outname_loop[i])        
 

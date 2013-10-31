@@ -46,7 +46,7 @@ xp={
 'flagspw':'',
 'flagreset':True,
 'flagtest':False,
-
+'flagselect_default':["mode='shadow'"],
 
 # BASELINE
 'bcant':'',
@@ -66,8 +66,9 @@ xp={
 # CONSOLIDATE
 'prefix_comb':[],
 'wtscale':[],
-'usevconcat':True,
-'spwrgd':False,
+'usevconcat':False,
+'spwrgd':'',    #    by default, we will regrid TOPO to outframe
+                #    set spwgrd to True/False could overwrite the default
 
 # CONTINUE SUBTRACTION
 'fitspw':'',
@@ -141,7 +142,7 @@ xp={
 'clean_nchan':-1,
 
 # PLOTTING
-'plotformat':'png',
+'plotformat':'pdf',
 
 # INFOMATIVE
 'email':'',     # NOTIFICATION EMAIL ADDRESS

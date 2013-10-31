@@ -96,19 +96,19 @@ if  len(xp['prefix_comb'])==1:
           field=xp['source'],
           keepflags=False,
           datacolumn= "corrected")
+    
+    spwrgd=False
+    if  xp['spwrgd']=='':
+        tb.open(xp['msfile']+'/SPECTRAL_WINDOW',nomodify=True)
+        spw_names=tb.getcol('MEAS_FREQ_REF')
+        tb.close()
+        for spw_name in spw_names:
+            if  spw_name==5:         # ref=5 is TOPO
+                spwrgd=True
+    else:
+        spwrgd=xp['spwrgd']
 
-    xu.news("")
-    xu.news(">>>check spw_name")
-    xu.news("")
-    spw_name_list=vishead(xp['srcfile'],mode='get',hdkey='spw_name')
-    xu.news("")
-    #for spw_name in spw_name_list[0]:
-    #    if  spw_name.find('TOPO')!=-1:
-    #        xp['spwrgd']=True
-    xu.news("")
-
-
-    if  xp['spwrgd']==True:
+    if  spwrgd==True:
         xu.news("")
         xu.news("")
         xu.news("TOPO frame: Spectral Regridding Performed Automatically") 
@@ -130,7 +130,7 @@ if  len(xp['prefix_comb'])==1:
              mode='channel',
              restfreq=xp['restfreq'],
              outframe=xp['outframe'],
-             hanning=xp['gs'])
+             hanning=xp['hs'])
         os.system('rm -rf '+xp['srcfile'])
         os.system('mv tmp.ms '+xp['srcfile'])
     else:
@@ -224,7 +224,7 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
     if  xp['uvcs']==False:
         postfix=['']
     else:
-        postfix=['.contsub','.cont']
+        postfix=['.contsub','']
     
     for loop in postfix:
         
@@ -258,8 +258,7 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
                    visweightscale=xp['wtscale'],
                    keepcopy=False,
                    copypointing=True)
-    
-
+            
 #----------------------------------------------------------------------------------------
 #   Obs List: List a summary of the new MS
 #----------------------------------------------------------------------------------------
