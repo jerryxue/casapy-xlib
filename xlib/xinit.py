@@ -67,8 +67,9 @@ xp={
 'prefix_comb':[],
 'wtscale':[],
 'usevconcat':False,
-'spwrgd':'',    #    by default, we will regrid TOPO to outframe
-                #    set spwgrd to True/False could overwrite the default
+'spwrgd':False,    # if spwrgd='', we will regrid TOPO to outframe
+                   # clean()/concat() can't work with datasets with TOPO+LSRK or TOPO+BARY
+                   # spectral regridding for TOPO tracks might resolve this issue.   
 
 # CONTINUE SUBTRACTION
 'fitspw':'',

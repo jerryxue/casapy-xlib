@@ -128,6 +128,7 @@ if  len(xp['prefix_comb'])==1:
              passall=False,
              spw='',
              mode='channel',
+             selectdata=False,
              restfreq=xp['restfreq'],
              outframe=xp['outframe'],
              hanning=xp['hs'])
@@ -218,7 +219,7 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
     xu.news("")
     xu.news("--concat--")
     xu.news("")
-    xu.news("Use CONCAT to combine tracks and creat a new measurement set file")
+    xu.news("Use CONCAT to combine tracks and create a new measurement set file")
     xu.news("")
     
     if  xp['uvcs']==False:
