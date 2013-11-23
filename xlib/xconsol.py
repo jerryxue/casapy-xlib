@@ -83,67 +83,64 @@ xu.news("")
 if  len(xp['prefix_comb'])==1:
 
     xu.news("")
-    xu.news("--split--")
+    xu.news("--mstransform--")
     xu.news("")
-    xu.news(" Use split to extract the source data.")
+    xu.news(" Use mstransform() to:")
+    xu.news(" * extract the source data")
+    xu.news(" * [spectral regridding]")
+    xu.news(" * [hanning smoothing]")
     xu.news("")
     
     xp['msfile']=xp['prefix']+'.ms' 
     xp['srcfile']=xp['prefix']+'.src.ms'
     os.system('rm -rf '+xp['srcfile'])
-    split(vis=xp['msfile'],
-          outputvis=xp['srcfile'],
-          field=xp['source'],
-          keepflags=False,
-          datacolumn= "corrected")
+
+    if  xp['spwrgd']!='spw':
+        if  xp['spwrgd']=='':
+            spwrgd=False
+        if  xp['spwrgd']=='frame':
+            spwrgd=True
+        mstransform(vis=xp['msfile'],
+                    outputvis=xp['srcfile'],
+                    createmms=False,
+                    separationaxis='both',
+                    field=xp['source'],
+                    spw='',
+                    useweights='flags',
+                    datacolumn= "corrected",
+                    regridms=spwrgd,
+                    combinespws=False,
+                    mode='channel',
+                    nchan=-1,
+                    start=0,
+                    width=1,
+                    nspw=1,
+                    interpolation='linear',
+                    outframe=xp['outframe'],
+                    restfreq=xp['restfreq'],
+                    hanning=xp['hs'])
+    else:
+        mstransform(vis=xp['msfile'],
+                    outputvis=xp['srcfile'],
+                    createmms=False,
+                    separationaxis='both',
+                    field=xp['source'],
+                    spw='',
+                    useweights='spectrum',
+                    datacolumn= "corrected",
+                    regridms=True,
+                    combinespws=True,
+                    mode=xp['cleanmode'],
+                    nchan=xp['clean_nchan'],
+                    start=xp['clean_start'],
+                    width=xp['clean_width'],
+                    nspw=0,
+                    interpolation=xp['spinterpmode'],
+                    outframe=xp['outframe'],
+                    restfreq=xp['restfreq'],
+                    phasecenter=xp['phasecenter'],
+                    hanning=xp['hs'])
     
-    spwrgd=False
-    if  xp['spwrgd']=='':
-        tb.open(xp['msfile']+'/SPECTRAL_WINDOW',nomodify=True)
-        spw_names=tb.getcol('MEAS_FREQ_REF')
-        tb.close()
-        for spw_name in spw_names:
-            if  spw_name==5:         # ref=5 is TOPO
-                spwrgd=True
-    else:
-        spwrgd=xp['spwrgd']
-
-    if  spwrgd==True:
-        xu.news("")
-        xu.news("")
-        xu.news("TOPO frame: Spectral Regridding Performed Automatically") 
-        xu.news("")
-        xu.news("")
-        xu.news("--cvel--")
-        xu.news("")
-        xu.news(" Use cvel to perform a spectral regridding.")
-        if  xp['hs']==True:
-            xu.news(" to perform a hanning smoothing to remove Gibbs ringing")    
-        xu.news("")
-        
-        os.system('rm -rf tmp.ms')
-        cvel(vis=xp['srcfile'],
-             outputvis='tmp.ms',
-             field='',
-             passall=False,
-             spw='',
-             mode='channel',
-             selectdata=False,
-             restfreq=xp['restfreq'],
-             outframe=xp['outframe'],
-             hanning=xp['hs'])
-        os.system('rm -rf '+xp['srcfile'])
-        os.system('mv tmp.ms '+xp['srcfile'])
-    else:
-        if  xp['hs']==True:
-        
-            xu.news("")
-            xu.news("--Hanning Smooth--")
-            xu.news("")
-            xu.news(" Use HANNINGSMOOTH to remove Gibbs ringing")
-            xu.news("")
-            hanningsmooth(vis=xp['srcfile'])
-
     xu.news("")
     xu.news("--check split--")
     xu.news("")
@@ -199,15 +196,23 @@ if  len(xp['prefix_comb'])==1:
         
         os.system('rm -rf '+xp['srcfile']+".cont")
         os.system('rm -rf '+xp['srcfile']+".contsub")
+        """
         uvcontsub(vis=xp['srcfile'],
                   field='',
                   fitspw=xp['fitspw'],
                   fitorder=xp['fitorder'],
                   spw='',
                   combine=xp['uvcs_combine'],
-                  want_cont=True,
+                  want_cont=False,
                   solint='int')
-
+        replace uvcontsub with uvcontsub3 to improve performance
+        """
+        uvcontsub3(vis=xp['srcfile'],
+                  field='',
+                  fitspw=xp['fitspw'],
+                  fitorder=xp['fitorder'],
+                  spw='',
+                  combine=xp['uvcs_combine'])
 
 
 if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
@@ -259,6 +264,9 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
                    visweightscale=xp['wtscale'],
                    keepcopy=False,
                    copypointing=True)
+        
+
+        
             
 #----------------------------------------------------------------------------------------
 #   Obs List: List a summary of the new MS

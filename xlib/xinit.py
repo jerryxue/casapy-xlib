@@ -67,9 +67,12 @@ xp={
 'prefix_comb':[],
 'wtscale':[],
 'usevconcat':False,
-'spwrgd':False,    # if spwrgd='', we will regrid TOPO to outframe
-                   # clean()/concat() can't work with datasets with TOPO+LSRK or TOPO+BARY
-                   # spectral regridding for TOPO tracks might resolve this issue.   
+'spwrgd':'',    # if spwrgd='spw', we will regrid spw to the clean setup
+                # if spwrgd='', we will keep the spw from observations
+                # 
+                # Note: clean()/concat() can't work with a dataset with TOPO+LSRK or TOPO+BARY frames
+                # if spwrgd='frame', we will only transform the spw frame to the desired one, which
+                # might help resolve the above issue when combing multiple tracks with various frames.  
 
 # CONTINUE SUBTRACTION
 'fitspw':'',

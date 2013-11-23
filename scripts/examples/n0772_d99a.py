@@ -27,8 +27,9 @@ xp['flagselect']        = [ "antenna='VA12&VA17' timerange='17:44:35~17:44:55'",
                             "antenna='VA14&VA24'"]
 
 # CONSOLIDATING
+xp['spwrgd']            ='spw'
 xp['uvcs']              =True
-xp['fitspw']            ='0:6~31;95~109'
+xp['fitspw']            ='*:0~5;33~38'
 xp['fitorder']          =1
 
 # IMAGING
@@ -42,12 +43,12 @@ xp['cleanmode']        ='velocity'
 xp['clean_start']       ='2050.0km/s'
 xp['clean_width']       ='20.8km/s'
 xp['clean_nchan']       =39
-xp['phase_center']      ='J2000 01h59m19.58 +19d00m27.10'
+xp['phasecenter']      ='J2000 01h59m19.58 +19d00m27.10'
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
-execfile(xlib+'xcal.py')
+#execfile(xlib+'ximport.py')
+#execfile(xlib+'xcal.py')
+#execfile(xlib+'xcalplot.py')
 execfile(xlib+'xconsol.py')
-xu.checkstatwt(xp['prefix']+'.src.ms',fitspw=xp['fitspw'])
 execfile(xlib+'xclean.py')
 

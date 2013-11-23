@@ -25,8 +25,9 @@ xp['flagselect']        =["antenna='ea08' spw='*:16'",
                           "antenna='ea28' spw='*:16'"]
 
 # CONSOLIDATING
+xp['spwrgd']            ='spw'
 xp['uvcs']              =True
-xp['fitspw']            ='*:0~9;53~63'
+xp['fitspw']            ='*:0~5;33~38'
 xp['fitorder']          =1
 
 # IMAGING
@@ -36,14 +37,15 @@ xp['cleancont']         =True
 xp['imsize']            =512
 xp['cell']              ='6.0arcsec'
 
-xp['cleanmode']        ='velocity'
+xp['cleanmode']         ='velocity'
 xp['clean_start']       ='2050.0km/s'
 xp['clean_width']       ='20.8km/s'
 xp['clean_nchan']       =39
-xp['phase_center']      ='J2000 01h59m19.58 +19d00m27.10'
+xp['phasecenter']      ='J2000 01h59m19.58 +19d00m27.10'
+xp['niter']             =0
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
-execfile(xlib+'xcal.py')
+#execfile(xlib+'ximport.py')
+#execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')
