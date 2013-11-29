@@ -155,7 +155,7 @@ if  xp['imagermode']==None:
     nfield=len(tb.getcol('NAME'))
     tb.close()
     if  nfield>1:
-        imagermode = 'mosaic'    
+        xp['imagermode'] = 'mosaic'    
     hetero=False
     xu.news("")
     xu.news("nfield: "+str(nfield))
@@ -264,6 +264,10 @@ for i in range(0,len(vis_loop)):
     if  cleanmode_loop[i]=='mfs':
         start=0
         width=1
+    if  xp['spwrgd']=='spw':
+        interpolation='nearest'
+    else:
+        interpolation=xp['spinterpmode']  
     clean(vis=vis_loop[i],
           imagename=outname_loop[i],
           field=xp['clean_field'],
@@ -277,7 +281,7 @@ for i in range(0,len(vis_loop)):
           resmooth=resmooth_loop[i],
           multiscale=multiscale_loop[i],
           negcomponent=xp['negcomponent'],
-          interpolation=xp['spinterpmode'],
+          interpolation=interpolation,
           threshold=threshold_loop[i],
           psfmode=xp['psfmode'],
           mask=xp['clean_mask'],
