@@ -17,7 +17,7 @@ xp={
 'importcorr':'',
 'importtimerange':'',
 'importmode':'vla',   # import data mode
-'importwidth':'1',
+'importchanbin':1,
 'importfield':'',
 'importband':'',
 'importmirarray':'CARMA',
@@ -56,13 +56,20 @@ xp={
 # CAL
 'interpmode':['linear','nearest'],
 'ref_ant':'15',
-'evlacal':False,
 'calwt':True,
-'gaincurve':False,
-
+'syscal':'default', # syscal='default': choose the best caltype according to the dataset
+                    # syscal=''       : no system pre-calibration
+                    # syscal='tsys'....
+                    
 #    gaincurvel will be turned on if:
 #        * data were from VLA
 #        * taken before 2001
+'scalsmooth':False,
+'scalsmoothtime':60,
+
+'flagtsys':True,
+'flagysys_range':[5.0,1000.0],
+
 # CONSOLIDATE
 'prefix_comb':[],
 'wtscale':[],
@@ -70,9 +77,21 @@ xp={
 'spwrgd':'',    # if spwrgd='spw', we will regrid spw to the clean setup
                 # if spwrgd='', we will keep the spw from observations
                 # 
-                # Note: clean()/concat() can't work with a dataset with TOPO+LSRK or TOPO+BARY frames
+                # * clean()/concat() can't work with a dataset with TOPO+LSRK or TOPO+BARY frames
                 # if spwrgd='frame', we will only transform the spw frame to the desired one, which
-                # might help resolve the above issue when combing multiple tracks with various frames.  
+                # might help resolve the above issue when combing multiple tracks with various frames.
+                # spwgrd='spw' will help to reduce the vis data size to the mininmal required because
+                # 
+                # * the split vis already has the channel rebinned. This will also
+                # speed up the CLEAN() because a smaller number vis records was handled during
+                # the major cycle.
+                # * If two corrs setup are in one spw (which may happen if two tracks with different 
+                #   corr-config were regridding to the same channel setup), CLEAN() will consider
+                #   one corr and ignore another corr. So you want to void two corr-setup in one spw
+                #   -> avoid regridding dual-pol and single-pol tracks into the same channel setup.
+                #
+                #    
+                #  
 
 # CONTINUE SUBTRACTION
 'fitspw':'',
@@ -82,8 +101,9 @@ xp={
 'imcs':False,
 'freqtol':'',
 'uvcs_combine':'spw',
-'wtstat':False,
-'wtstat_fitspw':'',
+'scalewt':False,
+'scalewt_fitspw':'',
+'scalewt_uvrange':'',
 'hs':False,
 
 # CLEANing
