@@ -82,6 +82,12 @@ xu.news("")
 #----------------------------------------------------------------------------------------    
 if  len(xp['prefix_comb'])==1:
 
+    
+    xp['msfile']=xp['prefix']+'.ms' 
+    xp['srcfile']=xp['prefix']+'.src.ms'
+    os.system('rm -rf '+xp['srcfile'])
+
+    
     xu.news("")
     xu.news("--mstransform--")
     xu.news("")
@@ -91,9 +97,7 @@ if  len(xp['prefix_comb'])==1:
     xu.news(" * [hanning smoothing]")
     xu.news("")
     
-    xp['msfile']=xp['prefix']+'.ms' 
-    xp['srcfile']=xp['prefix']+'.src.ms'
-    os.system('rm -rf '+xp['srcfile'])
+
 
     if  xp['spwrgd']!='spw':
         if  xp['spwrgd']=='':
@@ -106,8 +110,9 @@ if  len(xp['prefix_comb'])==1:
                     separationaxis='both',
                     field=xp['source'],
                     spw='',
-                    useweights='flags',
+                    useweights='flags',#spectrum
                     datacolumn= "corrected",
+                    chanaverage=False,
                     regridms=spwrgd,
                     combinespws=False,
                     mode='channel',
@@ -115,9 +120,10 @@ if  len(xp['prefix_comb'])==1:
                     start=0,
                     width=1,
                     nspw=1,
-                    interpolation='linear',
+                    interpolation=xp['spinterpmode'],
                     outframe=xp['outframe'],
                     restfreq=xp['restfreq'],
+                    phasecenter='',
                     hanning=xp['hs'])
     else:
         mstransform(vis=xp['msfile'],
@@ -126,8 +132,10 @@ if  len(xp['prefix_comb'])==1:
                     separationaxis='both',
                     field=xp['source'],
                     spw='',
-                    useweights='spectrum',
+                    useweights='spectrum',#spectrum
                     datacolumn= "corrected",
+                    chanaverage=True,
+                    chanbin=1,
                     regridms=True,
                     combinespws=True,
                     mode=xp['cleanmode'],
@@ -138,48 +146,24 @@ if  len(xp['prefix_comb'])==1:
                     interpolation=xp['spinterpmode'],
                     outframe=xp['outframe'],
                     restfreq=xp['restfreq'],
-                    phasecenter=xp['phasecenter'],
+                    phasecenter='',
                     hanning=xp['hs'])
     
+    #  COPY WEIGHT_SPECTRUM TO WEIGHT
+    xu.copyweight(xp['srcfile'],copyback=True)
+    
     xu.news("")
-    xu.news("--check split--")
+    xu.news("--check split data & weight--")
     xu.news("")
     listobs(xp['srcfile'])
-
-    if  xp['wtstat']==True:
-        
-        #   StatWt: Recalculate the WEIGHT & SIGMA columns
-        
-        xu.news("+++++++++++++++++++++++++++++++++++++++++++++++")
-        xu.news("+++++++++++++++++++++++++++++++++++++++++++++++")
-        xu.news("")
-        xu.news("--check weight column before recalculating--")
-        xu.news("")
-        visstat(vis=xp['srcfile'],axis='weight')
-        xu.exporttasklog('visstat',xp['srcfile']+'.before-statwt.log',
-                         ['\n',"Visibility weight BEFORE recalculation.",'\n','\n'])
-        xu.news("")
-        xu.news("")
-        
-        xu.news("")
-        xu.news("--statwt--")
-        xu.news("")
-        xu.news("Use statwt to recalculate the WEIGHT & SIGMA columns:")
-        xu.news("Useful for early-stage JVLA data")
-        xu.news("")
-        statwt(vis=xp['srcfile'],
-               fitspw=xp['wtstat_fitspw'])
-
-        xu.news("")
-        xu.news("--check weight column after recalculating--")
-        xu.news("")
-        visstat(vis=xp['srcfile'],axis='weight')
-        xu.exporttasklog('visstat',xp['srcfile']+'.after-statwt.log',
-                         ['\n',"Visibility weight AFTER recalculation.",'\n','\n'])
-        xu.news("")
-        xu.news("")
-        xu.news("+++++++++++++++++++++++++++++++++++++++++++++++")
-        xu.news("+++++++++++++++++++++++++++++++++++++++++++++++")
+    
+    if  xp['scalewt_fitspw']=='':
+        xp['scalewt_fitspw']=xp['fitspw']
+    xu.scalewt(xp['srcfile'],
+               uvrange=xp['scalewt_uvrange'],
+               fitspw=xp['scalewt_fitspw'],
+               datacolumn='data',
+               modify=xp['scalewt'])
     
     if  xp['uvcs']==True:
            
@@ -252,7 +236,7 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
             concat(vis=xp['srcfile_comb'],
                    concatvis=xp['srcfile']+loop,
                    freqtol='',
-                   dirtol='1.arcsec',
+                   dirtol='',
                    timesort=False,
                    visweightscale=xp['wtscale'],
                    copypointing=True)
@@ -260,9 +244,9 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
             virtualconcat(vis=xp['srcfile_comb'],
                    concatvis=xp['srcfile']+loop,
                    freqtol='',
-                   dirtol='1.arcsec',
+                   dirtol='',
                    visweightscale=xp['wtscale'],
-                   keepcopy=False,
+                   keepcopy=True,
                    copypointing=True)
         
 
