@@ -39,7 +39,7 @@
 #        importtimerange|''        select the timerange to be imported
 #        importfield|''            select the fields to be imported
 #        importband|''             band to be imported
-#        importwidth|''            channel averaging during splitting 
+#        importchanbin|''            channel averaging during splitting 
 #        importcorr|''             import correlation
 #       
 
@@ -185,7 +185,7 @@ if  (   xp['importscan']!=''
      or xp['importtimerange']!=''
      or xp['importfield']!=''
      or xp['importtimebin']!='0s'
-     or xp['importwidth']!='1'
+     or xp['importchanbin']!=1
      or xp['importmode']=='ms') :
     
     if  xp['importmode']=='ms':
@@ -208,7 +208,7 @@ if  (   xp['importscan']!=''
     xu.news("Use split to extract data based on Scan/Spw/Timerange/Field selecting and TimeBin setting:")
     xu.news(xp['prepfile'])
     xu.news("")
-    
+
     split(vis=xp['prepfile'],
           outputvis=xp['msfile']+'.select',
           scan=xp['importscan'],
@@ -218,9 +218,26 @@ if  (   xp['importscan']!=''
           timebin=xp['importtimebin'],
           datacolumn='data',
           keepflags=True,
-          width=xp['importwidth'],
+          width=xp['importchanbin'],
           correlation=xp['importcorr'],
           combine='')
+    """
+    mstransform(vis=xp['prepfile'],
+          outputvis=xp['msfile']+'.select',
+          scan=xp['importscan'],
+          timerange=xp['importtimerange'],
+          spw=xp['importspw'],
+          field=xp['importfield'],
+          timebin=xp['importtimebin'],
+          datacolumn='data',
+          combinespws=False,
+          chanaverage=True,
+          chanbin=xp['importchanbin'],
+          useweights='spectrum',
+          regridms=False,
+          correlation=xp['importcorr'])
+    """
+    
     os.system('rm -rf '+xp['msfile'])
     os.system('rm -rf '+xp['msfile']+'.flagversions')
     os.system('mv '+xp['msfile']+'.select '+xp['msfile'])
