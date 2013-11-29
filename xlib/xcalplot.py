@@ -30,9 +30,9 @@
 #                   <prefix>.plotxy.cal.uvdist_amp.beforecal.<plotformat>
 #                   -- calibrators visiblity plot before calibrations: amp vs. uvdist                   
 #               calibration solutions:
-#                   <prefix>.plotcal.bandpass.pdf
+#                   <prefix>.plotcal.bandpass.png
 #                   -- passband solution plots (one page for one antenna)
-#                   <prefix>.plotcal.gscaled.pdf
+#                   <prefix>.plotcal.gscaled.png
 #                   -- gain solution plots (one page for one antenna)
 #                   <prefix>.plotcal.allbandpass.<plotformat>
 #                   -- passband solution plot (all antennas in one page)
@@ -100,13 +100,23 @@ plotxy(vis=xp['msfile'],
 xu.news("")
 xu.news("--xplotcal--")
 xu.news("")
-xu.news("plot the gain/passband solutions")
+xu.news("plot the syscal/gain/passband solutions")
 
-xu.xplotcal(xp['prefix']+'.gcal_passcal',iterant=False)
-xu.xplotcal(xp['prefix']+'.bcal',iterant=False)
-xu.xplotcal(xp['prefix']+'.fcal',iterant=False)
-
-
+if  os.path.exists(xp['prefix']+'.gcal_passcal'):
+    xu.xplotcal(xp['prefix']+'.gcal_passcal',iterant=False,extenv=extenv)
+if  os.path.exists(xp['prefix']+'.bcal'):
+    xu.xplotcal(xp['prefix']+'.bcal',iterant=False,extenv=extenv)
+if  os.path.exists(xp['prefix']+'.bcal_comb'):
+    xu.xplotcal(xp['prefix']+'.bcal_comb',iterant=False,extenv=extenv)
+if  os.path.exists(xp['prefix']+'.fcal'):
+    xu.xplotcal(xp['prefix']+'.fcal',iterant=False,extenv=extenv)
+if  os.path.exists(xp['prefix']+'.scal'):
+    xu.xplotcal(xp['prefix']+'.scal',iterant=False,extenv=extenv)
+if  os.path.exists(xp['prefix']+'.scal.origin'):
+    xu.xplotcal(xp['prefix']+'.scal.origin',iterant=False,extenv=extenv)
+if  os.path.exists(xp['prefix']+'.scal.unflagged'):
+    xu.xplotcal(xp['prefix']+'.scal.unflagged',iterant=False,extenv=extenv)
+        
 xu.news("")
 xu.news("--plotxy--")
 xu.news("")
@@ -114,7 +124,7 @@ xu.news("plot weights vs. uvdist")
 plotxy(vis=xp['msfile'],xaxis='uvdist',yaxis='weight',
        width='all',timebin='0',
        field=xp['source'],
-       figfile=xp['msfile']+'.wt_uvdist.pdf', multicolor='both',
+       figfile=xp['msfile']+'.wt_uvdist.png', multicolor='both',
        datacolumn='corrected',interactive=False)
 
 xu.news("")
@@ -124,7 +134,7 @@ xu.news("plot amp vs. uvdist")
 plotxy(vis=xp['msfile'],xaxis='uvdist',yaxis='amp',
        width='all',timebin='0',
        field=xp['source'],
-       figfile=xp['msfile']+'.amp_uvdist.pdf', multicolor='both',
+       figfile=xp['msfile']+'.amp_uvdist.png', multicolor='both',
        datacolumn='corrected',interactive=False)
 
 xu.news("")
@@ -134,7 +144,7 @@ xu.news("plot amp vs. time")
 plotxy(vis=xp['msfile'],xaxis='time',yaxis='amp',
        width='all',timebin='0',
        field=xp['source'],
-       figfile=xp['msfile']+'.amp_time.pdf', multicolor='both',
+       figfile=xp['msfile']+'.amp_time.png', multicolor='both',
        datacolumn='corrected',interactive=False)
 
 xu.news("")
@@ -144,7 +154,7 @@ xu.news("plot amp vs. freq")
 plotxy(vis=xp['msfile'],xaxis='frequency',yaxis='amp',
        width='',timebin='all',crossscans=True,
        field=xp['source'],restfreq=xp['restfreq'],frame=xp['outframe'],
-       figfile=xp['msfile']+'.amp_freq.pdf', multicolor='both',
+       figfile=xp['msfile']+'.amp_freq.png', multicolor='both',
        datacolumn='corrected',interactive=False)
 
 #----------------------------------------------------------------------------------------
