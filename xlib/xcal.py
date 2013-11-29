@@ -39,9 +39,7 @@
 #       spw_passcal|<spw_fluxcakl>     spectral Windows for passcal
 
 #       ref_ant|'15'            reference antenna name. 
-#       gaincurve               gain-elevation curve calibration
-#                               default=TRUE if the data were taken from VLA/EVLA 
-#                               after 2001
+#       syscal                  system pre-calibration
 #
 #       flagreset|True          reset flagging, if False, the previous flagging info
 #                               saved in 'flagged' will be reused
@@ -108,7 +106,7 @@ os.system('rm -rf '+xp['prefix']+'.?cal'+'*')
 xu.news("")
 xu.news(">>>>check for flagversion Original")
 xu.news("")
-if    os.path.exists(xp['prefix']+'.ms.flagversions/flags.Original'):
+if  os.path.exists(xp['prefix']+'.ms.flagversions/flags.Original'):
     xu.news("flagversion 'Original' exists ")
     xu.news("")
 else:
@@ -151,18 +149,31 @@ obstime=tb.getcol("TIME_RANGE").tolist()
 tb.close()
 isvla=False
 isafter2001=False
+isalma=False
+isevla=False
 utc2001=86400*(me.epoch('utc','2003/02/16')['m0']['value']+0./24.)
 for k in range(len(namelist)):
-    if  namelist[k]=='VLA' or namelist[k]=='EVLA' :
+    if  namelist[k]=='VLA':
         isvla=True
+    if  namelist[k]=='EVLA':
+        isevla=True
+    if  namelist[k]=='ALMA':
+        isalma=True
     if  obstime[k][0]>utc2001:
         isafter2001=True
-if  isvla==True and isafter2001==True:
-    xp['gaincurve']=True
-xu.news("gaincurve calibration?: "+str(xp['gaincurve']))
+if  xp['syscal']=='default':
+    xp['syscal']==''
+    if  isalma==True:
+        xp['syscal']='tsys'
+    if  isevla==True:
+        xp['syscal']='swpow'
+    if  isvla==True and isafter2001==True:
+        xp['syscal']='gceff'
+    if  isvla==True and isafter2001==False:
+        xp['syscal']='eff'
+xu.news("system pre-calibration?: "+str(xp['syscal']))
 xu.news("")
 
-xp['gaincurve']=False
 #----------------------------------------------------------------------------------------
 #   Flagging Resetting (default: True)
 #----------------------------------------------------------------------------------------
@@ -175,8 +186,6 @@ if  xp['flagreset']==False:
 #----------------------------------------------------------------------------------------
 #   Edge / Shadow / Autocorr / Quack Flagging
 #----------------------------------------------------------------------------------------
-
-
 
 xu.news("")
 xu.news("--flagcmd--")
@@ -252,18 +261,33 @@ xu.news("")
 #   EVLA GAIN
 #----------------------------------------------------------------------------------------
 
-if  xp['evlacal']==True:
+if  xp['syscal']!='':
 
     xu.news("")
     xu.news("--gencal--")
     xu.news("")
-    xu.news("Get EVLA gain/tsys calibration table using info from")
-    xu.news("the MS's CALDEVICE and SYSPOWER subtables.")
+    xu.news("  Determine System Pre-Calibration Table:")
+    xu.news("")
+    xu.news("* Get EVLA gain/tsys calibration table using info from")
+    xu.news("  the MS's CALDEVICE and SYSPOWER subtables.")
+    xu.news("* Solve VLA Gaincurve solutions")
+    xu.news("* ....")
     xu.news("")
     gencal(vis=xp['msfile'],
-           caltype='evlagain',
-           caltable=xp['prefix']+'.tcal')
-
+           caltype=xp['syscal'],
+           caltable=xp['prefix']+'.scal')
+    if  xp['scalsmooth']==True:
+        os.system("rm -rf "+xp['prefix']+'.scal.origin')
+        os.system("cp -rf "+xp['prefix']+'.scal'+' '+xp['prefix']+'.scal.origin')
+        smoothcal(vis=xp['msfile'],
+                  tablein=xp['prefix']+'.scal',
+                  smoothtype='median',
+                  smoothtime=xp['scalsmoothtime'])
+    if  xp['flagtsys']==True and xp['syscal']=='swpow':
+        os.system("rm -rf "+xp['prefix']+'.scal.unflagged')
+        os.system("cp -rf "+xp['prefix']+'.scal'+' '+xp['prefix']+'.scal.unflagged')
+        xu.flagtsys(caltable=xp['prefix']+'.scal',tsysrange=xp['flagtsys_range'])
+        
 #----------------------------------------------------------------------------------------
 #   Baseline Correction
 #----------------------------------------------------------------------------------------
@@ -280,22 +304,6 @@ if  xp['bcant']!='':
            caltype=xp['bctype'],
            antenna=xp['bcant'],
            parameter=xp['bcpara'])
-
-
-#----------------------------------------------------------------------------------------
-#   Gaincurve Correction
-#----------------------------------------------------------------------------------------
-
-if  xp['gaincurve']==True:
-
-    xu.news("")
-    xu.news("--gencal--")
-    xu.news("")
-    xu.news("solve gaincurve correction solutions")
-    xu.news("")
-    gencal(vis=xp['msfile'],
-           caltable=xp['prefix']+'.gccal',
-           caltype='gceff')
 
 #----------------------------------------------------------------------------------------
 #   CALIBRATION BEGIN
@@ -325,16 +333,16 @@ xu.news("")
 
 gaintable=[]
 gainfield=[]
-if  xp['evlacal']==True:
-    gaintable=gaintable+[xp['prefix']+'.tcal']
-    gainfield=gainfield+['']
+interp=[]
 if  xp['bcant']!='':
     gaintable=gaintable+[xp['prefix']+'.pcal']
     gainfield=gainfield+['']
-if  xp['gaincurve']==True:
-    gaintable=gaintable+[xp['prefix']+'.gccal']
+    interp=interp+['linear,linear']
+if  xp['syscal']!='':
+    gaintable=gaintable+[xp['prefix']+'.scal']
     gainfield=gainfield+['']   
-            
+    interp=interp+['linear,linear']
+    
 gaincal(vis=xp['msfile'],
         caltable=xp['prefix']+'.gcal_passcal',
         field=xp['passcal'],
@@ -346,7 +354,8 @@ gaincal(vis=xp['msfile'],
         minsnr=3.0,
         solnorm=False,
         gaintable=gaintable,
-        gainfield=gainfield)
+        gainfield=gainfield,
+        interp=interp)
 
 xu.news("")
 xu.news("")
@@ -357,7 +366,8 @@ xu.news("")
 xu.news("")
 
 gaintable=gaintable+[xp['prefix']+'.gcal_passcal']
-gainfield=gainfield+['']   
+gainfield=gainfield+['']
+interp=interp+['nearest,linear']   
     
 bandpass(vis=xp['msfile'],
          caltable=xp['prefix']+'.bcal',
@@ -371,7 +381,8 @@ bandpass(vis=xp['msfile'],
          bandtype='B',
          combine='scan',
          gaintable=gaintable,
-         gainfield=gainfield)
+         gainfield=gainfield,
+         interp=interp)
 xu.news("")
 
 # SPECIAL TREATMENT FOR SOME HI TRACKS
@@ -409,6 +420,7 @@ if  len(spwid_passcal)==2*len(spwid_source):
                  combine='spw,scan',
                  gaintable=gaintable,
                  gainfield=gainfield,
+                 interp=interp,
                  append=True)
         xu.news("")
 
@@ -478,7 +490,7 @@ if  2*len(spwid_fluxcal)==len(spwid_passcal):
 else:
     gaintable[-1]=xp['prefix'] + '.bcal'
 spwmap=[[]]*len(gaintable)
-interp=['nearest']*len(gaintable)
+interp[-1]='nearest,nearest'
 
 for j in range(0,len(spwid_source)):
     
@@ -502,6 +514,9 @@ for j in range(0,len(spwid_source)):
             minblperant=2,
             refant=xp['ref_ant'],
             combine='spw',
+            gaintable=gaintable,
+            gainfield=gainfield,
+            interp=interp,
             append= True)
 
     spwmap[-1]=spwmap_phasecal
@@ -517,6 +532,9 @@ for j in range(0,len(spwid_source)):
             minblperant=2,
             refant=xp['ref_ant'],
             combine='spw',
+            gaintable=gaintable,
+            gainfield=gainfield,
+            interp=interp,
             append= True)    
 
     xu.news("")
@@ -606,7 +624,7 @@ gainfield=gainfield+[xp['phasecal']]
 
 spwmap=spwmap+[spwmap_fcal2source]
 spwmap[-2]=spwmap_bcal2source
-interp=interp+['linear']
+interp=interp+['linear,linear']
 applycal(vis=xp['msfile'],
          field=xp['source'],
          spw=xp['spw_source'],
@@ -626,7 +644,7 @@ xu.news('')
 
 spwmap[-2]=spwmap_bcal2phasecal
 spwmap[-1]=spwmap_fcal2phasecal
-interp[-1]='nearest'
+interp[-1]='nearest,linear'
 applycal(vis=xp['msfile'],
          field=xp['phasecal'],
          spw=xp['spw_phasecal'],
