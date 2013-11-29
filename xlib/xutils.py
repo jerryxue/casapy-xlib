@@ -871,45 +871,159 @@ def modelconv(outname,mode=''):
         expr='IM0+IM1-IM1',outfile=outname+'.cmodel')
         os.system('rm -rf '+outname+'.cmodel2')    
 
-
-def checkstatwt(srcfile,fitspw=''):
+def copyweight(srcfile,
+               copyback=False):
+    # copyback=False copy weight to weight_spectrum
+    # copyback=True  copy mean(weight_spectrum) to weight
     
-    #srcfile='n0337d03.src.ms'
-    #statwt_fitspw='1:7~17,0:46~56'
-
-    oldsrcfile=srcfile
-    srcfile=srcfile+'.rewt'
+    news("")
+    news("--copyweight--")
+    news("")
     
-    os.system("rm -rf "+srcfile)
-    os.system("cp -rf "+oldsrcfile+" "+srcfile)
+    if  copyback==True:
+        tb.open(srcfile,nomodify=False)
+        wt=tb.getcol('WEIGHT')
+        wts=tb.getcol('WEIGHT_SPECTRUM')
+        wtsc=np.average(wts,axis=-2)
+        tb.putcol('WEIGHT',wtsc)
+        tb.close()
+    else:
+        tb.open(srcfile,nomodify=False)
+        wts=tb.getcol('FLAG')*1.0
+        wtt=tb.getcol('WEIGHT')
+        for i in range(0,wtt.shape[0]):
+            wts[i,:,:]=wtt[i,:]
+        tb.putcol('WEIGHT_SPECTRUM',wts)
+        tb.close()
+
+def scalewt(srcfile,
+            uvrange='',
+            fitspw='',
+            datacolumn='corrected',
+            modify=False):
+    #
+    # statwt() modifies weight/sigma for each vis record using an emperical
+    # noise estimation from the data itself.
+    #
+    # this function will only scale weight/sigma by a constant factor (derived by
+    # comparing weight before&after statwt() results) for all records in a single track
+    # This might be better than statwt() because:
+    #    *  weights in the raw data are usually correct in the relative sense in a single track 
+    #       (e.g. theoretical prediction using tsys+gain+int+freq etc.), just at 
+    #       a wrong absolute scale (which is required when combing tracks).
+    #    *  statwt() requires line-free data for noise evaluation. but still the vis "noise" will be
+    #       amplified for the records with strong continuum emissions (see wt=1/sig^2.0 vs. uvdist from statwt results).
+    #       In addition, statwt() could introduce small-scale weight value "noise" 
+    #       for individual records if the statistical sampling selection is not well done.
+    #
+    # modify=False: WEIGHT/SIGMA is not touched, so you could run a test
+    #               and check if the scaling factor is reasonable.
+    # uvrange:      ideally, the uvrange doesn't show strong signal (either cont or line)
+    #
+    
+    # BACKUP OLD WEIGHT & SIGMA & WEIGHT_SPECTRUM
+    
+    news("")
+    news("--scalewt--")
+    news("")
+    
+    myms=mstool()
+    myms.open(srcfile,nomodify=True)
+    tbwt_old=myms.getdata(['weight','sigma'])
+    myms.close() 
+    tb.open(srcfile,nomodify=True)
+    tswt_old=tb.getcol('WEIGHT_SPECTRUM')
+    tb.close()
+    
+    # COPY WEIGHT TO WEIGHT_SPECTRUM TEMPORARILY
+    # VISSTAT(axis='weight') DOESN'T SEEM TO TREAT FLAG CORRECTLY
+    copyweight(srcfile)
     
     news("+++++++++++++++++++++++++++++++++++++++++++++++")
     news("+++++++++++++++++++++++++++++++++++++++++++++++")
+        
     news("")
     news("--check weight column before recalculating--")
     news("")
-    wt_before=visstat(vis=oldsrcfile,axis='weight')
-    news("")
-    news("")
-    
+    """
+    stwt_old=visstat(vis=srcfile,
+                     axis='sigma',
+                     uvrange=uvrange,
+                     useflags=True,
+                     spw='')
+    """
+    stwt_old=visstat(vis=srcfile,
+                     axis='weight_spectrum',
+                     uvrange=uvrange,
+                     useflags=True,
+                     spw='')
     news("")
     news("--statwt--")
     news("")
     news("Use statwt to recalculate the WEIGHT & SIGMA columns:")
-    news("Useful for early-stage JVLA data")
     news("")
-    statwt(vis=srcfile,fitspw=fitspw)
+    statwt(vis=srcfile,fitspw=fitspw,
+           field='',combine='',
+           datacolumn=datacolumn,dorms=False)
+    
+    # COPY WEIGHT TO WEIGHT_SPECTRUM TEMPORARILY
+    # VISSTAT(axis='weight') DOESN'T SEEM TO TREAT FLAG CORRECTLY
+    # statwt in v4.1 doesn't touch weight_spectrum
+    copyweight(srcfile)
+
     
     news("")
     news("--check weight column after recalculating--")
     news("")
-    wt_after=visstat(vis=srcfile,axis='weight')
+    """
+    stwt_new=visstat(vis=srcfile,
+                     axis='sigma',
+                     uvrange=uvrange,
+                     useflags=True,
+                     spw='')
+    """
+    stwt_new=visstat(vis=srcfile,
+                     axis='weight_spectrum',
+                     uvrange=uvrange,
+                     useflags=True,
+                     spw='')
     news("")
     news("")
     news("+++++++++++++++++++++++++++++++++++++++++++++++")
     news("+++++++++++++++++++++++++++++++++++++++++++++++")
+    
+    medianwt_old=stwt_old['WEIGHT_SPECTRUM']['median']
+    medianwt_new=stwt_new['WEIGHT_SPECTRUM']['median']
+    
+    sf=medianwt_new/medianwt_old
+    news("")
+    news("*"*10)
+    news("median(wt) before statwt():  "+str(medianwt_old))
+    news("median(wt) after  statwt():   "+str(medianwt_new))
+    news("scaling factor:            "+str(sf))
+    news("*"*10)
+    news("")
+    
+    # SCALE THE OLD WEIGHT/SIGMA & LOAD THE NEW VALUES
+    if  modify==True:
+        news("WEIGHT/SIGMA are modified")
+        tbwt_old['weight']=tbwt_old['weight']*sf
+        tswt_old=tswt_old*sf
+        tbwt_old['sigma']=tbwt_old['sigma']/(sf**0.5)
+    else:
+        news("WEIGHT/SIGMA are not modified. This is a test run")
+    myms=mstool()
+    myms.open(srcfile,nomodify=False)
+    tbwt_new=myms.getdata(['weight','sigma'])
+    myms.putdata(tbwt_old)
+    myms.close()
+    tb.open(srcfile,nomodify=False)
+    tb.putcol('WEIGHT_SPECTRUM',tswt_old)
+    tb.close() 
+    
+    return sf
 
-def simmoments(imagename,
+def xmoments(imagename,
                smfac=[3.0,3.0],
                th=3.0,
                errfile='',
@@ -976,10 +1090,75 @@ def getevladata(url,user='',password='',extenv={}):
     p=subprocess.Popen(cmd,shell=True,env=extenv,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for line in iter(p.stdout.readline,''):
         news(line,origin='wget')
-        
 
+
+
+def findoutliers(data,
+                 m=2.,
+                 range=[-1,-1]):
+    # find outliers in the data
+    # *  clip in a range
+    # *  median filtering.
+    if  range!=[-1,-1]:
+        outliers=np.logical_or(data<range[0],data>range[1])
+    else:
+        outliers=(data!=data)
+    inrange=(np.where(outliers==False))[0]
+    if  inrange.size!=0:
+        subdata=data[inrange]
+        d=np.abs(subdata-np.median(subdata))
+        mdev=np.median(d)
+        s=d/mdev if mdev else 0
+        flag=np.where(s>m)[0]
+        if  flag.size!=0:
+            outliers[inrange[flag]]=True
+    return outliers
+
+    os.system('rm -rf test.scal')
+os.system('cp -rf n0772b13a.scal test.scal')
+caltable='test.scal'
+
+
+def flagtsys(caltable='',
+            tsysrange=[5.0,1000.0]):
+    #
+    # flag bad tsys records in the swpow caltable.
+    #
+    
+    news("")
+    news("--flagtsys--")
+    news("")
+    news("Flag bad TSYS")
+    news("caltable:  "+str(caltable))
+    news("tsysrange: "+str(tsysrange))
+    
+    # READ FLAG/SPW/ANTENA/TSYS/SWPOW
+    tb.open(caltable,nomodify=False)
+    var=tb.getcol('FPARAM')
+    flag=tb.getcol('FLAG')
+    spwids=tb.getcol('SPECTRAL_WINDOW_ID')
+    spwid=np.unique(spwids)
+    antids=tb.getcol('ANTENNA1')
+    antid=np.unique(antids)
+    
+    for ant in antid:
+        for spw in spwid:
+            list=np.where(np.logical_and(spwids==spw,antids==ant))[0]
+            nc=var.shape[0]/2
+            for pick in range(nc):
+                tsys=var[pick*2+1,0,list]
+                tag=np.where(findoutliers(tsys,range=tsysrange)==True)
+                flag[:,:,list[tag]]=True
+                
+    tb.putcol('FLAG',flag)
+    tb.close
+
+    news("")
+    
 def xplotcal(tbfile,iterant=False,
-             amprange='',pharange=''):
+             amprange=[],pharange=[],
+             tsysrange=[],spgrange=[],
+             extenv=''):
 
     news("")
     news("--xplotcal--")
@@ -1000,6 +1179,12 @@ def xplotcal(tbfile,iterant=False,
             pharange=[-1,-1,-20,20]
         if  tbtype=='G Jones':
             pharange=[-1,-1,-180,180]
+    if  tsysrange==[]:
+        if  tbtype=='G EVLASWPOW':
+            tsysrange=[]
+    if  spgrange==[]:
+        if  tbtype=='G EVLASWPOW':
+            spgrange=[]
     
     tb.open(tbfile+'/ANTENNA')
     ant_name=tb.getcol('NAME')
@@ -1029,6 +1214,8 @@ def xplotcal(tbfile,iterant=False,
     
     for i in range(0,len(ant_name)):
         one_pdf=tbfile+'.ant'+str(ant_code[i])+'.pdf'
+        if  len(ant_name)==1:
+            one_pdf=tbfile+'.ant'+str(ant_code[i])+'.png'
         ant_str='Ant'+str(ant_code[i])+'/'+ant_name[i]+'/'+ant_stat[i]
         if  iterant==False:
             ant_str='All Ants'
@@ -1037,8 +1224,12 @@ def xplotcal(tbfile,iterant=False,
                 figfile_loop=['','']
                 if  j==len(spw_name)-1 and k==1:
                     figfile_loop[1]=one_pdf
-                yaxis_loop=['amp','phase']
-                plotrange_loop=[amprange,pharange]
+                if  tbtype=='G Jones' or tbtype=='B Jones':
+                    yaxis_loop=['amp','phase']
+                    plotrange_loop=[amprange,pharange]
+                if  tbtype=='G EVLASWPOW':
+                    yaxis_loop=['tsys','spgain']
+                    plotrange_loop=[tsysrange,spgrange]
                 plotcal(caltable=tbfile,
                     antenna=ant_name[i],
                     field='',
