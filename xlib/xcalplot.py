@@ -87,15 +87,28 @@ xu.news("--plotxy--")
 xu.news("")
 xu.news("plot the source uv coverage and antenna positions")
 
-plotxy(vis=xp['msfile'],field=xp['source'],spw='',
-    xaxis='u',yaxis='v',
-    figfile=xp['msfile']+'.sou_uvcoverage.'+xp['plotformat'],
-    interactive=False)
+"""
 plotxy(vis=xp['msfile'],
     xaxis='x',
-    figfile=xp['msfile']+'.array_config.'+xp['plotformat'],
-    interactive=False)	
+    figfile=xp['msfile']+'.array_config.png',
+    interactive=False)
+"""
+#plotants(vis=xp['msfile'],
+#    figfile=xp['msfile']+'.array_config.png')
+"""
+plotxy(vis=xp['msfile'],field=xp['source'],spw='',
+     xaxis='u',yaxis='v',
+     figfile=xp['msfile']+'.sou_uvcoverage.png',
+     interactive=True) 
+"""
+plotms(vis=xp['msfile'],
+       xaxis='u',yaxis='v',
+       showmajorgrid=False,
+       plotfile=xp['msfile']+'.sou_uvcoverage.png',
+       interactive=False,
+       overwrite=True)
 # alternative solution: plotuv & plotants
+#sys.exit("Please ignore the above color Trackback error message")
 
 xu.news("")
 xu.news("--xplotcal--")
@@ -121,42 +134,78 @@ xu.news("")
 xu.news("--plotxy--")
 xu.news("")
 xu.news("plot weights vs. uvdist")
+"""
 plotxy(vis=xp['msfile'],xaxis='uvdist',yaxis='weight',
        width='all',timebin='0',
        field=xp['source'],
        figfile=xp['msfile']+'.wt_uvdist.png', multicolor='both',
-       datacolumn='corrected',interactive=False)
+       datacolumn='data',interactive=False)
+"""
+plotms(vis=xp['msfile'],
+       xaxis='uvdist',yaxis='weight',
+       xdatacolumn='data',
+       showmajorgrid=False,
+       plotfile=xp['msfile']+'.wt_uvdist.png',
+       interactive=False,
+       overwrite=True)
 
 xu.news("")
 xu.news("--plotxy--")
 xu.news("")
 xu.news("plot amp vs. uvdist")
+"""
 plotxy(vis=xp['msfile'],xaxis='uvdist',yaxis='amp',
        width='all',timebin='0',
        field=xp['source'],
        figfile=xp['msfile']+'.amp_uvdist.png', multicolor='both',
        datacolumn='corrected',interactive=False)
+"""
+plotms(vis=xp['msfile'],
+       xaxis='uvdist',yaxis='amp',
+       xdatacolumn='corrected',
+       showmajorgrid=False,
+       plotfile=xp['msfile']+'.amp_uvdist.png',
+       interactive=False,
+       overwrite=True)
 
 xu.news("")
 xu.news("--plotxy--")
 xu.news("")
 xu.news("plot amp vs. time")
+"""
 plotxy(vis=xp['msfile'],xaxis='time',yaxis='amp',
        width='all',timebin='0',
        field=xp['source'],
        figfile=xp['msfile']+'.amp_time.png', multicolor='both',
        datacolumn='corrected',interactive=False)
-
+"""
+plotms(vis=xp['msfile'],
+       xaxis='time',yaxis='amp',
+       xdatacolumn='corrected',
+       showmajorgrid=False,
+       plotfile=xp['msfile']+'.amp_time.png',
+       interactive=False,
+       overwrite=True)
 xu.news("")
 xu.news("--plotxy--")
 xu.news("")
 xu.news("plot amp vs. freq")
+"""
 plotxy(vis=xp['msfile'],xaxis='frequency',yaxis='amp',
        width='',timebin='all',crossscans=True,
        field=xp['source'],restfreq=xp['restfreq'],frame=xp['outframe'],
        figfile=xp['msfile']+'.amp_freq.png', multicolor='both',
        datacolumn='corrected',interactive=False)
-
+"""
+plotms(vis=xp['msfile'],
+       xaxis='frequency',yaxis='amp',
+       xdatacolumn='corrected',
+       showmajorgrid=False,
+       transform=True,
+       field=xp['source'],restfreq=xp['restfreq'],freqframe=xp['outframe'],
+       plotfile=xp['msfile']+'.amp_freq.png',
+       interactive=False,
+       overwrite=True)
 #----------------------------------------------------------------------------------------
 #   End Statement
 #----------------------------------------------------------------------------------------

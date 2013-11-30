@@ -886,6 +886,7 @@ def copyweight(srcfile,
         wts=tb.getcol('WEIGHT_SPECTRUM')
         wtsc=np.average(wts,axis=-2)
         tb.putcol('WEIGHT',wtsc)
+        tb.putcol('SIGMA',(1.0/wtsc)**0.5)
         tb.close()
     else:
         tb.open(srcfile,nomodify=False)
@@ -897,6 +898,7 @@ def copyweight(srcfile,
         tb.close()
 
 def scalewt(srcfile,
+            field='',
             uvrange='',
             fitspw='',
             datacolumn='corrected',
@@ -932,7 +934,9 @@ def scalewt(srcfile,
     tbwt_old=myms.getdata(['weight','sigma'])
     myms.close() 
     tb.open(srcfile,nomodify=True)
-    tswt_old=tb.getcol('WEIGHT_SPECTRUM')
+    wts_exist=tb.iscelldefined('WEIGHT_SPECTRUM',0)
+    if  wts_exist==True:
+        tswt_old=tb.getcol('WEIGHT_SPECTRUM')
     tb.close()
     
     # COPY WEIGHT TO WEIGHT_SPECTRUM TEMPORARILY
@@ -953,6 +957,7 @@ def scalewt(srcfile,
                      spw='')
     """
     stwt_old=visstat(vis=srcfile,
+                     field=field,
                      axis='weight_spectrum',
                      uvrange=uvrange,
                      useflags=True,
@@ -963,7 +968,7 @@ def scalewt(srcfile,
     news("Use statwt to recalculate the WEIGHT & SIGMA columns:")
     news("")
     statwt(vis=srcfile,fitspw=fitspw,
-           field='',combine='',
+           field=field,combine='',
            datacolumn=datacolumn,dorms=False)
     
     # COPY WEIGHT TO WEIGHT_SPECTRUM TEMPORARILY
@@ -983,6 +988,7 @@ def scalewt(srcfile,
                      spw='')
     """
     stwt_new=visstat(vis=srcfile,
+                     field=field,
                      axis='weight_spectrum',
                      uvrange=uvrange,
                      useflags=True,
@@ -1018,7 +1024,10 @@ def scalewt(srcfile,
     myms.putdata(tbwt_old)
     myms.close()
     tb.open(srcfile,nomodify=False)
-    tb.putcol('WEIGHT_SPECTRUM',tswt_old)
+    if  wts_exist==True:
+        tb.putcol('WEIGHT_SPECTRUM',tswt_old)
+    else:
+        copyweight(srcfile)
     tb.close() 
     
     return sf
@@ -1106,17 +1115,16 @@ def findoutliers(data,
     inrange=(np.where(outliers==False))[0]
     if  inrange.size!=0:
         subdata=data[inrange]
-        d=np.abs(subdata-np.median(subdata))
+        med=np.median(subdata)
+        d=np.abs(subdata-med)
         mdev=np.median(d)
         s=d/mdev if mdev else 0
+        news("median,medabsdevmed,threshold:"+str([med,mdev,m]))
         flag=np.where(s>m)[0]
         if  flag.size!=0:
             outliers[inrange[flag]]=True
+    print "outliers percent: "+str(np.count_nozero(outliers)*1.0/outliers.size)+" %"
     return outliers
-
-    os.system('rm -rf test.scal')
-os.system('cp -rf n0772b13a.scal test.scal')
-caltable='test.scal'
 
 
 def flagtsys(caltable='',
@@ -1146,8 +1154,9 @@ def flagtsys(caltable='',
             list=np.where(np.logical_and(spwids==spw,antids==ant))[0]
             nc=var.shape[0]/2
             for pick in range(nc):
+                news("antenna,spw,corr"+str([ant,spw,pick]))
                 tsys=var[pick*2+1,0,list]
-                tag=np.where(findoutliers(tsys,range=tsysrange)==True)
+                tag=np.where(findoutliers(tsys,m=10,range=tsysrange)==True)
                 flag[:,:,list[tag]]=True
                 
     tb.putcol('FLAG',flag)

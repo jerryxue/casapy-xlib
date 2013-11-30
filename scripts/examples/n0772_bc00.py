@@ -20,13 +20,19 @@ xp['flagselect']        = [ "antenna='VA07'","antenna='VA17'",
                             "uvrange='<1700lambda' field='0202+149'",
                             "antenna='VA16' timerange='18:38:10~18:38:20'",
                             "antenna='VA16' timerange='18:39:40~18:39:50'"]
+xp['flagselect_default']=[]     # mode='shadow' doesn't work with B1960 in v4.2
 
 # CONSOLIDATING
+xp['spwrgd']            =''
+xp['scalewt']           =True
+xp['uvcs']              =True
+xp['fitspw']            ='0:3~14;47~55'
+xp['fitorder']          =1
 xp['spwrgd']            ='spw'
+xp['scalewt']           =True
 xp['uvcs']              =True
 xp['fitspw']            ='*:0~5;33~38'
 xp['fitorder']          =1
-xp['flagselect_default']=[]     # mode='shadow' doesn't work with B1960 in v4.2
 
 # IMAGING
 xp['cleanspec']         =True
@@ -38,13 +44,13 @@ xp['cell']              ='6.0arcsec'
 xp['cleanmode']        ='velocity'
 xp['clean_start']       ='2050.0km/s'
 xp['clean_width']       ='20.8km/s'
-xp['clean_nchan']       =39
+# evla tracks have nchan=39 to avoid spws with different corrs merging into one.
+xp['clean_nchan']       =40
 xp['phasecenter']      ='J2000 01h59m19.58 +19d00m27.10'
 
 # RUN SCRIPTS:
 #execfile(xlib+'ximport.py')
 #execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
-#xu.checkstatwt(xp['prefix']+'.src.ms',fitspw=xp['fitspw'])
-execfile(xlib+'xclean.py')
+#execfile(xlib+'xclean.py')
 

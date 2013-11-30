@@ -28,7 +28,13 @@ xp['flagselect']        = [ "timerange='16:06:40~17:29:15'",
                             "antenna='VA19&VA26'"]
 
 # CONSOLIDATING
+xp['spwrgd']            =''
+xp['scalewt']           =True
+xp['uvcs']              =True
+xp['fitspw']            ='0:6~31;95~109'
+xp['fitorder']          =1
 xp['spwrgd']            ='spw'
+xp['scalewt']           =True
 xp['uvcs']              =True
 xp['fitspw']            ='*:0~5;33~38'
 xp['fitorder']          =1
@@ -43,14 +49,15 @@ xp['cell']              ='12.0arcsec'
 xp['cleanmode']        ='velocity'
 xp['clean_start']       ='2050.0km/s'
 xp['clean_width']       ='20.8km/s'
-xp['clean_nchan']       =39
+# evla tracks have nchan=39 to avoid spws with different corrs merging into one.
+xp['clean_nchan']       =40
 xp['phasecenter']      ='J2000 01h59m19.58 +19d00m27.10'
+xp['niter']             =0
 
 # RUN SCRIPTS:
-#execfile(xlib+'ximport.py')
-#execfile(xlib+'xcal.py')
+execfile(xlib+'ximport.py')
+execfile(xlib+'xcal.py')
 #execfile(xlib+'xcalplot.py')
 execfile(xlib+'xconsol.py')
-#xu.checkstatwt(xp['prefix']+'.src.ms',fitspw=xp['fitspw'])
 execfile(xlib+'xclean.py')
 

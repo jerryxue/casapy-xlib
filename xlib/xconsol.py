@@ -159,12 +159,20 @@ if  len(xp['prefix_comb'])==1:
     
     if  xp['scalewt_fitspw']=='':
         xp['scalewt_fitspw']=xp['fitspw']
+    # note:  channel regridding will change
+    #        the noise level (sometimes interp='nearest'
+    #        or 'linear' will make a difference depending)
     xu.scalewt(xp['srcfile'],
                uvrange=xp['scalewt_uvrange'],
                fitspw=xp['scalewt_fitspw'],
                datacolumn='data',
                modify=xp['scalewt'])
-    
+    # note:  below lines can help to check weight/noise in
+    #        calibrated MS before split.
+    #xu.scalewt(xp['srcfile'],
+    #           field=xp['source'],
+    #           datacolumn='corrected',
+    #           fitspw=xp['scalewt_fitspw'])
     if  xp['uvcs']==True:
            
         xu.news("")

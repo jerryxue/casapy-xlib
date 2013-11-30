@@ -490,7 +490,7 @@ if  2*len(spwid_fluxcal)==len(spwid_passcal):
 else:
     gaintable[-1]=xp['prefix'] + '.bcal'
 spwmap=[[]]*len(gaintable)
-interp[-1]='nearest,nearest'
+interp[-1]='nearest,linear'
 
 for j in range(0,len(spwid_source)):
     

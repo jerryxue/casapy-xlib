@@ -6,7 +6,7 @@ xp['rawfiles']          ='/Volumes/Scratch/reduc/evla/n0772/13B-363.sb24382374.e
 xp['importspw']         ='2,12'
 xp['importscan']        ='2~15'
 xp['importmode']        ='ms'
-xp['importwidth']       =['8','8']
+xp['importchanbin']     =8
 
 # CALIBRATION
 xp['source']            ='NGC0772'
@@ -23,9 +23,11 @@ xp['flagselect']        =["antenna='ea08' spw='*:16'",
                           "antenna='ea25' spw='*:16'",
                           "antenna='ea26' spw='*:16'",
                           "antenna='ea28' spw='*:16'"]
+xp['flagtsys_range']    =[5.0,200.0]
 
 # CONSOLIDATING
 xp['spwrgd']            ='spw'
+xp['scalewt']           =True
 xp['uvcs']              =True
 xp['fitspw']            ='*:0~5;33~38'
 xp['fitorder']          =1
@@ -42,9 +44,11 @@ xp['clean_start']       ='2050.0km/s'
 xp['clean_width']       ='20.8km/s'
 xp['clean_nchan']       =39
 xp['phasecenter']      ='J2000 01h59m19.58 +19d00m27.10'
+xp['niter']             =0
 
 # RUN SCRIPTS:
 #execfile(xlib+'ximport.py')
 #execfile(xlib+'xcal.py')
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
+execfile(xlib+'xcalplot.py')
+#execfile(xlib+'xconsol.py')
+#execfile(xlib+'xclean.py')
