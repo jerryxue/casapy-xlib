@@ -44,6 +44,6 @@ xp['niter']             =0
 # RUN SCRIPTS:
 execfile(xlib+'ximport.py')
 execfile(xlib+'xcal.py')
-#execfile(xlib+'xcalplot.py')
+execfile(xlib+'xcalplot.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

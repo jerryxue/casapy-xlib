@@ -47,8 +47,8 @@ xp['phasecenter']      ='J2000 01h59m19.58 +19d00m27.10'
 xp['niter']             =0
 
 # RUN SCRIPTS:
-#execfile(xlib+'ximport.py')
-#execfile(xlib+'xcal.py')
+execfile(xlib+'ximport.py')
+execfile(xlib+'xcal.py')
 execfile(xlib+'xcalplot.py')
-#execfile(xlib+'xconsol.py')
-#execfile(xlib+'xclean.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')
