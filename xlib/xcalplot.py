@@ -123,6 +123,8 @@ if  os.path.exists(xp['prefix']+'.bcal_comb'):
     xu.xplotcal(xp['prefix']+'.bcal_comb',iterant=False,extenv=extenv)
 if  os.path.exists(xp['prefix']+'.fcal'):
     xu.xplotcal(xp['prefix']+'.fcal',iterant=False,extenv=extenv)
+
+
 if  os.path.exists(xp['prefix']+'.scal'):
     xu.xplotcal(xp['prefix']+'.scal',iterant=False,extenv=extenv)
 if  os.path.exists(xp['prefix']+'.scal.origin'):

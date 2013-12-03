@@ -155,7 +155,7 @@ if  xp['imagermode']==None:
     nfield=len(tb.getcol('NAME'))
     tb.close()
     if  nfield>1:
-        xp['imagermode'] = 'mosaic'    
+        xp['imagermode']='mosaic'
     hetero=False
     xu.news("")
     xu.news("nfield: "+str(nfield))

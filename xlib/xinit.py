@@ -46,7 +46,8 @@ xp={
 'flagspw':'',
 'flagreset':True,
 'flagtest':False,
-'flagselect_default':["mode='shadow'"],
+
+'flagselect_default':["mode='shadow'"], # VLA archival data already have shadow flagging
 
 # BASELINE
 'bcant':'',
@@ -92,7 +93,7 @@ xp={
                 #
                 #    
                 #  
-
+'combinespws':True,
 # CONTINUE SUBTRACTION
 'fitspw':'',
 'fitchans':'',

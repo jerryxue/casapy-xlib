@@ -98,12 +98,19 @@ if  len(xp['prefix_comb'])==1:
     xu.news("")
     
 
+    tb.open(xp['msfile'])
+    if  'CORRECTED_DATA' in tb.colnames():
+        datacolumn='corrected'
+    else:
+        datacolumn='data'
+    tb.close()
 
     if  xp['spwrgd']!='spw':
         if  xp['spwrgd']=='':
             spwrgd=False
         if  xp['spwrgd']=='frame':
             spwrgd=True
+
         mstransform(vis=xp['msfile'],
                     outputvis=xp['srcfile'],
                     createmms=False,
@@ -111,7 +118,7 @@ if  len(xp['prefix_comb'])==1:
                     field=xp['source'],
                     spw='',
                     useweights='flags',#spectrum
-                    datacolumn= "corrected",
+                    datacolumn=datacolumn,
                     chanaverage=False,
                     regridms=spwrgd,
                     combinespws=False,
@@ -123,21 +130,21 @@ if  len(xp['prefix_comb'])==1:
                     interpolation=xp['spinterpmode'],
                     outframe=xp['outframe'],
                     restfreq=xp['restfreq'],
-                    phasecenter='',
                     hanning=xp['hs'])
     else:
         mstransform(vis=xp['msfile'],
                     outputvis=xp['srcfile'],
                     createmms=False,
+                    numsubms=4,
                     separationaxis='both',
                     field=xp['source'],
                     spw='',
                     useweights='spectrum',#spectrum
-                    datacolumn= "corrected",
-                    chanaverage=True,
+                    datacolumn=datacolumn,
+                    chanaverage=False,
                     chanbin=1,
                     regridms=True,
-                    combinespws=True,
+                    combinespws=xp['combinespws'],
                     mode=xp['cleanmode'],
                     nchan=xp['clean_nchan'],
                     start=xp['clean_start'],
@@ -146,7 +153,7 @@ if  len(xp['prefix_comb'])==1:
                     interpolation=xp['spinterpmode'],
                     outframe=xp['outframe'],
                     restfreq=xp['restfreq'],
-                    phasecenter='',
+                    phasecenter='', #xp['phasecenter'],
                     hanning=xp['hs'])
     
     #  COPY WEIGHT_SPECTRUM TO WEIGHT

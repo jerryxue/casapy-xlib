@@ -1123,7 +1123,7 @@ def findoutliers(data,
         flag=np.where(s>m)[0]
         if  flag.size!=0:
             outliers[inrange[flag]]=True
-    print "outliers percent: "+str(np.count_nozero(outliers)*1.0/outliers.size)+" %"
+    news("outliers percent: "+str(np.mean(outliers)*100.0)+" %")
     return outliers
 
 
@@ -1178,89 +1178,95 @@ def xplotcal(tbfile,iterant=False,
     tbtype=tb.getkeyword('VisCal')
     tb.close()
     
-    if  amprange=='':
-        if  tbtype=='B Jones':
-            amprange=[-1,-1,0.2,1.4]
-        if  tbtype=='G Jones':
-            amprange=[-1,-1,-1,-1]
-    if  pharange=='':
-        if  tbtype=='B Jones':
-            pharange=[-1,-1,-20,20]
-        if  tbtype=='G Jones':
-            pharange=[-1,-1,-180,180]
-    if  tsysrange==[]:
-        if  tbtype=='G EVLASWPOW':
-            tsysrange=[]
-    if  spgrange==[]:
-        if  tbtype=='G EVLASWPOW':
-            spgrange=[]
     
-    tb.open(tbfile+'/ANTENNA')
-    ant_name=tb.getcol('NAME')
-    ant_stat=tb.getcol('STATION')
-    ant_code=range(0,len(tb.getcol('NAME')))
-    tb.close()
-    
-    tb.open(tbfile)
-    spw_name=np.unique(tb.getcol('SPECTRAL_WINDOW_ID'))
-    spw_name=sorted(list(set(spw_name)))
-    spw_name=[str(i) for i in spw_name]
-    tb.close()
-    
-    news("")
-    news("Antenna Name:   "+str(ant_name))
-    news("SPW     Name:   "+str(spw_name))
-    news("")
-    
-    if  iterant==False:
-        ant_name=['']
-        ant_stat=['all']
-        ant_code=['all']
-    
-    merge_pdf='gs -sDEVICE=pdfwrite -sOutputFile='+tbfile+'.antall.pdf'
-    merge_pdf=merge_pdf+' -dNOPAUSE -dBATCH'
-    all_pdf=''
-    
-    for i in range(0,len(ant_name)):
-        one_pdf=tbfile+'.ant'+str(ant_code[i])+'.pdf'
-        if  len(ant_name)==1:
-            one_pdf=tbfile+'.ant'+str(ant_code[i])+'.png'
-        ant_str='Ant'+str(ant_code[i])+'/'+ant_name[i]+'/'+ant_stat[i]
-        if  iterant==False:
-            ant_str='All Ants'
-        for j in range(0,len(spw_name)):
-            for k in range(0,2):
-                figfile_loop=['','']
-                if  j==len(spw_name)-1 and k==1:
-                    figfile_loop[1]=one_pdf
-                if  tbtype=='G Jones' or tbtype=='B Jones':
-                    yaxis_loop=['amp','phase']
-                    plotrange_loop=[amprange,pharange]
-                if  tbtype=='G EVLASWPOW':
-                    yaxis_loop=['tsys','spgain']
-                    plotrange_loop=[tsysrange,spgrange]
-                plotcal(caltable=tbfile,
-                    antenna=ant_name[i],
-                    field='',
-                    plotsymbol='o',
-                    plotcolor='blue',
-                    markersize=5.0,
-                    fontsize=10.0,
-                    showgui = False,
-                    spw=spw_name[j],
-                    plotrange=plotrange_loop[k],
-                    subplot=2*100+len(spw_name)*10+1+j+k*len(spw_name),
-                    yaxis=yaxis_loop[k],
-                    figfile=figfile_loop[k])
-                if  k==0:
-                    subtitle='Solution: '+ant_str+' SpwID '+str(spw_name[j])
-                    plt.title(subtitle,fontsize=10)
-        merge_pdf=merge_pdf+' '+one_pdf
-        all_pdf=all_pdf+' '+one_pdf
+    if  tbtype=='B Jones' or \
+        tbtype=='G Jones' or \
+        tbtype=='G EVLASWPOW' :
+        if  amprange=='':
+            if  tbtype=='B Jones':
+                amprange=[-1,-1,0.2,1.4]
+            if  tbtype=='G Jones':
+                amprange=[-1,-1,-1,-1]
+        if  pharange=='':
+            if  tbtype=='B Jones':
+                pharange=[-1,-1,-20,20]
+            if  tbtype=='G Jones':
+                pharange=[-1,-1,-180,180]
+        if  tsysrange==[]:
+            if  tbtype=='G EVLASWPOW':
+                tsysrange=[]
+        if  spgrange==[]:
+            if  tbtype=='G EVLASWPOW':
+                spgrange=[]
         
-    if  iterant==True:
-        p=subprocess.Popen(merge_pdf,shell=True,env=extenv,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        output = p.stdout.read()
-        os.system('rm '+all_pdf)
-
+        tb.open(tbfile+'/ANTENNA')
+        ant_name=tb.getcol('NAME')
+        ant_stat=tb.getcol('STATION')
+        ant_code=range(0,len(tb.getcol('NAME')))
+        tb.close()
+        
+        tb.open(tbfile)
+        spw_name=np.unique(tb.getcol('SPECTRAL_WINDOW_ID'))
+        spw_name=sorted(list(set(spw_name)))
+        spw_name=[str(i) for i in spw_name]
+        tb.close()
+        
+        news("")
+        news("Antenna Name:   "+str(ant_name))
+        news("SPW     Name:   "+str(spw_name))
+        news("")
+        
+        if  iterant==False:
+            ant_name=['']
+            ant_stat=['all']
+            ant_code=['all']
+        
+        merge_pdf='gs -sDEVICE=pdfwrite -sOutputFile='+tbfile+'.antall.pdf'
+        merge_pdf=merge_pdf+' -dNOPAUSE -dBATCH'
+        all_pdf=''
+        
+        for i in range(0,len(ant_name)):
+            one_pdf=tbfile+'.ant'+str(ant_code[i])+'.pdf'
+            if  len(ant_name)==1:
+                one_pdf=tbfile+'.ant'+str(ant_code[i])+'.png'
+            ant_str='Ant'+str(ant_code[i])+'/'+ant_name[i]+'/'+ant_stat[i]
+            if  iterant==False:
+                ant_str='All Ants'
+            for j in range(0,len(spw_name)):
+                for k in range(0,2):
+                    figfile_loop=['','']
+                    if  j==len(spw_name)-1 and k==1:
+                        figfile_loop[1]=one_pdf
+                    if  tbtype=='G Jones' or tbtype=='B Jones':
+                        yaxis_loop=['amp','phase']
+                        plotrange_loop=[amprange,pharange]
+                    if  tbtype=='G EVLASWPOW':
+                        yaxis_loop=['tsys','spgain']
+                        plotrange_loop=[tsysrange,spgrange]
+                    plotcal(caltable=tbfile,
+                        antenna=ant_name[i],
+                        field='',
+                        plotsymbol='o',
+                        plotcolor='blue',
+                        markersize=5.0,
+                        fontsize=10.0,
+                        showgui = False,
+                        spw=spw_name[j],
+                        plotrange=plotrange_loop[k],
+                        subplot=2*100+len(spw_name)*10+1+j+k*len(spw_name),
+                        yaxis=yaxis_loop[k],
+                        figfile=figfile_loop[k])
+                    if  k==0:
+                        subtitle='Solution: '+ant_str+' SpwID '+str(spw_name[j])
+                        plt.title(subtitle,fontsize=10)
+            merge_pdf=merge_pdf+' '+one_pdf
+            all_pdf=all_pdf+' '+one_pdf
+            
+        if  iterant==True:
+            p=subprocess.Popen(merge_pdf,shell=True,env=extenv,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            output = p.stdout.read()
+            os.system('rm '+all_pdf)
+    
+    else:
+        news("not supported .scal table")
  
