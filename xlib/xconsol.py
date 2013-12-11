@@ -117,7 +117,7 @@ if  len(xp['prefix_comb'])==1:
                     separationaxis='both',
                     field=xp['source'],
                     spw='',
-                    useweights='flags',#spectrum
+                    useweights='spectrum',#spectrum
                     datacolumn=datacolumn,
                     chanaverage=False,
                     regridms=spwrgd,
@@ -130,8 +130,23 @@ if  len(xp['prefix_comb'])==1:
                     interpolation=xp['spinterpmode'],
                     outframe=xp['outframe'],
                     restfreq=xp['restfreq'],
+                    phasecenter=xp['phasecenter'],
                     hanning=xp['hs'])
     else:
+        """
+        tb.open(xp['msfile'],nomodify=False)
+        flag=tb.getcol('FLAG')
+        wts=tb.getcol('WEIGHT_SPECTRUM')
+        wts=wts*(1.0-flag*1.0)
+        tb.putcol('WEIGHT_SPECTRUM',wts)
+        tb.close()
+        """
+        if  xp['chanbin']==0:
+            chanaverage=False
+            chanbin=1
+        if  xp['chanbin']!=0:
+            chanaverage=True
+            chanbin=xp['chanbin']
         mstransform(vis=xp['msfile'],
                     outputvis=xp['srcfile'],
                     createmms=False,
@@ -141,8 +156,8 @@ if  len(xp['prefix_comb'])==1:
                     spw='',
                     useweights='spectrum',#spectrum
                     datacolumn=datacolumn,
-                    chanaverage=False,
-                    chanbin=1,
+                    chanaverage=chanaverage,
+                    chanbin=chanbin,
                     regridms=True,
                     combinespws=xp['combinespws'],
                     mode=xp['cleanmode'],
@@ -153,12 +168,28 @@ if  len(xp['prefix_comb'])==1:
                     interpolation=xp['spinterpmode'],
                     outframe=xp['outframe'],
                     restfreq=xp['restfreq'],
-                    phasecenter='', #xp['phasecenter'],
+                    phasecenter='',
                     hanning=xp['hs'])
-    
+        xu.news("")
+        xu.news("checking flagging consistency among channels:")
+        xu.news("")
+        xu.checkchflag(xp['srcfile'])
+        
     #  COPY WEIGHT_SPECTRUM TO WEIGHT
+    if  xp['unchflag']==True:
+        xu.unchflag(xp['srcfile'])
     xu.copyweight(xp['srcfile'],copyback=True)
     
+    #  Note:
+    #
+    #  mstransform() accumulates weight_spectrum from each spw
+    #  and fill them into the final weight_spectrum using the gridding function. 
+    #  However it doesn't address the scaling due to the channel width change.
+    #  WEIGHT/SIGMA are copied from the first spw of each visibility record
+    #  it encounters, so the values are not a result of averaging/summing
+    #  weight from different spws.
+    #
+
     xu.news("")
     xu.news("--check split data & weight--")
     xu.news("")

@@ -82,6 +82,8 @@ def importmir(mirfile='',
             ")' out="+fitspre+cmd
         
         os.system('rm -rf '+fitspre)
+        news('',origin='miriad')
+        news(cmd,origin='miriad')
         tmp=os.popen(mirbin+cmd).read()
         news(tmp,origin='miriad')
         
@@ -106,7 +108,8 @@ def importmir(mirfile='',
     news("")
     
     os.system('rm -rf '+vis)
-    concat(vis=win_combine,concatvis=vis,freqtol='',dirtol='',timesort=True)
+    concat(vis=win_combine,concatvis=vis,\
+           freqtol='',dirtol='',timesort=True)
     for tmp in win_combine:
         os.system('rm -rf '+tmp+'*')
     
@@ -897,6 +900,57 @@ def copyweight(srcfile,
         tb.putcol('WEIGHT_SPECTRUM',wts)
         tb.close()
 
+def checkchflag(msfile):
+    #
+    #    check flag consistancy in channel
+    #    currently only handle the single spw case
+    #    
+    #    note: miriad/invert slop=1,zero could include
+    #          partionally flagged vis records into imaging
+    #          In CASA, we can unlflag and zero-out such data
+    #          to have a similar treatment:
+    #          http://www.atnf.csiro.au/computing/software/miriad/userguide/node144.html)
+    #  
+    tb.open(msfile)
+    flag=tb.getcol('FLAG')
+    shape=flag.shape
+    news(msfile+' '+str(shape))
+    for i in range(0,shape[0]):
+        
+        flag0=flag[[i],:,:] # this will make a copy 
+        flag0=flag0[0,:,:]  # otehrwise .view will not work
+                            # flag0.strides
+        flag0=flag0.view(','.join(shape[1]* ['i1']))
+        unique_vals,indicies=np.unique(flag0, return_inverse=True)
+        counts = np.bincount(indicies)
+        news("poln: "+str(i)+' type: '+str(len(counts)))
+        for j in range(0,len(counts)):
+            u=str(unique_vals[j])
+            u=u.translate(None, '(), ')
+            news(u+' '+str(counts[j])+'/'+str(shape[-1]))
+    news("")
+    tb.close()
+
+def unchflag(msfile):
+    #
+    #  cleanup flagging glitch near spw edges from mstransform() 
+    #  this will make sure a consistant flagging and psf cross different
+    #  channels (only use it when you believe mstransform flags more
+    #  spw edge channels than it should do during spw regridding)
+    #  It will have similar effects as miriad/invert slop=1,zero
+    #
+    tb.open(msfile,nomodify=False)
+    flag=tb.getcol('FLAG')
+    shape=flag.shape
+    news(msfile+' '+str(shape))
+    for i in range(0,shape[0]):
+        for j in range(0,shape[-1]):
+            flag0=np.sum(flag[i,:,j])
+            if  flag0!=0 and flag0!=shape[-1]:
+                flag[i,:,j]=False
+    tb.putcol('FLAG',flag)
+    tb.close()
+    
 def scalewt(srcfile,
             field='',
             uvrange='',
@@ -1005,8 +1059,9 @@ def scalewt(srcfile,
     news("")
     news("*"*10)
     news("median(wt) before statwt():  "+str(medianwt_old))
-    news("median(wt) after  statwt():   "+str(medianwt_new))
-    news("scaling factor:            "+str(sf))
+    news("median(wt) after  statwt():  "+str(medianwt_new))
+    news("scaling factor:              "+str(sf))
+    news("based on spw selection:      "+str(fitspw))
     news("*"*10)
     news("")
     

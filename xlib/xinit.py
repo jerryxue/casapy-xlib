@@ -94,6 +94,7 @@ xp={
                 #    
                 #  
 'combinespws':True,
+'chanbin':0,
 # CONTINUE SUBTRACTION
 'fitspw':'',
 'fitchans':'',
@@ -106,6 +107,8 @@ xp={
 'scalewt_fitspw':'',
 'scalewt_uvrange':'',
 'hs':False,
+'unchflag':False, # unflagged records with several channel flagged
+                  # so each channel has the same flagging 
 
 # CLEANing
 'restorbeam':[''],
