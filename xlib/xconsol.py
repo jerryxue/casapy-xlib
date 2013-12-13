@@ -141,35 +141,60 @@ if  len(xp['prefix_comb'])==1:
         tb.putcol('WEIGHT_SPECTRUM',wts)
         tb.close()
         """
-        if  xp['chanbin']==0:
-            chanaverage=False
-            chanbin=1
-        if  xp['chanbin']!=0:
-            chanaverage=True
-            chanbin=xp['chanbin']
-        mstransform(vis=xp['msfile'],
-                    outputvis=xp['srcfile'],
-                    createmms=False,
-                    numsubms=4,
-                    separationaxis='both',
-                    field=xp['source'],
-                    spw='',
-                    useweights='spectrum',#spectrum
-                    datacolumn=datacolumn,
-                    chanaverage=chanaverage,
-                    chanbin=chanbin,
-                    regridms=True,
-                    combinespws=xp['combinespws'],
-                    mode=xp['cleanmode'],
-                    nchan=xp['clean_nchan'],
-                    start=xp['clean_start'],
-                    width=xp['clean_width'],
-                    nspw=0,
-                    interpolation=xp['spinterpmode'],
-                    outframe=xp['outframe'],
-                    restfreq=xp['restfreq'],
-                    phasecenter='',
-                    hanning=xp['hs'])
+        ####
+        #   use cvel() when corrected column doesn't exist, and
+        #   its behaviour is more predictable.
+        #
+        #   mstransform() might drop extra edge channels in some ocassions
+        #### 
+        if  datacolumn=='corrected':
+            if  xp['chanbin']==0:
+                chanaverage=False
+                chanbin=1
+            if  xp['chanbin']!=0:
+                chanaverage=True
+                chanbin=xp['chanbin']
+            mstransform(vis=xp['msfile'],
+                        outputvis=xp['srcfile'],
+                        createmms=False,
+                        numsubms=4,
+                        separationaxis='both',
+                        field=xp['source'],
+                        spw='',
+                        useweights='spectrum',#spectrum
+                        datacolumn=datacolumn,
+                        chanaverage=chanaverage,
+                        chanbin=chanbin,
+                        regridms=True,
+                        combinespws=xp['combinespws'],
+                        mode=xp['cleanmode'],
+                        nchan=xp['clean_nchan'],
+                        start=xp['clean_start'],
+                        width=xp['clean_width'],
+                        nspw=0,
+                        interpolation=xp['spinterpmode'],
+                        outframe=xp['outframe'],
+                        restfreq=xp['restfreq'],
+                        phasecenter='',
+                        hanning=xp['hs'])
+        else:
+            cvel(vis=xp['msfile'],
+                outputvis=xp['srcfile'],
+                passall=False,
+                field=xp['source'],
+                spw='',
+                selectdata=True,
+                mode=xp['cleanmode'],
+                nchan=xp['clean_nchan'],
+                start=xp['clean_start'],
+                width=xp['clean_width'],
+                interpolation=xp['spinterpmode'],
+                outframe=xp['outframe'],
+                restfreq=xp['restfreq'],
+                veltype='radio',
+                phasecenter='',
+                hanning=xp['hs'])
+
         xu.news("")
         xu.news("checking flagging consistency among channels:")
         xu.news("")

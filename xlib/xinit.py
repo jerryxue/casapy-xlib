@@ -158,7 +158,25 @@ xp={
 'wrobust':0.5,
 'gridmode':'aprojection',
 'cleanmode':'',
-'mweight':False,
+# 
+# MOSWEIGHT determines whether to calculate the gridding weights for each field independently
+# or together, so mosweight doesn't matter for natural weighting.
+#
+# mosweight=True will produce an image optimzed local SNR, but sacrafy the uniformity 
+# of noise and psf across the whole mosaicing pattern. Usually it will produced a slight larger
+# beam. Since a global UV sampling density function doesn't make much sense when combing
+# multiple tracks with several pointing because the phase-shifting from different point 
+# will reduce local sensitiviy by bluring phase information.  
+# 
+# mosweight=True is closer to MIRAID's linear-mosaicing approach becaue each pointig are
+# inverted independently (less phase bluring). 
+# Although the primary pattern & the weight for each pointing (from integration time) are still embeded in the
+# the basic weight and the additional PB pattern convolved during UV gridding.
+#
+# If the UV coverage is very different, it might doesn't much difference.
+#
+'mosweight':True, 
+
 'psfmode':'clark',
 'fitpsf':False,
 'negcomponent':-1,

@@ -88,7 +88,7 @@
 #       cleancont|False     MFS Imaging for the continuum data
 #       cleanspec|True      channel by channel imaging for the spectral line data
 #
-#       mweight|False       mosweight=True to better deal with few fields+ different
+#       mosweight|False     mosweight=True to better deal with few fields+ different
 #                           nosie level case in the archival data#
 #
 #   HISTORY
@@ -295,7 +295,7 @@ for i in range(0,len(vis_loop)):
           outframe=xp['outframe'],
           restfreq=xp['restfreq'],
           scaletype='SAULT',
-          mosweight=xp['mweight'],
+          mosweight=xp['mosweight'],
           minpb=xp['minpb'],
           pbcor=False,
           uvtaper=True,

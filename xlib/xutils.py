@@ -11,11 +11,13 @@ import subprocess
 import smtplib
 import scipy.constants as sci_const
 import matplotlib.pyplot as plt
+import pyfits
 
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 from email import Encoders
+
 
 
 def importmir(mirfile='',
@@ -160,11 +162,17 @@ def importmir(mirfile='',
     for j in range(len(ref_freq)):
         chan_velo=sci_const.c*(rest_freq[j]-ref_freq[j])/rest_freq[j]/1000.
         news(" spw"+str(j)+": "+str(chan_velo))
-    news("")
     news("spw starting velocity [km/s] in MIRIAD/uvlist:")
     news("...rounded numbers...")
     for j in range(len(uvlist_dict['starting velocity'])):
         news(" spw"+str(j)+": "+str(uvlist_dict['starting velocity'][j]))
+    news("note: starting frequency in the uvlist log is:")
+    news("      the sky frequency (sfreq) from the first vis record")
+    #+
+    # UVFITS doesn't have a time-dependent sky freqency
+    # importuvfits() recompute the rest frequency (time-independent if doppler track)
+    # using this "starting or sky frequency" in UVFITS.
+    #-
     news("")    
     
     news("")
@@ -887,9 +895,11 @@ def copyweight(srcfile,
         tb.open(srcfile,nomodify=False)
         wt=tb.getcol('WEIGHT')
         wts=tb.getcol('WEIGHT_SPECTRUM')
-        wtsc=np.average(wts,axis=-2)
+        flag=tb.getcol('FLAG')
+        wtsc=np.average(wts,axis=-2,weights=1.0-flag)
         tb.putcol('WEIGHT',wtsc)
-        tb.putcol('SIGMA',(1.0/wtsc)**0.5)
+        sigma=np.select([wtsc!=0,wtsc==0],[(1.0/wtsc)**0.5,-1])
+        tb.putcol('SIGMA',sigma)
         tb.close()
     else:
         tb.open(srcfile,nomodify=False)
