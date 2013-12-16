@@ -896,9 +896,10 @@ def copyweight(srcfile,
         wt=tb.getcol('WEIGHT')
         wts=tb.getcol('WEIGHT_SPECTRUM')
         flag=tb.getcol('FLAG')
-        wtsc=np.average(wts,axis=-2,weights=1.0-flag)
+        wtsc=np.ma.average(wts,axis=-2,weights=1.0-flag)*1.0
         tb.putcol('WEIGHT',wtsc)
-        sigma=np.select([wtsc!=0,wtsc==0],[(1.0/wtsc)**0.5,-1])
+        sigma=np.where(wtsc>0.0,wtsc**0.5,-1.0)
+        sigma=1.0/sigma
         tb.putcol('SIGMA',sigma)
         tb.close()
     else:
@@ -1080,7 +1081,10 @@ def scalewt(srcfile,
         news("WEIGHT/SIGMA are modified")
         tbwt_old['weight']=tbwt_old['weight']*sf
         tswt_old=tswt_old*sf
-        tbwt_old['sigma']=tbwt_old['sigma']/(sf**0.5)
+        if  sf>0.0:
+            tbwt_old['sigma']=tbwt_old['sigma']/(sf**0.5)
+        if  sf==0.0:
+            tbwt_old['sigma']=tbwt_old['sigma']*0.0-1.0
     else:
         news("WEIGHT/SIGMA are not modified. This is a test run")
     myms=mstool()
@@ -1334,4 +1338,55 @@ def xplotcal(tbfile,iterant=False,
     
     else:
         news("not supported .scal table")
- 
+
+
+def checkvrange(srcfile='',
+                outframe='',
+                restfreq='',
+                start=0,
+                width=1,
+                field=0,
+                nchan=-1):
+    """
+    examples:
+        srcfile='n3147bc04.ms'
+        outframe='LSRK'
+        restfreq=me.spectralline('HI')['m0']['value']
+        start='2515.0km/s'
+        width='20.8km/s'
+        nchan=26
+        field=2
+    """
+    news("")
+    ms.open(srcfile)    
+    req_freq=ms.cvelfreqs(mode='velocity',
+                          start=start,
+                          width=width,
+                          nchan=nchan,
+                          restfreq=restfreq)
+    tmp1=ms.cvelfreqs(mode='channel',
+                  fieldids=field,
+                  outframe='')
+    tmp2=ms.cvelfreqs(mode='channel',
+                  fieldids=field,
+                  outframe=outframe)
+    ms.close()
+    old2new=tmp2[0]-tmp1[0]
+    req_freq=req_freq-old2new
+    
+    news("")
+    news("requested range (Hz) in orginal frame:")
+    req_del_freq=np.abs(req_freq[0]-req_freq[1])
+    req_low_freq=np.min(req_freq)-req_del_freq/2.0
+    req_hig_freq=np.max(req_freq)+req_del_freq/2.0
+    news([req_low_freq,req_del_freq,req_hig_freq])
+    
+    tb.open(srcfile+'/SPECTRAL_WINDOW')
+    news("available range (Hz) in orginal frame:")
+    chan_freq=tb.getcol('CHAN_FREQ')
+    chan_del_freq=np.average(np.abs(chan_freq[0]-chan_freq[1]))
+    chan_low_freq=np.min(chan_freq)-chan_del_freq/2.0
+    chan_hig_freq=np.max(chan_freq)+chan_del_freq/2.0
+    news([chan_low_freq,chan_del_freq,chan_hig_freq])
+    tb.close()
+    news("")

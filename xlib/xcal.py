@@ -159,7 +159,7 @@ for k in range(len(namelist)):
         isevla=True
     if  namelist[k]=='ALMA':
         isalma=True
-    if  obstime[k][0]>utc2001:
+    if  obstime[0][k]>utc2001:
         isafter2001=True
 if  xp['syscal']=='default':
     xp['syscal']==''
