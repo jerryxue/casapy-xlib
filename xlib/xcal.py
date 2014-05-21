@@ -697,15 +697,28 @@ flagmanager(vis=xp['msfile'],
             comment='Flagging After ApplyCAL',
             merge='replace')
 
+if  xp['flagselect_cal']!=[]:
+    flagcmd(vis=xp['msfile'],
+            inpmode='list',
+            inpfile=xp['flagselect_cal'],
+            savepars=True,
+            outfile=xp['msfile']+'.flagcal.log',        
+            flagbackup=False)
+    flagmanager(vis=xp['msfile'],
+                mode='save',
+                versionname='FlagCal',
+                comment='Flagging After FlagCal',
+                merge='replace')
+
 xu.news("")
 xu.news("list the current flag versions")
 xu.news("")
 flagmanager(vis=xp['msfile'],
-            mode='list',
-            versionname='ApplyCal',
-            comment='Flagging After ApplyCAL',
-            merge='replace')
+            mode='list')
 xu.news("")
+
+
+
 
 #----------------------------------------------------------------------------------------
 #   End Statement
