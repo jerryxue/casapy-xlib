@@ -23,6 +23,7 @@ xp={
 'importmirarray':'CARMA',
 'importmirnocal':False,
 'importtimebin':'0s',
+'importmirline':'',
 
 'starttime':'',       # import starttime
 'stoptime':'',        # import stoptime
@@ -43,11 +44,17 @@ xp={
 
 # FLAGGING
 'flagselect':[],
+'flagselect_cal':[],
 'flagspw':'',
 'flagreset':True,
 'flagtest':False,
 
-'flagselect_default':["mode='shadow'"], # VLA archival data already have shadow flagging
+# by default, importvla & importevla will flag shadowed antennas. 
+# no extra "mode='shadow'" is needed. 
+# "mode='shadow'" will crash flagcmd if source is in B1950...
+'flagselect_default':[], 
+'dirtol':'',
+'freqtol':'',
 
 # BASELINE
 'bcant':'',
@@ -112,7 +119,7 @@ xp={
 
 # CLEANing
 'restorbeam':[''],
-'resmooth':'common',
+'resmooth':True,
 'restorbeam_default':[''],
 'restorbeam_method':'maximum',
 
@@ -121,7 +128,6 @@ xp={
 
 'minpb':0.1,
 'cleanspw':'',
-'iterchan':False,
 'phasecenter':'',
 'spinterpmode':'linear',
 'restfreq':'1420405752.0Hz',
@@ -157,7 +163,7 @@ xp={
 'cleanspec':True,
 'wrobust':0.5,
 'gridmode':'aprojection',
-'cleanmode':'',
+'cleanmode':'channel',
 # 
 # MOSWEIGHT determines whether to calculate the gridding weights for each field independently
 # or together, so mosweight doesn't matter for natural weighting.
@@ -175,7 +181,7 @@ xp={
 #
 # If the UV coverage is very different, it might doesn't much difference.
 #
-'mosweight':True, 
+'mosweight':False, 
 
 'psfmode':'clark',
 'fitpsf':False,
