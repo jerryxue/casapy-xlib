@@ -209,7 +209,7 @@ if  xp['cleanspec']==True:
         cleanmode_loop+=[xp['cleanmode']]
         cleanspw_loop+=[xp['cleanspw']]
         restorbeam_loop+=[xp['restorbeam']]
-        resmooth_loop+=['']
+        resmooth_loop+=[False]
         multiscale_loop+=[[]]
 
     vis_loop+=[vis]
@@ -238,7 +238,7 @@ if  xp['cleancont']==True:
         cleanmode_loop+=['mfs']
         cleanspw_loop+=[spw]
         restorbeam_loop+=[xp['restorbeam']]
-        resmooth_loop+=['']
+        resmooth_loop+=[False]
         multiscale_loop+=[[]]
 
     vis_loop+=[vis]
@@ -248,7 +248,7 @@ if  xp['cleancont']==True:
     cleanmode_loop+=['mfs']
     cleanspw_loop+=[spw]
     restorbeam_loop+=[xp['restorbeam']]
-    resmooth_loop+=['']
+    resmooth_loop+=[False]
     multiscale_loop+=[xp['multiscale']]
 
 for i in range(0,len(vis_loop)):
