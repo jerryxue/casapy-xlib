@@ -1,0 +1,36 @@
+# ---------- SCRIPTS REPOSITORY
+
+script_version='20111125'
+myemail='jerryxue@gmail.com'
+
+# ---------- B+C+D ARRAY COMBINATION 
+
+track_list=['../vis/D2','../vis/D5','../vis/D6','../vis/D7']
+
+# TRACK INFO
+prefix_combine=track_list
+prefix='n3147co.v2'
+
+# CLEANING, IMAGING, & ANALYSIS
+clean_mode = 'velocity'
+clean_start='2570km/s'
+clean_nchan=(2610-2570)/10+1
+clean_width='10km/s'
+rest_freq='115.2712GHz'
+out_frame='LSRK'
+
+phase_center='J2000 10h16m53.60 +73d24m03.00'
+im_size=256
+cell_size='1arcsec'
+min_pb=1.0/3.0
+
+multi_scale=[0,4,12]
+clean_gain=0.7
+cycle_factor=5.0
+neg_component=1
+
+# RUN SCRIPTS
+#execfile(script_home+'imerge_'+script_version+'.py')
+execfile(script_home+'iclean_'+script_version+'.py')
+
+

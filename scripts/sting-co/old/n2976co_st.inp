@@ -1,0 +1,142 @@
+# ---------- SCRIPTS REPOSITORY
+
+script_version='20111125'
+myemail='jerryxue@gmail.com'
+
+# ---------- B+C+D ARRAY COMBINATION 
+
+track_list = [		'bima10',
+					'bima1',
+					'bima11',
+					'bima12',
+					'bima13',
+					'bima14',
+					'bima15',
+					'bima17',
+					'bima16',
+					'bima19',
+					'bima18',
+					'bima2',
+					'bima20',
+					'bima21',
+					'bima22',
+					'bima23',
+					'bima24',
+					'bima3',
+					'bima5',
+					'bima4',
+					'bima6',
+					'bima7',
+					'bima8',
+					'bima9',
+					'C1',
+					'C2',
+					'C3',
+					'C4',
+					'C5',
+					'C6',
+					'C7',
+					'C8']
+
+
+telescopes = [		'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'bima',
+					'CARMA',
+					'CARMA',
+					'CARMA',
+					'CARMA',
+					'CARMA',
+					'CARMA',
+					'CARMA',
+					'CARMA']
+
+mirfile_list=	[	'../../sdi/bima/n2976/n2976/old/n2976.1.lc.usb',
+					'../../sdi/bima/n2976/n2976/old/n2976.2.lc.usb',
+					'../../sdi/bima/n2976/n2976_C/01apr01/n2976.lc.usb',
+					'../../sdi/bima/n2976/n2976_C/01apr30/n2976.lc.usb',
+					'../../sdi/bima/n2976/n2976_C/01may02/n2976.lc.usb',
+					'../../sdi/bima/n2976/n2976_C/01may08/n2976.lc.usb',
+					'../../sdi/bima/n2976/n2976_C/01may27/n2976.lc.usb',
+					'../../sdi/bima/n2976/n2976_C/01jun02/n2976.lc.usb',
+					'../../sdi/bima/n2976/n2976_C/01jun04/n2976.lc.usb',
+					'../../sdi/bima/n2976/n2976/01jun21/n2976.usb',
+					'../../sdi/bima/n2976/n2976/01jun23/n2976.usb',
+					'../../sdi/bima/n2976/n2976_B/02feb26/n2976.usb',
+					'../../sdi/bima/n2976/n2976_B/02mar02/n2976.usb',
+					'../../sdi/bima/n2976/n2976_B/02mar03/n2976.usb',
+					'../../sdi/bima/n2976/n2976_B/02mar04/n2976.usb',
+					'../../sdi/bima/n2976/n2976_B/02mar08/n2976.usb',
+					'../../sdi/bima/n2976/c115.2976n/03may20.raw/n2976.lc.usb',
+					'../../sdi/bima/n2976/c115.2976n/03may12.raw/n2976.lc.usb',
+					'../../sdi/bima/n2976/c115.2976n/03may14.raw/n2976.lc.usb',
+					'../../sdi/bima/n2976/d115.2976n/03jun30.raw/n2976.lc.usb',
+					'../../sdi/bima/n2976/c115.2976s/03may11.raw/n2976.lc.usb',
+					'../../sdi/bima/n2976/c115.2976s/03may17.raw/n2976.lc.usb',
+					'../../sdi/bima/n2976/c115.2976s/03may19.raw/n2976.lc.usb',
+					'../../sdi/bima/n2976/d115.2976s/03jul01.raw/n2976.lc.usb',
+					'../../sdi/n2976/vis/ngc2976_C1_10SEP30.co.cal',
+					'../../sdi/n2976/vis/ngc2976_C2_10OCT02.co.cal',
+					'../../sdi/n2976/vis/ngc2976_C3_10OCT12.co.cal',
+					'../../sdi/n2976/vis/ngc2976_C4_10OCT13.co.cal',
+					'../../sdi/n2976/vis/ngc2976_C5_10OCT13.co.cal',
+					'../../sdi/n2976/vis/ngc2976_C6_10OCT14.co.cal',
+					'../../sdi/n2976/vis/ngc2976_C7_10OCT29.co.cal',
+					'../../sdi/n2976/vis/ngc2976_C8_10NOV01.co.cal']
+
+for i in range(0,len(mirfile_list)):
+	rawfiles=mirfile_list[i]
+ 	prefix=track_list[i]+'.src'
+ 	telescope=telescopes[i]
+ 	importmode='mir'
+ 	#execfile(script_home+'iload_'+script_version+'.py')
+ 	
+# ---------- IMAGE DATA 
+
+prefix_combine=track_list
+prefix='n2976co'
+
+# CLEANING, IMAGING, & ANALYSIS
+clean_mode = 'velocity'
+clean_start='-100km/s'
+clean_nchan=(200)/5+1
+clean_width='5km/s'
+rest_freq='115.2712GHz'
+out_frame='LSRK'
+
+phase_center='J2000 09h47m15.40 67d54m59.00'
+im_size=256
+cell_size='1arcsec'
+min_pb=1.0/3.0
+
+cleanweight='natural'
+#multi_scale=[0,3,9]
+#clean_gain=0.3
+cycle_factor=5.0
+neg_component=0
+sigcutoff_spec=3.0
+
+# RUN SCRIPTS
+#execfile(script_home+'imerge_'+script_version+'.py')
+execfile(script_home+'iclean_'+script_version+'.py')
