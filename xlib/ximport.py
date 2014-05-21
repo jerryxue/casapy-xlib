@@ -160,6 +160,7 @@ if  xp['importmode']=='mir':
                  telescope=xp['importmirarray'],
                  nocal=xp['importmirnocal'],
                  win_list=xp['importmirspw'],
+                 line=xp['importmirline'],
                  mirbin=mir_path)
 
 if  xp['importmode']=='miriad':
