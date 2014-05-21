@@ -19,12 +19,28 @@ from email.MIMEText import MIMEText
 from email import Encoders
 
 
+def sumwt(visfile=''):
+    
+    vsfile=open(visfile+'.sumwt.log','w')
+    
+    tb.open(visfile+'/SPECTRAL_WINDOW',nomodify=False)
+    num_chan = np.min(tb.getcol('NUM_CHAN'))
+    tb.close()
+    for ic in range(0,num_chan):
+        #vs=ms.statistics(useflags=True,spw='*:'+str(ic),column='WEIGHT_SPECTRUM')
+        vs=visstat(vis=visfile,axis='weight_spectrum',useflags=True,spw='*:'+str(ic))
+        print "chan"+' '+str(ic)+' '+str(vs['WEIGHT_SPECTRUM']['sum'])
+        print >>vsfile,str(vs['WEIGHT_SPECTRUM']['sum'])
+    
+    vsfile.close()
 
 def importmir(mirfile='',
               vis='',
               telescope='CARMA',
+              fieldname='',
               win_list='',
-              nocal=False,
+              line='',      # miriad/fits line parameter 
+              nocal=False,  # line=velocity,$nmaps,$vfirst,$delv,$delv
               rm_noise=True,
               rm_auto=True,
               mirbin='',
@@ -60,6 +76,19 @@ def importmir(mirfile='',
     
     win_combine=[]
     
+    opt=' op=uvout'
+    if  line!='':
+        opt=opt+' line='+line
+        win_list=[0]
+    if  nocal==True:
+        opt=opt+' options=nocal'
+    addsel=[]   
+    if  rm_auto==True:
+        addsel=addsel+["-auto"]
+    if  rm_noise==True: 
+        addsel=addsel+["-source(NOISE)"] 
+    addsel=",".join(addsel)
+    
     for j in range(0,len(win_list)):
 
         fitspre=vis+'.win'+str(win_list[j])+'.fits'
@@ -72,16 +101,12 @@ def importmir(mirfile='',
         news(mirfile)
         news("to UVFITS:")
         news(fitspre)
-        cmd=''
-        if  nocal==True:
-            cmd=' options=nocal'
-        addsel=''   
-        if  rm_auto==True:
-            addsel='-auto,'+addsel
-        if  rm_noise==True: 
-            addsel='-source(NOISE),'+addsel            
-        cmd="fits in="+mirfile+" op=uvout select='"+addsel+"win("+str(win_list[j])+\
-            ")' out="+fitspre+cmd
+        selectwin=""
+        if  str(win_list[j])!='0':
+            selectwin=",win("+str(win_list[j])+")"
+        if  addsel+selectwin!='':
+            selectvis=" select='"+addsel+selectwin+"'"
+        cmd="fits in="+mirfile+" out="+fitspre+opt+selectvis
         
         os.system('rm -rf '+fitspre)
         news('',origin='miriad')
@@ -102,6 +127,7 @@ def importmir(mirfile='',
         win_combine.append(mspre)
         os.system('rm -rf '+fitspre)
 
+
     news("")
     news(">>>concat")
     news("")
@@ -110,8 +136,9 @@ def importmir(mirfile='',
     news("")
     
     os.system('rm -rf '+vis)
-    concat(vis=win_combine,concatvis=vis,\
+    concat(vis=win_combine,concatvis=vis,respectname=False,\
            freqtol='',dirtol='',timesort=True)
+    
     for tmp in win_combine:
         os.system('rm -rf '+tmp+'*')
     
