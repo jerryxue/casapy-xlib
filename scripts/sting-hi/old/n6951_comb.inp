@@ -1,0 +1,16 @@
+# ---------- B+C+D ARRAY COMBINATION
+prefix_combine=['../d03/n6951d03',
+				'../c04/n6951c04',
+				'../b06/n6951b06',
+				'../c02/n6951c02']
+prefix='n6951hi'
+
+# CLEANING, IMAGING, & ANALYSIS
+im_size=512
+cell_size='4.0arcsec'
+
+wt_scale=[1,1,1,1.5]
+multi_scale=[0,3,9]
+clean_gain=0.3
+cycle_factor=5.0
+

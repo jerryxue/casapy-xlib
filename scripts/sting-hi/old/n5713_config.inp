@@ -1,0 +1,13 @@
+clean_mode = 'velocity'
+clean_start='1680km/s'
+clean_width='20.8km/s'
+clean_nchan=23
+
+phase_center='J2000 14h40m11.5 -00d17m20.3'
+
+imcs=True
+fit_chans  = '0~2,20~22'
+fit_order  = 1
+
+
+line_vrange=[1760,2060]

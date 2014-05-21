@@ -1,0 +1,34 @@
+# ---------- C 96 ARRAY REDUCTION
+
+prefix   = 'n3593c96' 
+rawfiles = ['../raw/AC459_2','../raw/AC459_3','../raw/AC459_4']
+
+# TRACK INFORMATION
+source = 'NGC3593'
+
+fluxcal = '1328+307'
+fluxcal_uvrange=''
+phasecal = '1117+146'
+phasecal_uvrange=''
+
+spw_source = '0,1'
+spw_edge = '*:0~4;57~62'
+
+# CALIBRATION & OPTIONS
+flagselect = [  " mode='quack' quackinterval=8.0 ",
+                " timerange='03:42:30~03:43:00' ",
+                " timerange='06:51:10~06:51:20' ",
+                " timerange='05:02:30~05:02:50' ",
+                " timerange='07:11:14~07:11:16' ",
+                " timerange='07:53:40~07:53:50' ",
+                " timerange='08:02:10~08:02:20' "
+                ]
+
+
+# CLEANING, IMAGING, & ANALYSIS
+fit_spw = '0:5~18,1:45~56'
+fit_order  = 1
+
+n_iter=0
+
+

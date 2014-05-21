@@ -1,0 +1,12 @@
+# ---------- B+C+D ARRAY COMBINATION 
+prefix_combine=['../ab/n2782ab','../c/n2782c','../d/n2782d']
+prefix='n2782hi'
+
+# CLEANING, IMAGING, & ANALYSIS
+
+im_size=512*2
+cell_size='2.0arcsec'
+
+multi_scale=[0,4,12]
+clean_gain=0.3
+cycle_factor=5.0

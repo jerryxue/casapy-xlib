@@ -1,0 +1,40 @@
+# ---------- D 99apr Track REDUCTION
+prefix   = 'n0772d99b' 
+rawfiles = ['../raw/AG564_4','../raw/AG564_5']
+import_spw='1'
+
+# TRACK INFORMATION
+source = 'ARP78'
+spw_source='0'
+
+fluxcal = '0137+331'
+fluxcal_uvrange='<40klambda'
+phasecal = '0204+152'
+phasecal_uvrange='<100klambda'
+
+spw_edge = "0:0~5;110~126"
+
+# CALIBRATION & OPTIONS
+flagselect = [  "timerange='16:06:40~17:29:15'", 
+				"timerange='19:57:25~19:57:35'", 
+				"timerange='17:38:00~17:40:00'",
+                "field='0137+331' uvrange='<800lambda'",
+                "field='0204+152' uvrange='<800lambda'",
+                "timerange='19:51:20~19:54:00' antenna='VA05'",
+				"antenna='VA14&VA24'",
+				"antenna='VA14&VA28'",
+				"antenna='VA14&VA12'",
+				"antenna='VA19&VA26'"
+            ]
+
+
+# CLEANING, IMAGING, & ANALYSIS
+fit_spw = '0:6~31;95~109'
+fit_order  = 1
+
+im_size=256
+cell_size='10.0arcsec'
+#n_iter=0
+
+
+

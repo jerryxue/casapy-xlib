@@ -1,0 +1,27 @@
+
+# ---------- D ARRAY REDUCTION
+prefix   = 'n4654d' 
+rawfiles = ['../raw/AP206_1']
+import_spw='1'
+
+# TRACK INFORMATION
+source = 'NGC4654'
+fluxcal = '1331+305'
+phasecal = '1221+282'
+
+spw_source = '0'
+spw_edge = '*:0~5;58~62'
+
+# CALIBRATION & OPTIONS
+flagselect	=	[	"antenna='VA10'"
+				]
+
+
+# CLEANING, IMAGING, & ANALYSIS
+
+fit_spw    = '0:6~19;55~57'
+fit_order  = 1
+
+n_iter=0
+
+

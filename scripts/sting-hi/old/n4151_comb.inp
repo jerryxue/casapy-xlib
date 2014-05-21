@@ -1,0 +1,20 @@
+
+# ---------- C ARRAY COMBINATION 
+prefix_combine=['../c1/n4151c1','../c2/n4151c2',
+				'../b93/n4151b93',
+				'../a1/n4151a1']
+prefix='n4151hi'
+
+# CLEANING, IMAGING, & ANALYSIS
+
+im_size=512+256
+cell_size='4.0arcsec'
+
+wt_scale=[5500,3500,4.0,1.0]
+
+multi_scale=[0,3,9]
+clean_gain=0.3
+cycle_factor=5.0
+
+
+

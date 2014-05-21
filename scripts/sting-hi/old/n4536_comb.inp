@@ -1,0 +1,19 @@
+# ---------- B test ARRAY REDUCTION
+prefix_combine=[	'../b09a/n4536b09a',
+					'../b09b/n4536b09b',
+					'../c04/n4536c04',
+					'../d87/n4536d87',
+					'../d09/n4536d09']
+prefix='n4536hi'
+
+# CLEANING, IMAGING, & ANALYSIS
+
+im_size=512+256
+cell_size='4.0arcsec'
+
+wt_scale=[1,1,1,250,1]
+
+multi_scale=[0,4,12]
+clean_gain=0.3
+cycle_factor=5.0
+
