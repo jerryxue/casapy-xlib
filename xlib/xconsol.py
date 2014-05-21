@@ -116,8 +116,9 @@ if  len(xp['prefix_comb'])==1:
                     createmms=False,
                     separationaxis='both',
                     field=xp['source'],
-                    spw='',
+                    spw=xp['spw_source'],
                     useweights='spectrum',#spectrum
+                    usewtspectrum=True,
                     datacolumn=datacolumn,
                     chanaverage=False,
                     regridms=spwrgd,
@@ -142,12 +143,17 @@ if  len(xp['prefix_comb'])==1:
         tb.close()
         """
         ####
-        #   use cvel() when corrected column doesn't exist, and
-        #   its behaviour is more predictable.
+        #   optionally, cvel() can be selected for test
         #
-        #   mstransform() might drop extra edge channels in some ocassions
+        #   mstransform() might drop extra edge channels
+        #   mstransform:
+        #        pre-averaging will adjust weight_spectrum by scaling up by nbin
+        #        regridding will not adjust weight_spectrum
+        #   However, cvel and mstransform doesn't WEIGHT
+        #   and the new SIGMA is adjusted, however incorrectly in the statistical sense.
+        #
         #### 
-        if  datacolumn=='corrected':
+        if  datacolumn!='null':
             if  xp['chanbin']==0:
                 chanaverage=False
                 chanbin=1
@@ -160,8 +166,9 @@ if  len(xp['prefix_comb'])==1:
                         numsubms=4,
                         separationaxis='both',
                         field=xp['source'],
-                        spw='',
-                        useweights='spectrum',#spectrum
+                        spw=xp['spw_source'],
+                        useweights='spectrum',#only matter is chanaverge=False
+                        usewtspectrum=True,
                         datacolumn=datacolumn,
                         chanaverage=chanaverage,
                         chanbin=chanbin,
@@ -171,7 +178,7 @@ if  len(xp['prefix_comb'])==1:
                         nchan=xp['clean_nchan'],
                         start=xp['clean_start'],
                         width=xp['clean_width'],
-                        nspw=0,
+                        nspw=1,
                         interpolation=xp['spinterpmode'],
                         outframe=xp['outframe'],
                         restfreq=xp['restfreq'],
@@ -182,7 +189,7 @@ if  len(xp['prefix_comb'])==1:
                 outputvis=xp['srcfile'],
                 passall=False,
                 field=xp['source'],
-                spw='',
+                spw=xp['spw_source'],
                 selectdata=True,
                 mode=xp['cleanmode'],
                 nchan=xp['clean_nchan'],
@@ -200,7 +207,7 @@ if  len(xp['prefix_comb'])==1:
         xu.news("")
         xu.checkchflag(xp['srcfile'])
         
-    #  COPY WEIGHT_SPECTRUM TO WEIGHT
+    #  COPY MEAN(WEIGHT_SPECTRUM) TO WEIGHT
     if  xp['unchflag']==True:
         xu.unchflag(xp['srcfile'])
     xu.copyweight(xp['srcfile'],copyback=True)
@@ -306,16 +313,16 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
         if  xp['usevconcat']==False:
             concat(vis=xp['srcfile_comb'],
                    concatvis=xp['srcfile']+loop,
-                   freqtol='',
-                   dirtol='',
+                   freqtol=xp['freqtol'],
+                   dirtol=xp['dirtol'],
                    timesort=False,
                    visweightscale=xp['wtscale'],
                    copypointing=True)
         else:
             virtualconcat(vis=xp['srcfile_comb'],
                    concatvis=xp['srcfile']+loop,
-                   freqtol='',
-                   dirtol='',
+                   freqtol=xp['freqtol'],
+                   dirtol=xp['dirtol'],
                    visweightscale=xp['wtscale'],
                    keepcopy=True,
                    copypointing=True)
