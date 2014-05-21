@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" ?>
+<casaxml xmlns="http://casa.nrao.edu/schema/psetTypes.html"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://casa.nrao.edu/schema/casa.xsd
+file:///opt/casa/code/xmlcasa/xml/casa.xsd">
+
+<task type="function" name="alignbyvel" category="analysis">
+<shortdescription>regrid an image to match a template image in velocity</shortdescription>
+<description>
+Alignbyvel regrids the input image to match the astrometry and
+velocity axis of a template image allowing for differences in rest frequency.
+</description>
+<input>
+	<param type="string" name="infile" mustexist="true">
+		<description>Name of the source image</description>
+		<value></value>
+	</param>
+
+	<param type="string" name="outfile">
+		<description>Name for the output image</description>
+		<value></value>
+	</param>
+
+	<param type="string" name="template" mustexist="true">
+		<description>Name of the template image</description>
+		<value></value>
+	</param>
+
+	<param type="bool" name="overwrite">
+	  <description>Overwrite the output image if it exists?</description>
+	  <value>True</value>
+	</param>
+
+<constraints>
+</constraints>
+
+</input>
+
+<example>
+
+        alignbyvel: align one cube to the velocity axis of another.
+
+        The new coordinate system is drawn from the template image.
+
+    	Keyword arguments:
+    	infile -- 
+    	template -- 
+    	outfile -- 
+        async -- Run task in a separate process (return CASA prompt)
+                default: False; example: async=True
+
+</example> 
+
+</task>
+</casaxml>

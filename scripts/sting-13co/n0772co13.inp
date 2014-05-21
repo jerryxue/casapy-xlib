@@ -1,0 +1,37 @@
+# ---------- IMPORT DATA
+
+mirfile_list=filesearch("../../sdi/n0772/vis/*.13co.cal")
+for i in range(0,len(mirfile_list)):
+	rawfiles=mirfile_list[i]
+ 	prefix=rawfiles.split('/')[-1].replace('.cal','.src')
+ 	telescope='CARMA'
+ 	importmode='mir'
+ 	#execfile(script_home+'ximport'+script_version+'.py')
+
+prefix_combine=[w.split('/')[-1].replace('.cal','') for w in mirfile_list]
+prefix='n0772co13'
+#execfile(script_home+'xmerge'+script_version+'.py')
+
+# ---------- IMAGE DATA
+
+srcfile='n0772co13.src.ms'
+prefix='n0772co13'
+
+# CLEANING, IMAGING, & ANALYSIS
+clean_mode = 'velocity'
+clean_start='2150km/s'
+clean_nchan=(2720-2150)/10+1
+clean_width='10km/s'
+rest_freq='110.201353GHz'
+out_frame='LSRK'
+
+phase_center='J2000 01h59m19.58 +19d00m27.10'
+im_size=350
+cell_size='1arcsec'
+
+multi_scale=[0,3,9]
+clean_gain=0.3
+cycle_factor=5.0
+neg_component=0
+
+execfile(script_home+'xclean'+script_version+'.py')

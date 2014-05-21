@@ -1,0 +1,42 @@
+# ---------- B+C+D ARRAY COMBINATION 
+
+track_list=['D1','D2','D3','D4']
+mirfile_list=[	'../../sdi/n1569/vis/ngc1569_D1_09aug14.13co.cal',
+				'../../sdi/n1569/vis/ngc1569_D2_09aug15.13co.cal',
+				'../../sdi/n1569/vis/ngc1569_D3_09aug19.13co.cal',
+				'../../sdi/n1569/vis/ngc1569_D4_09aug24.13co.cal']
+telescopes=list('CARMA' for i in track_list)
+
+for i in range(0,len(mirfile_list)):
+	rawfiles=mirfile_list[i]
+ 	prefix=track_list[i]+'.src'
+ 	telescope=telescopes[i]
+ 	importmode='mir'
+ 	execfile(script_home+'ximport'+script_version+'.py')
+ 	
+# ---------- IMAGE DATA 
+
+prefix_combine=track_list
+prefix='n1569co13'
+
+# CLEANING, IMAGING, & ANALYSIS
+clean_mode = 'velocity'
+clean_start='-230km/s'
+clean_nchan=(20+230)/10+1
+clean_width='10km/s'
+rest_freq='110.201353GHz'
+out_frame='LSRK'
+
+phase_center='J2000 04h30m49.06 64d50m52.61'
+im_size=300
+cell_size='1arcsec'
+clean_mask='circle[[150pix,150pix],60pix]'
+
+multi_scale=[0,4,12]
+clean_gain=0.3
+cycle_factor=5.0
+neg_component=0
+
+# RUN SCRIPTS
+execfile(script_home+'xmerge'+script_version+'.py')
+execfile(script_home+'xclean'+script_version+'.py')
