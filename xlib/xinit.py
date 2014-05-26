@@ -99,7 +99,8 @@ xp={
                 #   -> avoid regridding dual-pol and single-pol tracks into the same channel setup.
                 #
                 #    
-                #  
+                #
+'spwrgd_method':'mstransform',
 'combinespws':True,
 'chanbin':0,
 # CONTINUE SUBTRACTION

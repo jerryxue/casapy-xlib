@@ -144,16 +144,16 @@ if  len(xp['prefix_comb'])==1:
         """
         ####
         #   optionally, cvel() can be selected for test
-        #
+        #   mstransform is x3 faster in a test case
         #   mstransform() might drop extra edge channels
         #   mstransform:
         #        pre-averaging will adjust weight_spectrum by scaling up by nbin
         #        regridding will not adjust weight_spectrum
         #   However, cvel and mstransform doesn't WEIGHT
         #   and the new SIGMA is adjusted, however incorrectly in the statistical sense.
-        #
+        #   cvel is still better :)
         #### 
-        if  datacolumn!='null':
+        if  datacolumn=='corrected':
             if  xp['chanbin']==0:
                 chanaverage=False
                 chanbin=1

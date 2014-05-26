@@ -1369,12 +1369,11 @@ def xplotcal(tbfile,iterant=False,
 
 def checkvrange(srcfile='',
                 outframe='',
-                restfreq='',
-                start=0,
-                width=1,
-                field=0,
-                nchan=-1):
+                restfreq=''):
     """
+    me.list()
+    me.spectralline('CO_1_0')['m0']['value']
+    me.spectralline('HI')['m0']['value']
     examples:
         srcfile='n3147bc04.ms'
         outframe='LSRK'
@@ -1383,31 +1382,12 @@ def checkvrange(srcfile='',
         width='20.8km/s'
         nchan=26
         field=2
+    with limited functions (no frame conversion)
     """
+    c=3e5
+    if  restfreq=='':
+        restfreq=me.spectralline('HI')['m0']['value']
     news("")
-    ms.open(srcfile)    
-    req_freq=ms.cvelfreqs(mode='velocity',
-                          start=start,
-                          width=width,
-                          nchan=nchan,
-                          restfreq=restfreq)
-    tmp1=ms.cvelfreqs(mode='channel',
-                  fieldids=field,
-                  outframe='')
-    tmp2=ms.cvelfreqs(mode='channel',
-                  fieldids=field,
-                  outframe=outframe)
-    ms.close()
-    old2new=tmp2[0]-tmp1[0]
-    req_freq=req_freq-old2new
-    
-    news("")
-    news("requested range (Hz) in orginal frame:")
-    req_del_freq=np.abs(req_freq[0]-req_freq[1])
-    req_low_freq=np.min(req_freq)-req_del_freq/2.0
-    req_hig_freq=np.max(req_freq)+req_del_freq/2.0
-    news([req_low_freq,req_del_freq,req_hig_freq])
-    
     tb.open(srcfile+'/SPECTRAL_WINDOW')
     news("available range (Hz) in orginal frame:")
     chan_freq=tb.getcol('CHAN_FREQ')
@@ -1415,5 +1395,7 @@ def checkvrange(srcfile='',
     chan_low_freq=np.min(chan_freq)-chan_del_freq/2.0
     chan_hig_freq=np.max(chan_freq)+chan_del_freq/2.0
     news([chan_low_freq,chan_del_freq,chan_hig_freq])
+    v=c*(restfreq-np.array([np.max(chan_freq),np.min(chan_freq)]))/restfreq
+    news(v)
     tb.close()
     news("")
