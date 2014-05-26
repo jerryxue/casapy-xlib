@@ -6,7 +6,7 @@
 #entering and retrieving  measurements from the calibrator catalog database.
 #
 #
-#$Id: calDatabaseQuery.py,v 1.77 2013/11/12 20:26:06 dbarkats Exp $
+#$Id: calDatabaseQuery.py,v 1.91 2014/04/28 20:29:25 itoledo Exp $
 
 
 import datetime
@@ -44,27 +44,13 @@ NULL_AS_FLOAT = 1.7976931348623157e+308
 NULL_AS_FLOAT_STRING = '1.7976931348623157E308' 
 NULL_AS_STRING = 'null'
 
-# define the band definitions using aU.
-#bandDef = {
-#1  : [31.3e9, 45e9  ],
-#2  : [67e9  , 90e9  ],
-#3  : [84e9  , 116e9 ],
-#4  : [125e9 , 163e9 ],
-#5  : [163e9 , 211e9 ],
-#6  : [211e9 , 275e9 ],
-#7  : [275e9 , 373e9 ],
-#8  : [385e9 , 500e9 ],
-#9  : [602e9 , 720e9 ],
-#10 : [787e9 , 950e9]
-#}
-
 def defineGridNames():
     gridNames = ['J0237+288','J0238+166','3c84','J0334-401',
                  'J0423-013','J0510+180','J0519-454','J0522-364',
                  'J0538-440','J0635-7516','J0750+125','J0854+201',
                  'J1037-295','J1058+015','J1107-448','J1146+399',
                  '3c273','3c279','J1337-129','J1427-421',
-                 'J1517-243','J1550+054','J1613-586','3c345',
+                 'J1517-243','J1550+054','J1613-586','3c345', '3c454.3',
                  'J1733-130','J1751+096','J1924-292','J2025+337',
                  'J2056-472','J2148+069','J2232+117','J2258-279',
                  'J2357-5311']
@@ -157,7 +143,7 @@ class CalibratorCatalogUpdate:
                 print "### WARNING: This script is only intended to be run from scops0X/casa0X.sco.alma.cl. ### \n### Unless you are doing specific testing, only run this from scops0X/casa0X.### \n"
         #    sys.exit()
             
-    def matchName(self, sourceName, verbose = 1):
+    def matchName(self, sourceName, Id = None, verbose = 1):
         """
         Name matching function to check that the name provided (sourceName)
         is the same as the one in the catalog (realName)
@@ -174,8 +160,11 @@ class CalibratorCatalogUpdate:
         # remove any star at the end of the sourceName
         sourceName = sourceName.strip('*')
 
-        # get source Id from source Name
-        sourceId = self.getSourceIdFromSourceName('%%%s%%'%sourceName, verbose = 0)
+        if Id == None:
+            # get source Id from source Name
+            sourceId = self.getSourceIdFromSourceName('%%%s%%'%sourceName)
+        else:
+            sourceId = Id
         if sourceId != None:
             Names = self.getSourceNameFromId(sourceId)
             for name in Names:
@@ -185,8 +174,11 @@ class CalibratorCatalogUpdate:
                     realName = rp
 
             # find official name
+            #print nameList
             for name in nameList:
+                
                 ab = re.match("J[0-9]{4}.[0-9]{4}",name)
+                #print name, ab
                 if ab:
                     officialName = ab.group()
                     break
@@ -247,8 +239,8 @@ class CalibratorCatalogUpdate:
             sourceNameList.append(realName)
           
             # Get latest measurement which ALSO belong to SMA, ALMA, or ATCA, or CRATES or VLA
-            measurements = self.getMeasurementsFromSourceName(realName, latest = True, catalog = [1,5,21,3,2])
-            #print size(measurements)
+            measurements = self.wrapSearch(name = realName, limit = 1, sourceBandLimit = 1,sortBy = 'date_observed', asc=False,catalogues = [1,5,21,3,2])
+            # get the latest measurement only
             if measurements != []:
                 m = measurements[0]
             else:
@@ -400,7 +392,7 @@ class CalibratorCatalogUpdate:
                 print 'measurementId',measurementId
                 if measurementId != 0:
                     print "Making this new Measurement %i on sourceID %i Valid" %(measurementId, sourceId)
-                    setValid = self.s.sourcecat.setMeasurementState(measurementId, True, False)
+                    setValid = self.s.sourcecat.setMeasurementState(measurementId, True)
                     if setValid == True:
                         print "Measurement %i  on source %i is now  Valid" %(measurementId, sourceId)
                     else:
@@ -412,7 +404,7 @@ class CalibratorCatalogUpdate:
 
         print sourceNameList
         # make plots for all these sources
-        self.makePlots(sourceNameList)
+        self.makePlots(sourceNameList, interactive = True)
 
         # rsync is now happening on a cronjob on casa02 to wwwpub.sco.alma.cl once a day.
         # check for dbarkats crontab -l
@@ -453,6 +445,8 @@ class CalibratorCatalogUpdate:
         searching function
         OnlyValid = True means we find only valid sources. Not invalid ones.
         date has format '2013-01-01'
+        limit is a limit on the number of sources
+        sourceBandLimit is the number of measurements per source
         """
 
         if catalogues == None:
@@ -476,6 +470,7 @@ class CalibratorCatalogUpdate:
         #                                                            angleMax ,sortBy ,asc,
         #                                                            searchOnDate,dateCriteria,date)
         try:
+            #print "Searching using searchMeasurements103 with a source limit %d and measurements/source limit = %d"%(limit, sourceBandLimit)
             measurements = self.s.sourcecat.searchMeasurements103(sourceBandLimit,limit,catalogues,types,name,ra, dec,
                                                                   radius,ranges,fLower, fUpper, fluxMin,
                                                                   fluxMax, degreeMin,degreeMax, angleMin,
@@ -483,6 +478,7 @@ class CalibratorCatalogUpdate:
                                                                   searchOnDate,dateCriteria,date,
                                                                   onlyValid,uvmin,uvmax)
         except:
+            #print "Searching using searchMeasurements913"
             measurements = self.s.sourcecat.searchMeasurements913(limit,catalogues,types,name,ra, dec,
                                                                   radius,ranges,fLower, fUpper, fluxMin,
                                                                   fluxMax, degreeMin,degreeMax, angleMin,
@@ -526,13 +522,16 @@ class CalibratorCatalogUpdate:
                 datetime.date(int(date2[0:4]),int(date2[4:6]),int(date2[6:]))
         return(delta.days)
     
-    def searchFlux(self, sourcename=None, date='', band = None, fLower=1e9, fUpper=1e12,
+    def searchFlux(self, sourcename=None, date='', band = None, fLower=1e9,
+                   fUpper=1e12,
                    tunnel=False, maxrows=10, limit=1000, debug=False,
-                   server = '', dateCriteria=0, verbose=True, measurements=None,
-                   returnMostRecent=False):
+                   server = '', dateCriteria=0, verbose=True,
+                   measurements=None,
+                   returnMostRecent=False,showDateReduced=False,
+                   sourceBandLimit=1, dayWindow=-1):
         """
-        Searches the online ALMA calibrator catalog at JAO for a specific source
-        name.
+        Searches the online ALMA calibrator catalog at JAO for a specific
+        source name.
     
         sourcename: required string, e.g. 'J1924-292' (% is the wildcard character)
         date: optional string, YYYYMMDD, e.g. '20120101' or '2012-01-01'
@@ -543,10 +542,14 @@ class CalibratorCatalogUpdate:
                  access a server only accessible from within the JAO network.
                  (As of June 14, 2013, this is no longer necessary.)
         server: server to access
-        limit:  the maximum number of rows to return from the server
+        limit:  the maximum number of rows to return from the server (r9.x)
+        sourceBandLimit:  the maximum number of rows to return from the server (r10.x)
         maxrows:  the maximum number of rows to display
         dateCriteria: -1, 0 or 1, meaning: before, on, after (currently, only 0 works!)
         date: string of the format YYYY-MM-DD
+        showDateReduced: show the date of ingestion rather than observation
+        dayWindow: if non-negative, then return a list of all measurements within this
+                   many days
     
         Returns:
         The age of the most recent measurement (in days)
@@ -588,8 +591,10 @@ class CalibratorCatalogUpdate:
         #mjd = self.strDate2MJD_non_casa(date)
         mjd = aU.strDate2MJD(date)
         if (measurements == None):
+#            print "Calling self.wrapSearch(name='%s',limit=%d,date='%s',fLower=%f,fUpper=%f,searchOnDate=%s,sourceBandLimit=%d)" % (sourcename,limit,date,fLower,fUpper,searchOnDate,sourceBandLimit)
             measurements = self.wrapSearch(name=sourcename, limit=limit, date=date, fLower=fLower, 
-                                      fUpper=fUpper, searchOnDate=searchOnDate)
+                                           fUpper=fUpper, searchOnDate=searchOnDate,
+                                           sourceBandLimit=sourceBandLimit)
         size_m = len(measurements)
         if (debug):
             print measurements
@@ -638,7 +643,7 @@ class CalibratorCatalogUpdate:
                 julian_dates = self.getJulianDates(measurements)
                 julian_min = [abs(x-mjd) for x in julian_dates]
                 index = julian_min.index(min(julian_min))
-                m=measurements[index]
+                m = measurements[index]
                 if (matches > 1):
                     src = []
                     for nn in m['names']:
@@ -647,30 +652,42 @@ class CalibratorCatalogUpdate:
                 else:
                     src = m['names'][0]['source_name']
                 dateString = (('%s' % m['date_observed']).split('T'))[0]
+                try:
+                    dateReduced = m['origin'].split('_')[-1].split('.txt')[0] # .replace('-','')
+                    if (len(dateReduced) < 8):
+                        dateReduced = m['origin'].split('_')[-2]
+                        
+                except:
+                    dateReduced = 'unknown'
+                age = self.computeIntervalBetweenTwoDays(date,dateString)
                 if (i==0):
-#                    age = (datetime.datetime.today()-datetime.datetime(int(dateString[0:4]),int(dateString[4:6]),int(dateString[6:]))).days
-                    age = self.computeIntervalBetweenTwoDays(date,dateString)
+                    mydict = []
+                    firstAge = age
+                if (abs(age-firstAge) <= dayWindow or dayWindow < 0):
                     if (type(m['flux_uncertainty']) == NoneType):
                         uncertaintyValue = 0.0
                     else:
                         uncertaintyValue = float(m['flux_uncertainty'])
-                    mydict = {'age': age, 'date': dateString, 'flux': m['flux'], 'frequency': m['frequency'],
-                              'uncertainty': uncertaintyValue}
-                # insert dashes
-                dateString = dateString[0:4] + '-' + dateString[4:6] + '-' + dateString[6:]
+                    mydict.append({'age': age, 'date': dateString, 'flux': m['flux'], 'frequency': m['frequency'],
+                              'uncertainty': uncertaintyValue, 'dateReduced': dateReduced, 'origin': m['origin']})
+                if (showDateReduced):
+                    dateString = dateReduced
+                else:
+                    # insert dashes
+                    dateString = dateString[0:4] + '-' + dateString[4:6] + '-' + dateString[6:]
                 extension = float(m['extension'])
                 if (extension > 1e10):
                     extension = 0
                 if (verbose):
                     if (type(m['uvmin']) == NoneType or type(m['uvmax'])==NoneType):
-                        print '%5d |  %7.3f +- %4s  | %s | %6.2f GHz | %7.1f | %14s |       |' % (i+1, m['flux'],
+                        print '%5d |  %7.3f +- %4s  | %10s | %6.2f GHz | %7.1f | %14s |       |' % (i+1, m['flux'],
                                                                m['flux_uncertainty'], dateString,
                                                                m['frequency']/1e9, extension, src)
                     else:
                         uvmin = m['uvmin']
                         if (uvmin > 1e10):
                             uvmin = 0
-                        print '%5d |  %7.3f +- %4s  | %s | %6.2f GHz | %7.1f | %14s | %.0f-%.0f |' % (i+1, m['flux'],
+                        print '%5d |  %7.3f +- %4s  | %10s | %6.2f GHz | %7.1f | %14s | %.0f-%.0f |' % (i+1, m['flux'],
                                       m['flux_uncertainty'], dateString,
                                       m['frequency']/1e9, extension, src, uvmin, m['uvmax'])
                 measurements.remove(m)
@@ -682,6 +699,8 @@ class CalibratorCatalogUpdate:
                 else:
                     print 'Only ', str(size_m),' measurements found in total'
         if (returnMostRecent):
+            if (dayWindow < 0):
+                mydict = mydict[0]
             return(mydict)
         else:
             return(age)
@@ -689,9 +708,9 @@ class CalibratorCatalogUpdate:
     def getDateOfLatestMeasurmentFromSourceName(self,sourceName):
         """
         Given a source name, it will return the date
-        of the last valdi measurement for that source
+        of the last valid measurement for that source
         """
-        measurements = self.wrapSearch(name=sourceName, sortBy = 'date_observed',asc=False)
+        measurements = self.wrapSearch(name=sourceName, limit = 1, sourceBandLimit=1, sortBy = 'date_observed',asc=False)
         if measurements != []:
             m = measurements[0]
             return m['date_observed'].value
@@ -699,22 +718,21 @@ class CalibratorCatalogUpdate:
             print "No Valid measurement for this source Name %s" %sourceName 
             return None
             
-    def getSourceIdFromSourceName(self,sourceName, verbose = 1) :
+    def getSourceIdFromSourceName(self,sourceName) :
         """
         Searches for all sources given the name
         Returns sourceId
         Note that this search only finds sources which have a valid measurement
         
         """
-        measurements=self.wrapSearch(name=sourceName)
+        measurements=self.wrapSearch(name=sourceName, limit = 1, sourceBandLimit = 1)
         ids=[]
         for i in range(size(measurements)):
             ids.append(measurements[i]['source_id'])
 
         sourceId=unique(ids)
         if size(sourceId) == 0:
-            if (verbose):
-                print "Sorry, could not find any sources with name %s.Try to add wildcard %% before or after source name" %sourceName
+            print "Sorry, could not find any sources with name %s.Try to add wildcard %% before or after source name" %sourceName
             return
         else:
             return int(sourceId[0])
@@ -756,16 +774,6 @@ class CalibratorCatalogUpdate:
         return sourceList
 
 
-    def getMeasurementsFromSourceName(self,sourceName, latest = True, catalog = None):
-        if catalog != None:
-            catalog = aU.makeList(catalog)
-            
-        if latest == True:
-            measurements = self.wrapSearch(name=sourceName, sortBy = 'date_observed', asc=False, catalogues = catalog)
-        else:
-            measurements = self.wrapSearch(name=sourceName,catalogues = catalog)
-        return measurements
-    
     def getMeasurementsFromSourceId(self,sourceId):      
         sourceDict=self.s.sourcecat.getSource(sourceId)
         measurements=checkForPseudoNullsInMeasurements(sourceDict['measurements'])
@@ -822,84 +830,6 @@ class CalibratorCatalogUpdate:
 
         q=argsort(x)
         return sort(x),y[q],yerr[q]
-
-    # def strDate2MJD_non_casa(self, d):
-    #    """
-    #    Converts date in string format 20110809 or 2011x08x09 to MJD
-    #    where 'x' can be any non-numeric character, like '-' or '/'
-    #    """
-    #    
-    #    # print "strDate2MJD received: ", d
-    #    hr = 0
-    #    mn = 0
-    #    sc = 0
-    #    if ((d[4]==d[7]) and (d[4]<'0' or d[4]>'9') and (d[7]<'0' or d[7]>'9')):
-    #        # a delimiter is present
-    #        year = d[0:4]
-    #        month = d[5:7]
-    #        day = d[8:10]
-    #        if (len(d) > 11):
-    #            tokens = len(d[11:].split(':'))
-    #            hr = d[11:].split(':')[0]
-    #            if (tokens > 1):
-    #                mn =  d[11:].split(':')[1]
-    #            if (tokens > 2):
-    #                sc = d[11:].split(':')[2]
-    #    else:
-    #        year = d[0:4]
-    #        month = d[4:6]
-    #        day = d[6:8]
-    #        if (len(d) > 9):
-    #            tokens = len(d[9:].split(':'))
-    #            hr = d[9:].split(':')[0]
-    #            if (tokens > 1):
-    #                mn =  d[9:].split(':')[1]
-    #            if (tokens > 2):
-    #                sc = d[9:].split(':')[2]
-    #    date='%s-%s-%sT%s:%s:%s'%(year,month,day,hr,mn,sc)
-    #    year = int(year)
-    #    month = int(month)
-    #    day = int(day)
-    #    hr = int(hr)
-    #    mn = int(mn)
-    #    sc = float(sc)
-    #    mjd = self.ymdhmsToMJD(year,month,day, hr,mn,sc)
-    #    return mjd
-    
-
-    #def strDate2MJD(self,d):
-    #    """
-    #    converts date in string format 20110809 to MJD using casa measures tool
-    #    """
-    #    date='%s-%s-%s'%(d[0:4],d[4:6],d[6:])
-    #    mjd=me.epoch('utc',date)['m0']['value']
-    #    return mjd
-
-    #def ymdhmsToMJD(self, year,month,day,hour=0,minute=0,second=0.0):
-    #    """
-    #    converts 2010,12,31 to MJD on Dec 31, 2010 at UT=0
-    #    converts 2010,12,31,9.50 to MJD on Dec 31, 2010 at UT=09:30
-    #    converts 2010,12,31,9,0,5 to MJD on Dec 31, 2010 at UT=09:05
-    #    required arguments: year, month, day
-    #    optional arguments: hour, minute, second
-    #    """
-    #    if (month < 3):
-    #        month += 12
-    #        year -= 1
-    #    a =  floor(year / 100.)
-    #    b = 2 - a + floor(a/4.)
-    #    UT = hour+minute/60.+second/3600.
-    #    day += UT/24.
-    #    jd  = floor(365.25*(year+4716)) + floor(30.6001*(month+1)) + day + b - 1524.5;
-    #    mjd = self.jdToMJD(jd)
-    #    return(mjd)
-    
-    #def jdToMJD(self, JD):
-    #    """
-    #    Converts a JD value to MJD
-    #    """
-    #    MJD = JD - 2400000.5
-    #    return(MJD)
 
     def getJulianDates(self, measurements):
         """
@@ -1103,6 +1033,36 @@ class CalibratorCatalogUpdate:
         print 'number of VLBI sources ', nvlbi
         return sname,stype,s_ra,s_dec,s_radeg,s_decdeg
 
+    def readVLBACatalog(self):
+        f=open('/users/dbarkats/vlbi_compare/vlbaCalib.txt','r')
+        lines = f.readlines()
+        f.close()
+        
+        vname = []
+        v_ra =[]
+        v_dec = []
+        v_radeg = []
+        v_decdeg = []
+              
+        #loop over all sources in VLBA database
+        for line in lines:
+            if line[0] != '#':
+                fields = line.split()
+                #print fields
+                vname.append(fields[0])
+                ra = fields[2][0:2]+':'+fields[2][3:5]+':'+fields[2][6:].strip('s')
+                #print ra
+                v_ra.append(ra)
+                v_radeg.append(self.dms2decimaldeg(ra,raflag=True))
+                dec = fields[3][0:3]+':'+fields[3][4:6]+':'+fields[3][7:].strip('\"')
+                #print dec
+                v_dec.append(dec)
+                v_decdeg.append(self.dms2decimaldeg(dec,raflag=False))
+                
+        nvla = len(vname)
+        print 'number of VLBA sources ', nvla
+        return vname,v_ra,v_dec,v_radeg,v_decdeg
+
   
 #####################
 # Plotting or displaying utilities
@@ -1111,28 +1071,30 @@ class CalibratorCatalogUpdate:
         print "autoPlot"
         
         gridNames = defineGridNames()
-        self.makePlots(gridNames)
+        self.makePlots(gridNames, interactive = True)
         
-    def makePlots(self, sourceNameList):
+    def makePlots(self, sourceNameList, interactive = False):
         
         count = 0
         plotNames = []
         for sourceName in sourceNameList:
             sourceId,realName,officialName= self.matchName(sourceName)
-            all_measurements = self.wrapSearch(name=realName,catalogues=[5],limit=500, sortBy='date_observed',asc=False)
+            all_measurements = self.wrapSearch(name=realName,catalogues=[5],limit=1, sourceBandLimit = 500, sortBy='date_observed',asc=False)
             if size(all_measurements) != 0:
                 plotname = self.makeSinglePlot(realName, all_measurements,count)
                 plotNames.append(plotname)
             else:
                 print "No ALMA measurements found for this object yet" 
-            
+        
             count = count + 1
 
-        plotlist=''
-        for plotname in plotNames: 
-            plotlist = '%s %s'%(plotlist,plotname)
-        os.system('eog %s'%plotlist)
-        raw_input(" \n ### Have you reviewed all the plots with eog ? ###")
+        if interactive:
+            plotlist=''
+            for plotname in plotNames: 
+                plotlist = '%s %s'%(plotlist,plotname)
+            raw_input(" \n ### Review all the plots with the eog that just popped up and check for sanity !! ###")
+            os.system('eog %s'%plotlist)
+
     
     def makeSinglePlot(self,realName, all_m, fignum = 0):
         
@@ -1153,11 +1115,11 @@ class CalibratorCatalogUpdate:
 
         xlabel('MJD');ylabel('Database Flux (Jy)')
         legend()
-        yl = ylim(loc=1)
+        yl = ylim()
         self.makeXgridDates()
-        vlines([self.y11,self.y12, self.y13,self.y14],0,1.1*yl[1],color='k', linestyles='dashed')
+        vlines([self.y11,self.y12, self.y13,self.y14, self.y15],0,1.1*yl[1],colors='k', linestyles='dashed')
         vlines([self.ya,self.yb,self.yc,self.yd,self.ye,self.yf,self.yg,self.yh,self.yi,self.yj,self.yk,self.yl],
-               0,1.1*yl[1],color='k', linestyles='-.', linewidth=1)
+               0,1.1*yl[1],colors='k', linestyles='-.')
         text(self.ya,1.105*yl[1],'Jan', size='x-small', style = 'italic')
         text(self.yb,1.105*yl[1],'Feb', size='x-small', style = 'italic')
         text(self.yc,1.105*yl[1],'Mar', size='x-small', style = 'italic')
@@ -1177,7 +1139,7 @@ class CalibratorCatalogUpdate:
         text(self.y12+151,0.103*yl[0],'2012', size='x-large', style = 'normal')
         text(self.y13+151,0.103*yl[0],'2013', size='x-large', style = 'normal')
                
-        xlim([55550,56800]);ylim([0,1.1*yl[1]])
+        xlim([55550,57100]);ylim([0,1.1*yl[1]])
         ax.yaxis.grid(T)
         suptitle('ALMA Flux measurements for %s' %realName, y=0.96, size='large')
         plotname = '%s/plots/%s_current_flux.png' %(self.basepath,realName)
@@ -1195,6 +1157,7 @@ class CalibratorCatalogUpdate:
         self.y12 = aU.strDate2MJD('20120101')
         self.y13 = aU.strDate2MJD('20130101')
         self.y14 = aU.strDate2MJD('20140101')
+        self.y15 = aU.strDate2MJD('20150101')
         self.ya = aU.strDate2MJD('%s0101'%year)
         self.yb = aU.strDate2MJD('%s0201'%year)
         self.yc = aU.strDate2MJD('%s0301'%year)
@@ -1219,7 +1182,7 @@ class CalibratorCatalogUpdate:
         gridNames = defineGridNames()
         
         # make the plots for the gridName sources.
-        self.makePlots(gridNames)
+        self.makePlots(gridNames, interactive = False)
         now='%s'%datetime.datetime.now()
         filename = self.basepath+'/plots/grid_fluxes.html'
 
@@ -1251,7 +1214,7 @@ class CalibratorCatalogUpdate:
         
         for i in gridNames:
             sourceID,realName,officialName = self.matchName(i)
-            measurements =  self.wrapSearch(name=realName,catalogues=[5], limit=500,sortBy='date_observed',asc=False)
+            measurements =  self.wrapSearch(name=realName,catalogues=[5], limit=1,sourceBandLimit = 1, sortBy='date_observed',asc=False)
             if measurements != []:
                 m = measurements[0]
             else:
@@ -1259,10 +1222,10 @@ class CalibratorCatalogUpdate:
             self.parseMeasurement(m)
             f.write('<tr> \n')
             f.write('<td><strong>%10s</strong></td><td> %8s</td><td> %8s</td> \n' %(realName,self.ra_hms, self.dec_dms))
-            f.write('<td><a href="http://www.almaobservatory.org/~dbarkats/cal_survey/plots/%s_current_flux.png"> Plot </a></td> \n' %(realName))
+            f.write('<td><a href="http://www.alma.cl/~dbarkats/cal_survey/plots/%s_current_flux.png"> Plot </a></td> \n' %(realName))
 
             #B3
-            measurements = self.wrapSearch(name=realName, sortBy='date_observed',asc=False,catalogues=[5], fLower=aU.bandDefinitions[3][0], fUpper=aU.bandDefinitions[3][1])
+            measurements = self.wrapSearch(name=realName, limit = 1, sourceBandLimit = 1, sortBy='date_observed',asc=False,catalogues=[5], fLower=aU.bandDefinitions[3][0], fUpper=aU.bandDefinitions[3][1])
             if measurements != []:
                 self.parseMeasurement(measurements[0])
                 age = self.searchFlux(measurements=measurements, verbose=False)
@@ -1291,7 +1254,7 @@ class CalibratorCatalogUpdate:
             #else: f.write('<td></td><td></td><td></td><td></td> \n')
 
             #B7
-            measurements = self.wrapSearch(name=realName, catalogues=[5],asc=False, sortBy='date_observed',fLower=aU.bandDefinitions[7][0], fUpper=aU.bandDefinitions[7][1])  
+            measurements = self.wrapSearch(name=realName, limit = 1, sourceBandLimit = 1, catalogues=[5],asc=False, sortBy='date_observed',fLower=aU.bandDefinitions[7][0], fUpper=aU.bandDefinitions[7][1])  
             if measurements != []:
                 self.parseMeasurement(measurements[0])
                 age = self.searchFlux(measurements=measurements, verbose=False)
@@ -1382,7 +1345,7 @@ class CalibratorCatalogUpdate:
                 f.write('%s %s %s %s :"source does not exist in ALMA Cal database \n' %(sourceName, ra, dec, flux))
                 continue
             
-            measurements = self.wrapSearch(name=realName, sortBy = 'date_observed', asc=False, catalogues =[5], limit=500)
+            measurements = self.wrapSearch(name=realName, limit = 1, sourceBandLimit = 1, sortBy = 'date_observed', asc=False, catalogues =[5])
             if measurements != []:
                 m = measurements[0]
             else:
@@ -1449,7 +1412,7 @@ class CalibratorCatalogUpdate:
                         print 'Same source'
                         break
             
-            measurements = self.wrapSearch(ra = float(ras),dec = float(decs),radius = 0.01, sortBy = 'date_observed', asc=False, limit = 500)
+            measurements = self.wrapSearch(ra = float(ras),dec = float(decs),radius = 0.01, sortBy = 'date_observed', asc=False, limit = 10)
             if measurements != []:
                 m = measurements[0]
                 self.parseMeasurement(m)
@@ -1486,18 +1449,25 @@ class CalibratorCatalogUpdate:
         #read the VLBI catalog
         sname,stype,s_ra,s_dec,s_radeg,s_decdeg =self.readVLBICatalog()
         nvlbi = size(sname)
+
+        #read the VLBA catalog
+        vname,v_ra,v_dec,v_radeg,v_decdeg =self.readVLBACatalog()
+        nvlba = size(vname)
         
         # loop over all ALMA catalog sources
         # for now exclude invalid sources (CRATES sources are invalid, see CSv-2070)
         # to include them, make them valid or replace s.sourcat.getSource with getSourcePlus(i,False)
         invalid_src = 0
-        total_src = 10364
+        total_src = 13000
         print 'number of ALMA sources ', total_src
         tot_found_vlbi=0
+        tot_found_vlba = 0
         needs_updating = 0
 
-        g.write('VLBI name, ALMA name, type, sep (arcsec), ALMA pos RAdecimal, DECdecimal, RA, DEC, VLBI pos RAdecimal, Decdecimal, RA, DEC \n')
-        for i in range(total_src):
+        g.write('VLBA/I name, ALMA name, type, sep (arcsec), ALMA pos RAdecimal, DECdecimal, RA, DEC, VLBI pos RAdecimal, Decdecimal, RA, DEC \n')
+        print ('VLBA/I name, ALMA name, type, sep (arcsec), ALMA pos RAdecimal, DECdecimal, RA, DEC, VLBI pos RAdecimal, Decdecimal, RA, DEC \n')
+        #for i in range(total_src):
+        for i in range(10):
             if mod(i,500) == 0: print 'processing ALMA source ', i
 
             source = self.s.sourcecat.getSource(i)
@@ -1512,23 +1482,25 @@ class CalibratorCatalogUpdate:
             rahms =  self.ra_hms
             dechms = self.dec_dms
 
+            oname = self.matchName('',i,verbose = 0)[2]
+            
             found_vlbi = 0
             #now search for that alma source in vlbi source by ra and dec pos.
             for j in range(nvlbi): 
-                if decs > 45.0: found_vlbi=0; break
-                
                 rav = float(s_radeg[j])
                 decv = float(s_decdeg[j])
-                
-                if (absolute(decs-decv) < 0.01) and (absolute(rav-ras)) < 0.01:
+                namev = sname[j]
+                if namev == oname:
                     #sep1 = (sqrt((decs-decv)**2 + ((ras-rav)*cos(decs*3.14159/180.0))**2)) *3600.
                     sep = aU.angularSeparation(ras,decs,rav,decv) *3600.
-                    g.write('\n%10s, %14s,%s,%5.3f, '% (sname[j], self.getSourceNamesFromMeasurement(source,False)[1], stype[j], sep))
-                    print '%10s, %14s, %s, %5.3f, %9.5f, %9.5f, %s, %s, %9.5f, %9.5f, %s, %s\n'% (sname[j], self.getSourceNamesFromMeasurement(source,False)[1], stype[j], sep,ras, decs, rahms,dechms,rav, decv,s_ra[j],s_dec[j])
-                    g.write('%9.5f, %9.5f, %s, %s, %9.5f, %9.5f, %s, %s \n'%  (ras, decs, rahms,dechms,rav, decv,s_ra[j],s_dec[j]))
-                    if sep < SOURCE_SEP:
-                        if sep > SEP_MAX:
-                            needs_updating +=1
+                    comment = ''
+                    if sep > SEP_MAX:
+                        needs_updating +=1
+                        comment = '<<<<<<'
+                    
+                    g.write('%10s,%14s,%s,%5.3f,%9.5f, %9.5f, %s, %s, %9.5f, %9.5f, %s, %s %s \n'% (namev, oname, stype[j], sep,ras, decs, rahms,dechms,rav, decv,s_ra[j],s_dec[j],comment))
+                    print '%10s, %14s, %s, %5.3f, %9.5f, %9.5f, %s, %s, %9.5f, %9.5f, %s, %s, %s'% (namev, oname, stype[j], sep,ras, decs, rahms,dechms,rav, decv,s_ra[j],s_dec[j],comment)
+                   
                             # do we want to update all the measurements in that source with the new RA/DEC
                             # if so we have to loop over all the measurements
                             #for m  in measurements: 
@@ -1537,7 +1509,7 @@ class CalibratorCatalogUpdate:
                             #    print "AFTER: ", rav, decv
                             #    updated=self.s.sourcecat.updateMeasurement(self.measurementId, rav, self.ra_uncertainty, decv,dec_uncertainty, self.frequency, self.flux, self.flux_uncertainty,self.degree,self.degree_uncertainty,self.angle,self.angle_uncertainty,self.uvmin, self.uvmax,self.fluxratio,date_observed,self.origin, self.catalogue_id)
                             #    print "Updated source %s = %s" %(sourceName, updated)
-                            #    setValid = self.s.sourcecat.setMeasurementState(self.measurementId, True, False)
+                            #    setValid = self.s.sourcecat.setMeasurementState(self.measurementId, True)
                             #    if setValid == True:
                             #        print "Measurement %i  on source %s is now  Valid" %(self.measurementId, sourceName)
                 
@@ -1546,10 +1518,47 @@ class CalibratorCatalogUpdate:
                     break
         
             if found_vlbi == 0: 
-                h.write('no vlbi position for %16s \n'% (self.getSourceNamesFromMeasurement(source,False)[1]))
+                h.write('no vlbi position for %16s \n'% (oname))
+                found_vlba = 0
+                # now search for that alma source in vlbi source by ra and dec pos.
+                for j in range(nvlba): 
+                    ravv = float(v_radeg[j])
+                    decvv = float(v_decdeg[j])
+                    namevv = vname[j]
 
+                    if namevv == oname:
+                        sep = aU.angularSeparation(ras,decs,ravv,decvv) *3600.
+                        comment = ' VLBA'
+                        if sep > SEP_MAX:
+                            needs_updating +=1
+                            comment = 'VLBA <<<<'
+                    
+                        g.write('%10s,%14s, V,%5.3f,%9.5f, %9.5f, %s, %s, %9.5f, %9.5f, %s, %s %s \n'% (namevv, oname, sep,ras, decs, rahms,dechms,ravv, decvv,v_ra[j],v_dec[j],comment))
+                        print '%10s, %14s, V, %5.3f, %9.5f, %9.5f, %s, %s, %9.5f, %9.5f, %s, %s, %s'% (namevv, oname,  sep,ras, decs, rahms,dechms,ravv, decvv,v_ra[j],v_dec[j],comment)
+                   
+                            # do we want to update all the measurements in that source with the new RA/DEC
+                            # if so we have to loop over all the measurements
+                            #for m  in measurements: 
+                            #    self.parseMeasurement(m)
+                            #    print "BEFORE:",  self.ra_decimal, self.dec_decimal
+                            #    print "AFTER: ", rav, decv
+                            #    updated=self.s.sourcecat.updateMeasurement(self.measurementId, rav, self.ra_uncertainty, decv,dec_uncertainty, self.frequency, self.flux, self.flux_uncertainty,self.degree,self.degree_uncertainty,self.angle,self.angle_uncertainty,self.uvmin, self.uvmax,self.fluxratio,date_observed,self.origin, self.catalogue_id)
+                            #    print "Updated source %s = %s" %(sourceName, updated)
+                            #    setValid = self.s.sourcecat.setMeasurementState(self.measurementId, True)
+                            #    if setValid == True:
+                            #        print "Measurement %i  on source %s is now  Valid" %(self.measurementId, sourceName)
+                
+                        found_vlba = 1
+                        tot_found_vlba +=1
+                        break
+                
+            if found_vlba == 0:
+                h.write('no vlba position for %16s \n'% (oname))
+                
+                
         print 'Invalid sources = %d out of %d total sources' %(invalid_src,total_src)
         print  'with-VLBI-counterpart = %d out of %d total valid sources' %(tot_found_vlbi,total_src-invalid_src)
+        print  'with-VLBA-counterpart = %d out of %d total valid sources' %(tot_found_vlba,total_src-invalid_src)
         print 'Sources with VLBI counterparts that need updating: %d'%needs_updating
         g.close()
         h.close()
@@ -1577,7 +1586,7 @@ class CalibratorCatalogUpdate:
                 for m in  measurements:
                     if m['catalogue_id'] == 3:
                         # make invalid
-                        # setValid = self.s.sourcecat.setMeasurementState(m['measurement_id'], False, True)
+                        # setValid = self.s.sourcecat.setMeasurementState(m['measurement_id'], False)
                         # if setValid == True:
                             #print "Measurement %i  on source %s is now  Valid" %(m['measurement_id'], sourceNames[0])
                         #    set_invalid = set_invalid +1
@@ -1695,7 +1704,57 @@ class CalibratorCatalogUpdate:
                         else:
                             continue
         a.close()
+
+    def __checkOfficialName(self):
+        """
+        Go through all source ID and check that they all have the correct official name and they don't have the
+        incorrect name
         
+        """
+
+        for sourceId in range(14000):
+            a= s.sourcecat.getSourcePlus(sourceId,False)
+
+            names = a['names']
+            nameList= []
+            for i in range(size(names)):
+                nameList.append(names[i]['source_name'])
+            measurements = a['measurements']
+            if measurements != []:
+                m = measurements[-1]
+            else:
+                continue
+            ra = m['ra']
+            dec = m['dec']
+            pos = self.deg2radec(ra=ra,dec=dec, verbose = False)
+            ra_string=pos.split(',')[0].strip()
+            ras1 = ra_string.split(':')[0]
+            ras2 = ra_string.split(':')[1]
+            dec_string=pos.split(',')[1].strip()
+            decs1 = dec_string.split(':')[0]
+            decs2 = dec_string.split(':')[1]
+            official_name = 'J%s%s%s%s'%(ras1,ras2,decs1,decs2)
+
+            match = 0
+            for i in range(size(names)):
+                name = names[i]['source_name']
+                nameId = names[i]['name_id']
+                if len(name) == 10:
+                    if name == official_name:
+                        #print sourceId, name, official_name, 'Official Name match'
+                        match += 1
+                    else:
+                        print sourceId, name, official_name, 'Bad official Name *****'
+                        check = self.s.sourcecat.removeSourceName(sourceId, nameId)
+                        if check == True:
+                            print "bad name removed"
+                        #raw_input()
+            if match == 0:
+                print sourceId, official_name, nameList, 'Missing official Name'
+                new_name_id = self.s.sourcecat.addSourceName(sourceId, official_name)
+                print "new name added to this source, nameId = %s"%new_name_id
+                #raw_input()
+
     def __fixCratesRADEC(self):
         """
         single instance to fix all the RA/Dec of CRATES SOURCES after sources were re-ingested. see CSV-2070
@@ -1703,8 +1762,6 @@ class CalibratorCatalogUpdate:
         """
 
         for id in range(12000):
-            measurements = self.getMeasurementsFromSourceId(id)
-
             # find the latest measurment that is NOT CRATES
             if size(measurements) > 1:
                 print "check ID", id
@@ -1745,16 +1802,19 @@ class CalibratorCatalogUpdate:
                                                                    convertNoneToFloat(self.fluxratio),m['date_observed'],self.origin, self.catalogue_id)
                         
                         print "Updated source %d = %s" %(id, updated)
-                        setValid = self.s.sourcecat.setMeasurementState(self.measurementId, True, False)
+                        setValid = self.s.sourcecat.setMeasurementState(self.measurementId, True)
                         if setValid == True:
                             print "Measurement %i  on sourceId %d is now  Valid" %(self.measurementId, id)
 
         
-    def __addnewAT20GSource(self,filename, dryrun = False):
+    def __addnewAT20GSource(self,filename, dryrun = True):
         """
         Single usage function to add new sources from southern_extra_with_RADEC.txt
         provided by Ed Fomalont. File with all info
         is located in osf-red:/data/cal_survey/southern_extra_with_RADEC.txt
+
+        re-used Dec 2013 to add a  at20g catalog sources which also had a VLBI position and above 0.1 Jy.
+        
         """
         count = 0
         
@@ -1764,52 +1824,54 @@ class CalibratorCatalogUpdate:
             if line.startswith('#'):
                 continue
             print " \n---------########--------########--------########--------########"
-            _line = line.split()
+            _line = line.split(',')
             sourceName = _line[0].strip()
             
             #check validity of sourceName and get SourceId
-            sourceId,realName, officialName = self.matchName(sourceName)
-            
+            sourceId,realName, officialName = self.matchName(sourceName, verbose =True)
+                       
             # If source doesn't exist add it to ALMA catalog
             if sourceId == None:
                 #createSource = raw_input("Source name %s does not exist yet. Please add it manually along with its first measurement. This is done by dB for now (dbarkats@alma.cl)" %sourceName)
                 if dryrun == True:
                     sourceId = 9999
-                    realName =  sourceName
                 else:
-                    sourceId = self.addSource(sourceName,1)
-                    realName =  sourceName
+                    sourceId = self.s.sourcecat.addSource()
+                    self.s.sourcecat.addSourceType(sourceId, 1)
+                    self.s.sourcecat.addSourceName(sourceId, sourceName)
                          
             # Put ra, dec, and their uncertainty from latest measurement into this new measurement
-            # to update RA and DEC, use the update measurement function
-            ra = _line[3][3:]
-            ra_decimal = cc.dms2decimaldeg(ra,raflag = True)
-            ra_uncertainty = 0.0
-            dec = _line[4]
-            dec_decimal = cc.dms2decimaldeg(dec,raflag = False)
-            dec_uncertainty = 0.0
+            ra_decimal = float(_line[1])   # in deg
+            #ra_decimal = cc.dms2decimaldeg(ra,raflag = True)
+            ra_uncertainty = float(_line[2])
+            dec_decimal = float(_line[3])
+            #dec_decimal = cc.dms2decimaldeg(dec,raflag = False)
+            dec_uncertainty = float(_line[4])
             
             # Put frequency, flux, and flux uncertainty from this new measurement
-            frequency1 = float(8.0e9)
-            frequency2 = float(90.0e9)
-            flux1  = float(_line[1].strip())
-            flux2  = float(_line[2].strip())
-            flux_uncertainty = 0.0
-            degree = 0.0
-            degree_uncertainty = 0.0
-            angle = 0.0
-            angle_uncertainty = 0.0
-            extension = 0.0
-            fluxratio = 0.0
-            date_observed = tm.get_datetime_from_isodatetime('2009-10-25')
+            frequency = float(20.0e9)
+            flux  = float(_line[6])
+            flux_uncertainty = float(_line[7])
+            degree = NULL_AS_FLOAT
+            degree_uncertainty = NULL_AS_FLOAT
+            angle = NULL_AS_FLOAT
+            angle_uncertainty = NULL_AS_FLOAT
+
+            if (_line[12].strip() == 'NE') or (_line[12].strip() == '0.0'):
+                    uvmin = NULL_AS_FLOAT
+            uvmax= float(_line[13].strip())
+            
+            # will eventually disappear
+            fluxratio=float(1.0)
+                
+            date_observed = tm.get_datetime_from_isodatetime(_line[14].strip())
             origin = filename
             catalogue_id = long(21)
             names = []
             types = []
             
-            print realName, sourceId, ra_decimal, ra_uncertainty, dec_decimal, dec_uncertainty,frequency1, flux1, flux_uncertainty, degree,degree_uncertainty, angle, angle_uncertainty, extension,fluxratio, date_observed, origin, catalogue_id
-            print realName, sourceId, ra_decimal, ra_uncertainty, dec_decimal, dec_uncertainty,frequency2, flux2, flux_uncertainty, degree,degree_uncertainty, angle, angle_uncertainty, extension,fluxratio, date_observed, origin, catalogue_id
-
+            print sourceName, sourceId, ra_decimal, ra_uncertainty, dec_decimal, dec_uncertainty,frequency, flux, flux_uncertainty, degree,degree_uncertainty, angle, angle_uncertainty,fluxratio, uvmin, uvmax, date_observed, origin, catalogue_id
+            
             if dryrun == True:
                 checkAdd = 'n'
             else:
@@ -1817,33 +1879,17 @@ class CalibratorCatalogUpdate:
                 
             if checkAdd == 'y':
                 measurementId = self.s.sourcecat.addMeasurement(sourceId, ra_decimal, ra_uncertainty, dec_decimal, dec_uncertainty,
-                                                                frequency1, flux1, flux_uncertainty, degree,
-                                                                degree_uncertainty, angle, angle_uncertainty, extension,
-                                                                fluxratio, date_observed, origin, catalogue_id)
+                                                                frequency, flux, flux_uncertainty, degree,
+                                                                degree_uncertainty, angle, angle_uncertainty,
+                                                                fluxratio, uvmin, uvmax, date_observed, origin, catalogue_id)
                 count = count + 1
                 if measurementId != 0:
                     print "Making this new Measurement %i  on source %i Valid" %(measurementId, sourceId)
-                    setValid = self.s.sourcecat.setMeasurementState(measurementId, True, False)
+                    setValid = self.s.sourcecat.setMeasurementState(measurementId, True)
                     if setValid == True:
                         print "Measurement %i  on source %i is now  Valid" %(measurementId, sourceId)
                 else:
                     print "Sorry adding this last measurement to source %i %s failed" %(sourceId, name)
-
-
-                measurementId = self.s.sourcecat.addMeasurement(sourceId, ra_decimal, ra_uncertainty, dec_decimal, dec_uncertainty,
-                                                                frequency2, flux2, flux_uncertainty, degree,
-                                                                degree_uncertainty, angle, angle_uncertainty, extension,
-                                                                fluxratio, date_observed, origin, catalogue_id)
-
-                count = count + 1
-                if measurementId != 0:
-                    print "Making this new Measurement %i  on source %i Valid" %(measurementId, sourceId)
-                    setValid = self.s.sourcecat.setMeasurementState(measurementId, True, False)
-                    if setValid == True:
-                        print "Measurement %i  on source %i is now  Valid" %(measurementId, sourceId)
-                else:
-                    print "Sorry adding this last measurement to source %i %s failed" %(sourceId, name)
-                    
             else:
                 continue
             
@@ -1863,7 +1909,7 @@ class CalibratorCatalogUpdate:
             print " \n---------########--------########--------########--------########"
             _line = line.split(',')
             sourceName = _line[0].strip()
-            measurements = self.getMeasurementsFromSourceName(sourceName,catalog = 3)
+            measurements = self.wrapSearch(name = sourceName,catalog = 3, limit = 1, sourceBandLimit = 1000)
             for m in measurements:
                 self.parseMeasurement(m)
                 ra = float(_line[1].strip())
@@ -1878,7 +1924,7 @@ class CalibratorCatalogUpdate:
                                                        self.degree_uncertainty,self.angle,self.angle_uncertainty,self.extension,
                                                        self.fluxratio,date_observed,self.origin, self.catalogue_id)
                 print "Updated source %s = %s" %(sourceName, updated)
-                setValid = self.s.sourcecat.setMeasurementState(self.measurementId, True, False)
+                setValid = self.s.sourcecat.setMeasurementState(self.measurementId, True)
                 if setValid == True:
                     print "Measurement %i  on source %s is now  Valid" %(self.measurementId, sourceName)
         return
@@ -1978,7 +2024,7 @@ class CalibratorCatalogUpdate:
                 self.parseMeasurement(measurement)  
                 f.write('%10s, %f, %.2e, %f, %.2e, %.6e, %4.3f,%4.3f,%.1f, %.1f, %.1f, %.1f, %f, %.1f, %s \n' %(sourceName,self.ra_decimal, self.ra_uncertainty, self.dec_decimal, self.dec_uncertainty, self.frequency,self.flux, self.flux_uncertainty,self.degree, self.degree_uncertainty,self.angle,self.angle_uncertainty, self.extension, self.fluxratio,self.date_observed))
             else:
-                measurements = self.getMeasurementsFromSourceName(sourceName)
+                measurements = self.wrapSearch(name = sourceName, limit = 1, sourceBandLimit = 1000)
                 for i in range(size(measurements)):
                     measurement = measurements[i]
                     self.parseMeasurement(measurement)    

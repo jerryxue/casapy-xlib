@@ -23,7 +23,7 @@ Utilities for getting TMCDB data and plotting time-series data.
                     in some methods.
 2010-04-30 tsawada
 
-$Id: tmUtils.py,v 1.31 2013/11/11 17:34:21 thunter Exp $
+$Id: tmUtils.py,v 1.33 2014/05/19 23:48:01 thunter Exp $
 """
 import os
 import math
@@ -186,7 +186,8 @@ def retrieve_daily_tmc_data_file(antenna, device, monitorpoint, date, outpath='.
         return '_CURL_FAILED_'
 
 
-def retrieve_daily_tmc_data_file_name_only(antenna, device, monitorpoint, date, outpath='./'):
+def retrieve_daily_tmc_data_file_name_only(antenna, device, monitorpoint, 
+                                           date, outpath='./'):
     """
     Retrieve name of file that would be created by retrieve_daily_tmc_data_file()
 
@@ -203,22 +204,10 @@ def retrieve_daily_tmc_data_file_name_only(antenna, device, monitorpoint, date, 
 
     isodate = get_datetime_from_isodatetime(date).date().strftime('%Y-%m-%d')
     inputdate = datetime.datetime.strptime(date, '%Y-%m-%d')
-    
     rooturl = get_root_url_for_curl(date)
-
-    today = datetime.datetime.today()
-    twentydaysago = today + datetime.timedelta(days=-20)
-
-    if inputdate < twentydaysago:
-        unzip = 1
-        extension = 'txt.bz2'
-    else:
-        unzip = 0
-        extension = 'txt'
-
+    extension = 'txt'
     targeturl = 'CONTROL_%s_%s/%s.%s' % (antenna, device, monitorpoint, extension)
     completeurl = '%s/%s' % (rooturl, targeturl)
-    print completeurl
     outfile = '%s%s_%s_%s_%s.%s' % (outpath,isodate, antenna, device, monitorpoint, extension)
     return(outfile)
 
@@ -508,8 +497,9 @@ def show_monitor_data_in_subplot(subpl, antenna, device, monitorpoint, \
         startdatetime, enddatetime, yrange, ylabel, label, title, \
         showxticklabels, col,removediscontinuity, removeoutlier, index)
 
-def check_for_time_gaps(antenna='DV01', device='IFProc0', monitorpoint='GAINS', startdate=None, enddate=None,
-                        sigma=5,showFirstGap=False, outpath='./',removefile=True):
+def check_for_time_gaps(antenna='DV01', device='IFProc0', monitorpoint='GAINS',
+                        startdate=None, enddate=None, sigma=5,
+                        showFirstGap=False, outpath='./',removefile=True):
     """
     Check for gaps in the time series data for a specific monitor point
     Parameters are something like:
