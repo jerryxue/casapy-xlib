@@ -26,13 +26,7 @@ for i in range(0,len(mirfile_list)):
     xp['clean_width']       ='5km/s'
     xp['restfreq']          ='115.2712GHz'
     xp['outframe']          ='LSRK'
-    xp['niter']             =0
-    xp['chanbin']           =3
 
-    xp['phasecenter']       ='J2000 12h18m49.56 +14d24m58.50'
-    xp['imsize']            =350
-    xp['cell']              ='1arcsec'
-    
     execfile(xlib+'ximport.py')
     execfile(xlib+'xconsol.py')
 

@@ -59,12 +59,7 @@ xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 xp['minpb']             =0.10
 xp['clean_mask']        =0.10
-"""
-xp['prefix']            ='n3593co_scl'
-xp['clean_start']       ='500km/s'
-xp['clean_nchan']       =(770-500)/10+1
-xp['clean_width']       ='10km/s'
-"""
+
 # RUN SCRIPTS
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

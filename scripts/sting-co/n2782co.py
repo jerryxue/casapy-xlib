@@ -8,7 +8,7 @@ mirfile_list=['../../../../raw/co10/n2782/vis/ngc2782_C1_08may19.co.cal',
 telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):
-    
+
     execfile(xlib+'xinit.py')
     
     xp['rawfiles']=mirfile_list[i]

@@ -62,8 +62,6 @@ xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 xp['minpb']             =0.10
 xp['clean_mask']        =0.25
-xp['niter']             =0
-xp['resmooth']          =False
 
 # RUN SCRIPTS
 execfile(xlib+'xconsol.py')

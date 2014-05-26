@@ -1,12 +1,12 @@
 track_list=['C1','C2','D1','D2','D5','D6','D7','E1']
-mirfile_list=[  '/Volumes/Scratch/reduc/sting-co/n3147/vis/ngc3147_C1_08apr05.co.cal',
-                '/Volumes/Scratch/reduc/sting-co/n3147/vis/ngc3147_C2_08apr07.co.cal',
-                '/Volumes/Scratch/reduc/sting-co/n3147/vis/ngc3147_D1_08mar09.co.cal',
-                '/Volumes/Scratch/reduc/sting-co/n3147/vis/ngc3147_D2v2_08mar19.co.cal',
-                '/Volumes/Scratch/reduc/sting-co/n3147/vis/ngc3147_D5_10sep02.co.cal',
-                '/Volumes/Scratch/reduc/sting-co/n3147/vis/ngc3147_D6_10sep11.co.cal',
-                '/Volumes/Scratch/reduc/sting-co/n3147/vis/ngc3147_D7_10sep12.co.cal',
-                '/Volumes/Scratch/reduc/sting-co/n3147/vis/ngc3147a_E1_09jul12.co.cal']
+mirfile_list=[  '../../../../raw/co10/n3147/vis/ngc3147_C1_08apr05.co.cal',
+                '../../../../raw/co10/n3147/vis/ngc3147_C2_08apr07.co.cal',
+                '../../../../raw/co10/n3147/vis/ngc3147_D1_08mar09.co.cal',
+                '../../../../raw/co10/n3147/vis/ngc3147_D2v2_08mar19.co.cal',
+                '../../../../raw/co10/n3147/vis/ngc3147_D5_10sep02.co.cal',
+                '../../../../raw/co10/n3147/vis/ngc3147_D6_10sep11.co.cal',
+                '../../../../raw/co10/n3147/vis/ngc3147_D7_10sep12.co.cal',
+                '../../../../raw/co10/n3147/vis/ngc3147a_E1_09jul12.co.cal']
 telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):

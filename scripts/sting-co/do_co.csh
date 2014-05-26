@@ -10,10 +10,11 @@
 set pdir="/Volumes/Scratch/reduc/co10"
 set sdir="/Users/Rui/Dropbox/Worklib/casapy/scripts/sting-co"
 foreach source (    0337 0772 1156 1569 1637 \
-                    2681 2782 2976 3147 3198 \
-                    3486 3593 3949 4151 4254 \
-                    4273 4536 4605 4654 5371 \
+                    2681 2976 3147 3198 \
+                    3486 3593 3949 4151 \
+                    4273 4536 4605 5371 \
                     5713 6503 6951 )
+                    # 4254 2782 4654
     cd "${pdir}/msc/n${source}/"
     pwd
     rm -rf *
