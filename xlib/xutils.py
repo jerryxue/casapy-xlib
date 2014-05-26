@@ -1391,11 +1391,28 @@ def checkvrange(srcfile='',
     tb.open(srcfile+'/SPECTRAL_WINDOW')
     news("available range (Hz) in orginal frame:")
     chan_freq=tb.getcol('CHAN_FREQ')
+    header_para=tb.colnames()
+    if 'MEAS_FREQ_REF' in header_para:
+        frame=tb.getcol('MEAS_FREQ_REF')
+        spwids=range(0,len(tb.getcol('MEAS_FREQ_REF')))
+    else:  
+        spwids=0
+    
     chan_del_freq=np.average(np.abs(chan_freq[0]-chan_freq[1]))
     chan_low_freq=np.min(chan_freq)-chan_del_freq/2.0
     chan_hig_freq=np.max(chan_freq)+chan_del_freq/2.0
     news([chan_low_freq,chan_del_freq,chan_hig_freq])
     v=c*(restfreq-np.array([np.max(chan_freq),np.min(chan_freq)]))/restfreq
     news(v)
+    
+    ms.open(srcfile)
+    for spwid in spwids:
+        req_freq=chan_freq[:,spwid]
+        v=c*(restfreq-req_freq)/restfreq
+        news(['spwid: '+str(spwid),'frame: '+str(frame[spwid]),np.min(np.sort(v)),np.max(np.sort(v)),np.abs(v[0]-v[1])])
+    ms.close()
+    
     tb.close()
+    
+    news("0 REST 1 LSRK2 LSRD 3 BARY 4 GEO 5 TOPO 6 GALACTO 7 LGROUP")
     news("")

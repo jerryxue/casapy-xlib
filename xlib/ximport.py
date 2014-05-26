@@ -209,7 +209,7 @@ if  (   xp['importscan']!=''
     xu.news("Use split to extract data based on Scan/Spw/Timerange/Field selecting and TimeBin setting:")
     xu.news(xp['prepfile'])
     xu.news("")
-
+    """
     split(vis=xp['prepfile'],
           outputvis=xp['msfile']+'.select',
           scan=xp['importscan'],
@@ -222,23 +222,32 @@ if  (   xp['importscan']!=''
           width=xp['importchanbin'],
           correlation=xp['importcorr'],
           combine='')
+    
     """
+    if  xp['importchanbin']!=1:
+        chanaverage=True
+    else:
+        chanavarage=False
+    if  xp['importtimebin']!='':
+        timeaverage=True
+    else:
+        timeaverage=False
     mstransform(vis=xp['prepfile'],
           outputvis=xp['msfile']+'.select',
           scan=xp['importscan'],
           timerange=xp['importtimerange'],
           spw=xp['importspw'],
           field=xp['importfield'],
-          timebin=xp['importtimebin'],
           datacolumn='data',
           combinespws=False,
-          chanaverage=True,
+          chanaverage=chanaverage,
           chanbin=xp['importchanbin'],
-          useweights='spectrum',
+          timeaverage=timeaverage,
+          timebin=xp['importtimebin'],
+          useweights='flags',
           regridms=False,
           correlation=xp['importcorr'])
-    """
-    
+
     os.system('rm -rf '+xp['msfile'])
     os.system('rm -rf '+xp['msfile']+'.flagversions')
     os.system('mv '+xp['msfile']+'.select '+xp['msfile'])
