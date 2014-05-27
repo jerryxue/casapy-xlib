@@ -712,7 +712,7 @@ def checkpsf(outname):
 
 def blsearch(logname=casalog.logfile()):
     #
-    #    search for uniq baselines from PLOTMS identifying log
+    #    search for unique baselines from PLOTMS identifying log
     #
     news("")
     news("----------- antfilter Begin: -----------")
@@ -912,7 +912,7 @@ def modelconv(outname,mode=''):
 def copyweight(srcfile,
                copyback=False):
     # copyback=False copy weight to weight_spectrum
-    # copyback=True  copy mean(weight_spectrum) to weight
+    # copyback=True  copy mean(weight_spectrum) to weight if weight_spectrum exists
     
     news("")
     news("--copyweight--")
@@ -921,13 +921,18 @@ def copyweight(srcfile,
     if  copyback==True:
         tb.open(srcfile,nomodify=False)
         wt=tb.getcol('WEIGHT')
-        wts=tb.getcol('WEIGHT_SPECTRUM')
-        flag=tb.getcol('FLAG')
-        wtsc=np.ma.average(wts,axis=-2,weights=1.0-flag)*1.0
-        tb.putcol('WEIGHT',wtsc)
-        sigma=np.where(wtsc>0.0,wtsc**0.5,-1.0)
-        sigma=1.0/sigma
-        tb.putcol('SIGMA',sigma)
+        header_para=tb.colnames()
+        wts_exist=tb.iscelldefined('WEIGHT_SPECTRUM',0)
+        if  wts_exist==True:
+            wts=tb.getcol('WEIGHT_SPECTRUM')
+            flag=tb.getcol('FLAG')
+            wtsc=np.ma.average(wts,axis=-2,weights=1.0-flag)*1.0
+            tb.putcol('WEIGHT',wtsc)
+            sigma=np.where(wtsc>0.0,wtsc**0.5,-1.0)
+            sigma=1.0/sigma
+            tb.putcol('SIGMA',sigma)
+        else:
+            news("no valid WEIGHT_SPECTRUM values")
         tb.close()
     else:
         tb.open(srcfile,nomodify=False)
