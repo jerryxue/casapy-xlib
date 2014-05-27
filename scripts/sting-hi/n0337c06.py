@@ -15,8 +15,9 @@ xp['uvrange_fluxcal']   ='<40klambda'
 xp['phasecal']          ='0059+001'
 
 
-xp['flagspw']           ='*:0~2;60~62'
-xp['flagselect']        =["timerange='04:38:30~04:51:20.0'",
+xp['flagspw']           ="0:0~4;60~62,1:0~2;58~62"
+xp['flagselect']        =["timerange='04:45:50~04:48:20'",
+                          "timerange='04:43:20~04:44:50'",
                           "antenna='VA11&VA21'",
                           "antenna='VA06&VA21'",
                           "antenna='VA06&VA11'",
@@ -26,41 +27,36 @@ xp['flagselect']        =["timerange='04:38:30~04:51:20.0'",
                           "timerange='2006/11/04/01:59:35~01:59:45'",
                           "timerange='2006/11/04/03:07:15~03:07:25'",
                           "timerange='2006/11/04/04:15:00~04:15:15'",
-                          "antenna='VA22'",
                           "timerange='2006/11/04/10:03:45~10:04:15'",
                           "timerange='2006/11/04/10:04:54~10:05:06'",
                           "timerange='2006/11/04/10:06:04~10:06:16'",
-                          "timerange='03:00:00~11:00:00.0' antenna='VA03'",
-                          "antenna='VA11'",
-                          "antenna='VA06'",
-                          "antenna='VA05'",
                           "timerange='2006/11/04/04:33:06~04:34:05'"]
 
 # CONSOLIDATING
 xp['spwrgd']            ='spw'
 xp['scalewt']           =True
 xp['imcs']              =True
-xp['fitchans']          ='0~4;69~77'
+xp['fitchans']          ='0~22;84~106'
 xp['fitorder']          =1
 
 # IMAGING
 xp['cleanspec']         =True
 
-xp['imsize']            =512+256+128
-xp['cell']              ='4.0arcsec'
+xp['imsize']            =320
+xp['cell']              ='8.0arcsec'
 
-xp['imstat_box_spec']   ='93,206,234,350'
+xp['imstat_box_spec']   ='42,103,117,175'
 
 xp['cleanmode']         ='velocity'
-xp['clean_start']       ='1450.00km/s'
+xp['clean_start']       ='1360.00km/s'
 xp['clean_width']       ='5.2km/s'
-xp['clean_nchan']       =78
-xp['phase_center']      ='J2000 00h59m50.1 -07d34m41.0'
+xp['clean_nchan']       =107
+xp['phasecenter']       ='J2000 00h59m50.1 -07d34m41.0'
 xp['niter']             =0
 xp['usescratch']        =True
 
 # RUN SCRIPTS:
-#execfile(xlib+'ximport.py')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xconsol.py')
+execfile(xlib+'ximport.py')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

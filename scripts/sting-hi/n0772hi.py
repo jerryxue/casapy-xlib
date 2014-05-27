@@ -1,3 +1,10 @@
+#2172->2716
+execfile(stinghi+'n0772b13a.py')
+execfile(stinghi+'n0772b13b.py')
+execfile(stinghi+'n0772b13c.py')
+execfile(stinghi+'n0772bc13a.py')
+execfile(stinghi+'n0772bc13b.py')
+
 execfile(xlib+'xinit.py')
 
 # CONSOLIDATING
@@ -33,5 +40,5 @@ xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 
 # RUN SCRIPTS:
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
+#execfile(xlib+'xconsol.py')
+#execfile(xlib+'xclean.py')

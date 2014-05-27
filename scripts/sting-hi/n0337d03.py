@@ -15,7 +15,7 @@ xp['uvrange_fluxcal']   ='<40klambda'
 xp['phasecal']          ='0059+001'
 
 
-xp['flagspw']           ='*:0~2;60~62'
+xp['flagspw']           ="0:0~4;60~62,1:0~2;58~62"
 xp['flagselect']        =[  "timerange='2003/02/16/22:06:02~22:06:30' field='0137+331'",
                             "antenna='VA08&VA11'",
                             "antenna='VA20&VA11'",
@@ -34,21 +34,21 @@ xp['flagselect']        =[  "timerange='2003/02/16/22:06:02~22:06:30' field='013
 xp['spwrgd']            ='spw'
 xp['scalewt']           =True
 xp['imcs']              =True
-xp['fitchans']          ='0~4;69~77'
+xp['fitchans']          ='0~22;84~106'
 xp['fitorder']          =1
 
 # IMAGING
 xp['cleanspec']         =True
 
-xp['imsize']            =256+128+64
+xp['imsize']            =320
 xp['cell']              ='8.0arcsec'
 
 xp['imstat_box_spec']   ='42,103,117,175'
 
 xp['cleanmode']         ='velocity'
-xp['clean_start']       ='1450.00km/s'
+xp['clean_start']       ='1360.00km/s'
 xp['clean_width']       ='5.2km/s'
-xp['clean_nchan']       =78
+xp['clean_nchan']       =107
 xp['phasecenter']       ='J2000 00h59m50.1 -07d34m41.0'
 xp['niter']             =0
 xp['usescratch']        =True

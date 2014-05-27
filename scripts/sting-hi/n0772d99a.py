@@ -2,7 +2,7 @@ execfile(xlib+'xinit.py')
 
 # IMPORT
 xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-xp['rawfiles']          ='/Volumes/Scratch/reduc/sting-hi/msc/n0772/raw/AG564_3'
+xp['rawfiles']          ='/Volumes/Scratch/raw/21cm/n0772/AG564_3'
 xp['importspw']         ='1'
 
 # CALIBRATION
@@ -14,7 +14,7 @@ xp['uvrange_fluxcal']   ='<40klambda'
 xp['phasecal']          = '0204+152'
 xp['uvrange_phasecal']  ='<100klambda'
 
-#xp['flagspw']           ='0:0~2;124~126'
+xp['flagspw']           ='0:0~4;122~126'
 xp['flagselect']        = [ "antenna='VA12&VA17' timerange='17:44:35~17:44:55'",
                             "timerange='01:00:00~17:44:10'", "antenna='VA05'",
                             "antenna='VA04&VA27'","antenna='VA03&VA27'",
@@ -27,15 +27,10 @@ xp['flagselect']        = [ "antenna='VA12&VA17' timerange='17:44:35~17:44:55'",
                             "antenna='VA14&VA24'"]
 
 # CONSOLIDATING
-xp['spwrgd']            =''
-xp['scalewt']           =True
-xp['uvcs']              =True
-xp['fitspw']            ='0:6~31;95~109'
-xp['fitorder']          =1
 xp['spwrgd']            ='spw'
 xp['scalewt']           =True
 xp['uvcs']              =True
-xp['fitspw']            ='*:0~5;33~38'
+xp['fitspw']            ='*:0~35;92~126'
 xp['fitorder']          =1
 
 # IMAGING
@@ -46,17 +41,15 @@ xp['imsize']            =256
 xp['cell']              ='12.0arcsec'
 
 xp['cleanmode']         ='velocity'
-xp['clean_start']       ='2050.0km/s'
-xp['clean_width']       ='20.8km/s'
-# evla tracks have nchan=39 to avoid spws with different corrs merging into one.
-xp['clean_nchan']       =40
+xp['clean_start']       ='1780km/s'
+xp['clean_width']       ='10.4km/s'
+xp['clean_nchan']       =127
 xp['phasecenter']       ='J2000 01h59m19.58 +19d00m27.10'
 xp['niter']             =0
 
 # RUN SCRIPTS:
 execfile(xlib+'ximport.py')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xcalplot.py')
-#execfile(xlib+'xconsol.py')
-#execfile(xlib+'xclean.py')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')
 
