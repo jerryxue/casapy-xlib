@@ -517,6 +517,7 @@ for j in range(0,len(spwid_source)):
             gaintable=gaintable,
             gainfield=gainfield,
             interp=interp,
+            calmode='ap',
             append= True)
 
     spwmap[-1]=spwmap_phasecal
@@ -535,6 +536,7 @@ for j in range(0,len(spwid_source)):
             gaintable=gaintable,
             gainfield=gainfield,
             interp=interp,
+            calmode='ap',
             append= True)    
 
     xu.news("")

@@ -218,7 +218,7 @@ if  (   xp['importscan']!=''
           field=xp['importfield'],
           timebin=xp['importtimebin'],
           datacolumn='data',
-          keepflags=True,
+          keepflags=False,
           width=xp['importchanbin'],
           correlation=xp['importcorr'],
           combine='')
@@ -227,7 +227,7 @@ if  (   xp['importscan']!=''
     if  xp['importchanbin']!=1:
         chanaverage=True
     else:
-        chanavarage=False
+        chanaverage=False
     if  xp['importtimebin']!='':
         timeaverage=True
     else:

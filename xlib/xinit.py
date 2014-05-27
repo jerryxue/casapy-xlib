@@ -76,7 +76,7 @@ xp={
 'scalsmoothtime':60,
 
 'flagtsys':True,
-'flagysys_range':[5.0,1000.0],
+'flagtsys_range':[5.0,1000.0],
 
 # CONSOLIDATE
 'prefix_comb':[],
@@ -100,7 +100,7 @@ xp={
                 #
                 #    
                 #
-'spwrgd_method':'mstransform',
+'spwrgd_method':'cvel',
 'combinespws':True,
 'chanbin':0,
 # CONTINUE SUBTRACTION
@@ -131,7 +131,7 @@ xp={
 'cleanspw':'',
 'phasecenter':'',
 'spinterpmode':'linear',
-'restfreq':'1420405752.0Hz',
+'restfreq':'1420405752.0Hz', #1420.405752
 'outframe':'BARY',
 'allowchunk':False,
 

@@ -110,7 +110,6 @@ if  len(xp['prefix_comb'])==1:
             spwrgd=False
         if  xp['spwrgd']=='frame':
             spwrgd=True
-
         mstransform(vis=xp['msfile'],
                     outputvis=xp['srcfile'],
                     createmms=False,
@@ -133,6 +132,13 @@ if  len(xp['prefix_comb'])==1:
                     restfreq=xp['restfreq'],
                     phasecenter=xp['phasecenter'],
                     hanning=xp['hs'])
+        """
+        split(vis=xp['msfile'],
+              outputvis=xp['srcfile'],
+              spw=xp['spw_source'],
+              datacolumn='corrected',
+              keepflags=False)
+        """
     else:
         """
         tb.open(xp['msfile'],nomodify=False)
@@ -154,36 +160,61 @@ if  len(xp['prefix_comb'])==1:
         #   cvel is still better :)
         #### 
         if  datacolumn=='corrected':
-            if  xp['chanbin']==0:
-                chanaverage=False
-                chanbin=1
-            if  xp['chanbin']!=0:
-                chanaverage=True
-                chanbin=xp['chanbin']
-            mstransform(vis=xp['msfile'],
-                        outputvis=xp['srcfile'],
-                        createmms=False,
-                        numsubms=4,
-                        separationaxis='both',
-                        field=xp['source'],
-                        spw=xp['spw_source'],
-                        useweights='spectrum',#only matter is chanaverge=False
-                        usewtspectrum=True,
-                        datacolumn=datacolumn,
-                        chanaverage=chanaverage,
-                        chanbin=chanbin,
-                        regridms=True,
-                        combinespws=xp['combinespws'],
-                        mode=xp['cleanmode'],
-                        nchan=xp['clean_nchan'],
-                        start=xp['clean_start'],
-                        width=xp['clean_width'],
-                        nspw=1,
-                        interpolation=xp['spinterpmode'],
-                        outframe=xp['outframe'],
-                        restfreq=xp['restfreq'],
-                        phasecenter='',
-                        hanning=xp['hs'])
+            if  xp['spwrgd_method']=='cvel':
+                os.system("rm -rf "+xp['srcfile']+'.tmp')
+                split(vis=xp['msfile'],
+                      outputvis=xp['srcfile']+'.tmp',
+                      spw=xp['spw_source'],
+                      datacolumn='corrected',
+                      keepflags=False)
+                cvel(vis=xp['srcfile']+'.tmp',
+                     outputvis=xp['srcfile'],
+                     passall=False,
+                     field=xp['source'],
+                     selectdata=True,
+                     mode=xp['cleanmode'],
+                     nchan=xp['clean_nchan'],
+                     start=xp['clean_start'],
+                     width=xp['clean_width'],
+                     interpolation=xp['spinterpmode'],
+                     outframe=xp['outframe'],
+                     restfreq=xp['restfreq'],
+                     veltype='radio',
+                     phasecenter='',
+                     hanning=xp['hs'])
+                os.system("rm -rf "+xp['srcfile']+'.tmp')
+            if  xp['spwrgd_method']=='mstransform':
+                if  xp['chanbin']==0:
+                    chanaverage=False
+                    chanbin=1
+                if  xp['chanbin']!=0:
+                    chanaverage=True
+                    chanbin=xp['chanbin']
+                mstransform(vis=xp['msfile'],
+                            outputvis=xp['srcfile'],
+                            createmms=False,
+                            numsubms=4,
+                            separationaxis='both',
+                            field=xp['source'],
+                            spw=xp['spw_source'],
+                            useweights='spectrum',#only matter is chanaverge=False
+                            usewtspectrum=True,
+                            datacolumn=datacolumn,
+                            chanaverage=chanaverage,
+                            chanbin=chanbin,
+                            regridms=True,
+                            combinespws=xp['combinespws'],
+                            mode=xp['cleanmode'],
+                            nchan=xp['clean_nchan'],
+                            start=xp['clean_start'],
+                            width=xp['clean_width'],
+                            nspw=1,
+                            interpolation=xp['spinterpmode'],
+                            outframe=xp['outframe'],
+                            restfreq=xp['restfreq'],
+                            phasecenter='',
+                            hanning=xp['hs'])
+
         else:
             cvel(vis=xp['msfile'],
                 outputvis=xp['srcfile'],
@@ -210,8 +241,13 @@ if  len(xp['prefix_comb'])==1:
     #  COPY MEAN(WEIGHT_SPECTRUM) TO WEIGHT
     if  xp['unchflag']==True:
         xu.unchflag(xp['srcfile'])
-    xu.copyweight(xp['srcfile'],copyback=True)
-    
+    tb.open(xp['srcfile'],nomodify=False)
+    wts_exist=tb.iscelldefined('WEIGHT_SPECTRUM',0)
+    tb.close()
+    if  wts_exist==True:
+        xu.copyweight(xp['srcfile'],copyback=True)
+    else:
+        xu.copyweight(xp['srcfile'])
     #  Note:
     #
     #  mstransform() accumulates weight_spectrum from each spw
@@ -232,11 +268,13 @@ if  len(xp['prefix_comb'])==1:
     # note:  channel regridding will change
     #        the noise level (sometimes interp='nearest'
     #        or 'linear' will make a difference depending)
+
     xu.scalewt(xp['srcfile'],
                uvrange=xp['scalewt_uvrange'],
                fitspw=xp['scalewt_fitspw'],
                datacolumn='data',
                modify=xp['scalewt'])
+
     # note:  below lines can help to check weight/noise in
     #        calibrated MS before split.
     #xu.scalewt(xp['srcfile'],
