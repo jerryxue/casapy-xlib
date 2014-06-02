@@ -209,7 +209,7 @@ if  (   xp['importscan']!=''
     xu.news("Use split to extract data based on Scan/Spw/Timerange/Field selecting and TimeBin setting:")
     xu.news(xp['prepfile'])
     xu.news("")
-    """
+
     split(vis=xp['prepfile'],
           outputvis=xp['msfile']+'.select',
           scan=xp['importscan'],
@@ -247,7 +247,7 @@ if  (   xp['importscan']!=''
           useweights='flags',
           regridms=False,
           correlation=xp['importcorr'])
-
+    """
     os.system('rm -rf '+xp['msfile'])
     os.system('rm -rf '+xp['msfile']+'.flagversions')
     os.system('mv '+xp['msfile']+'.select '+xp['msfile'])
