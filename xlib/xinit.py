@@ -80,7 +80,6 @@ xp={
 
 # CONSOLIDATE
 'prefix_comb':[],
-'wtscale':[],
 'usevconcat':False,
 'spwrgd':'',    # if spwrgd='spw', we will regrid spw to the clean setup
                 # if spwrgd='', we will keep the spw from observations
@@ -111,9 +110,11 @@ xp={
 'imcs':False,
 'freqtol':'',
 'uvcs_combine':'spw',
-'scalewt':False,
-'scalewt_fitspw':'',
-'scalewt_uvrange':'',
+'scalewt':False,        #    scaling weight using WEIGHT_SCALING during concat
+'visweightscale':[],    #    scaling weight using a specified value
+'scalewt_fitspw':'',    #    the data range used to calculate WEIGHT_SCALING
+'scalewt_uvrange':'',   #    the data range used to calculate WEIGHT_SCALING
+'scalewt_minsamp':2,
 'hs':False,
 'unchflag':False, # unflagged records with several channel flagged
                   # so each channel has the same flagging 
