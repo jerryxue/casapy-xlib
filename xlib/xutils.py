@@ -916,9 +916,9 @@ def copyweight(srcfile,
     
     news("")
     news("--copyweight--")
-    news("")
     
     if  copyback==True:
+        news("  mean(weight_spectrum)->weight")
         tb.open(srcfile,nomodify=False)
         wt=tb.getcol('WEIGHT')
         header_para=tb.colnames()
@@ -935,6 +935,7 @@ def copyweight(srcfile,
             news("no valid WEIGHT_SPECTRUM values")
         tb.close()
     else:
+        news("  weight->weight_spectrum")
         tb.open(srcfile,nomodify=False)
         wts=tb.getcol('FLAG')*1.0
         wtt=tb.getcol('WEIGHT')
@@ -942,7 +943,9 @@ def copyweight(srcfile,
             wts[i,:,:]=wtt[i,:]
         tb.putcol('WEIGHT_SPECTRUM',wts)
         tb.close()
-
+        
+    news("")
+    
 def checkchflag(msfile):
     #
     #    check flag consistancy in channel
@@ -999,6 +1002,7 @@ def scalewt(srcfile,
             uvrange='',
             fitspw='',
             datacolumn='corrected',
+            minsamp=2,
             modify=False):
     #
     # statwt() modifies weight/sigma for each vis record using an emperical
@@ -1019,39 +1023,37 @@ def scalewt(srcfile,
     #               and check if the scaling factor is reasonable.
     # uvrange:      ideally, the uvrange doesn't show strong signal (either cont or line)
     #
-    
+    # 
     # BACKUP OLD WEIGHT & SIGMA & WEIGHT_SPECTRUM
-    
+    # 
+    # clean will use WEIGHT rather than WEIGHT_SPECTRUM (as for r4.2.1)
+    # 
     news("")
-    news("--scalewt--")
+    news("--running scalewt from xutils--")
     news("")
     
-    myms=mstool()
-    myms.open(srcfile,nomodify=True)
-    tbwt_old=myms.getdata(['weight','sigma'])
-    myms.close() 
+    #    SAVE OLD WEIGHT/SIGMA/WEIGHT_SPECTRUM VALUES
+    ms.open(srcfile,nomodify=True)
+    tbwt_old=ms.getdata(['weight','sigma'])
+    ms.close()
     tb.open(srcfile,nomodify=True)
     wts_exist=tb.iscelldefined('WEIGHT_SPECTRUM',0)
     if  wts_exist==True:
         tswt_old=tb.getcol('WEIGHT_SPECTRUM')
     tb.close()
     
-    # COPY WEIGHT TO WEIGHT_SPECTRUM TEMPORARILY
-    # VISSTAT(axis='weight') DOESN'T SEEM TO TREAT FLAG CORRECTLY
-    copyweight(srcfile)
-    
-    news("+++++++++++++++++++++++++++++++++++++++++++++++")
-    news("+++++++++++++++++++++++++++++++++++++++++++++++")
-        
+    #####
+    # NOTE (as for r4.2.1):
+    #    visstat(axis='weight') doesn't use the FLAG column correctly
+    #    we copy WEIGHT to WEIGHT_SPECTRUM for visstat calculations
+    #    statwt doesn't really touch WEIGHT_SPECTRUM
+    #####
+    news("")
+    news(">"*60)
+    news(">"*60)
     news("")
     news("--check weight column before recalculating--")
-    news("")
-    """
-    stwt_old=visstat(vis=srcfile,
-                     axis='sigma',
-                     uvrange=uvrange,
-                     useflags=True,
-                     spw='')
+    copyweight(srcfile)
     """
     stwt_old=visstat(vis=srcfile,
                      field=field,
@@ -1059,30 +1061,24 @@ def scalewt(srcfile,
                      uvrange=uvrange,
                      useflags=True,
                      spw='')
-    news("")
-    news("--statwt--")
-    news("")
+    """
+    tb.open(srcfile,nomodify=True)
+    swt_before=tb.getcol('WEIGHT_SPECTRUM')
+    flg_before=tb.getcol('FLAG')
+    flg_before=1.0-flg_before
+    tb.close()
     news("Use statwt to recalculate the WEIGHT & SIGMA columns:")
-    news("")
-    statwt(vis=srcfile,fitspw=fitspw,
-           field=field,combine='',
-           datacolumn=datacolumn,dorms=False)
-    
-    # COPY WEIGHT TO WEIGHT_SPECTRUM TEMPORARILY
-    # VISSTAT(axis='weight') DOESN'T SEEM TO TREAT FLAG CORRECTLY
-    # statwt in v4.1 doesn't touch weight_spectrum
-    copyweight(srcfile)
-
-    
+    statwt(vis=srcfile,
+           fitspw=fitspw,
+           spw=fitspw,
+           field=field,
+           minsamp=minsamp,
+           combine='',
+           datacolumn=datacolumn,
+           dorms=False)
     news("")
     news("--check weight column after recalculating--")
-    news("")
-    """
-    stwt_new=visstat(vis=srcfile,
-                     axis='sigma',
-                     uvrange=uvrange,
-                     useflags=True,
-                     spw='')
+    copyweight(srcfile)
     """
     stwt_new=visstat(vis=srcfile,
                      field=field,
@@ -1090,24 +1086,115 @@ def scalewt(srcfile,
                      uvrange=uvrange,
                      useflags=True,
                      spw='')
-    news("")
-    news("")
-    news("+++++++++++++++++++++++++++++++++++++++++++++++")
-    news("+++++++++++++++++++++++++++++++++++++++++++++++")
+    """
+    tb.open(srcfile,nomodify=True)
+    swt_after=tb.getcol('WEIGHT_SPECTRUM')
+    flg_after=tb.getcol('FLAG')
+    flg_after=1.0-flg_after
+    tb.close()
+    news("<"*60)
+    news("<"*60)
     
-    medianwt_old=stwt_old['WEIGHT_SPECTRUM']['median']
-    medianwt_new=stwt_new['WEIGHT_SPECTRUM']['median']
+    a=np.ravel(swt_before*flg_before)
+    b=np.ravel(swt_after*flg_after)
+    tag=np.where((a!=0) & (b!=0))[0]
     
-    sf=medianwt_new/medianwt_old
-    news("")
-    news("*"*10)
-    news("median(wt) before statwt():  "+str(medianwt_old))
-    news("median(wt) after  statwt():  "+str(medianwt_new))
-    news("scaling factor:              "+str(sf))
-    news("based on spw selection:      "+str(fitspw))
-    news("*"*10)
-    news("")
+    if  len(tag.flat)!=0: 
     
+        a1=1./np.sqrt(a[tag])
+        b1=1./np.sqrt(b[tag])
+        a2=a[tag]
+        b2=b[tag]
+        
+        news("")
+        news("1/WEIGHT^0.5")
+        news("Median,Min,Max (before): "+str([np.median(a1),np.min(a1),np.max(a1)]))
+        news("Median,Min,Max (after) : "+str([np.median(b1),np.min(b1),np.max(b1)]))
+        news("WEIGHT")
+        news("Median,Min,Max (before): "+str([np.median(a2),np.min(a2),np.max(a2)]))
+        news("Median,Min,Max (after) : "+str([np.median(b2),np.min(b2),np.max(b2)]))
+        news("")
+        
+        plt.close()
+        plt.ioff()
+        
+        plt.figure(figsize=(5,8))
+        plt.subplot(2,1,1)
+        plt.xlabel("1/wt$^{0.5}$ before")
+        plt.ylabel("1/wt$^{0.5}$ after")
+        H, xedges, yedges = np.histogram2d(a1, b1, bins=(40,40))
+        H = np.rot90(H)
+        H = np.flipud(H)
+        Hmasked = np.ma.masked_where(H==0,H) 
+        plt.axis([0, xedges.max(), 0, yedges.max()])
+        plt.pcolormesh(xedges,yedges,Hmasked)
+        cbar = plt.colorbar()
+        cbar.ax.set_ylabel('Counts')
+        xrange=np.array([0, xedges.max()])
+        plt.plot(xrange,xrange*(np.median(b1/a1)),label="sf="+str((1/np.median(b1/a1))**2.0))
+        plt.legend()
+        
+        plt.subplot(2,1,2)
+        plt.xlabel("wt before")
+        plt.ylabel("wt after")
+        H, xedges, yedges = np.histogram2d(a2, b2, bins=(40,40))
+        H = np.rot90(H)
+        H = np.flipud(H)
+        Hmasked = np.ma.masked_where(H==0,H) 
+        plt.axis([0, xedges.max(), 0, yedges.max()])
+        plt.pcolormesh(xedges,yedges,Hmasked)
+        cbar = plt.colorbar()
+        cbar.ax.set_ylabel('Counts')
+        xrange=np.array([0, xedges.max()])
+        plt.plot(xrange,xrange*(np.median(b2/a2)),label="sf="+str(np.median(b2/a2)))
+        plt.legend()
+        
+        #plt.show()
+        plt.savefig(srcfile+".scalewt.pdf")
+        news("")
+        news("save scatter plot for the WEIGHT change to:")
+        news(srcfile+".scalewt.pdf")
+        news("")
+        """
+        print "weight scaling factor: "+str((1/np.median(b1/a1))**2.0)
+        print "weight scaling factor: "+str(np.median(b2/a2))
+        print ""
+        """
+        """
+        medianwt_old=stwt_old['WEIGHT_SPECTRUM']['median']
+        medianwt_new=stwt_new['WEIGHT_SPECTRUM']['median']
+        sf=medianwt_new/medianwt_old
+        """
+        medianwt_old=np.median(a2)
+        medianwt_new=np.median(b2)
+        sf=np.median(b2/a2)
+        news("")
+        news("*"*60)
+        news("median(wt) before statwt():  "+str(medianwt_old))
+        news("median(wt) after  statwt():  "+str(medianwt_new))
+        news("scaling factor:              "+str(sf))
+        news("*"*60)
+        news("based on fitspw :            "+str(fitspw))
+        news("         minsamp:            "+str(minsamp))
+        news("note: only correct if enough unflagged line-free channels left")
+        news("      minsamp <= channel number in fitspw")
+        news("*"*60)
+        news("")
+    
+    else:
+        
+        sf=1.0
+        news("")
+        news("*"*60)
+        news("no enough unflagged line-free channels left for statwt()")
+        news("*"*60)
+        news("based on fitspw :            "+str(fitspw))
+        news("         minsamp:            "+str(minsamp))
+        news("note: only correct if enough unflagged line-free channels left")
+        news("      minsamp <= channel number in fitspw")
+        news("*"*60)
+        news("")
+            
     # SCALE THE OLD WEIGHT/SIGMA & LOAD THE NEW VALUES
     if  modify==True:
         news("WEIGHT/SIGMA are modified")
@@ -1118,18 +1205,26 @@ def scalewt(srcfile,
         if  sf==0.0:
             tbwt_old['sigma']=tbwt_old['sigma']*0.0-1.0
     else:
-        news("WEIGHT/SIGMA are not modified. This is a test run")
-    myms=mstool()
-    myms.open(srcfile,nomodify=False)
-    tbwt_new=myms.getdata(['weight','sigma'])
-    myms.putdata(tbwt_old)
-    myms.close()
+        news("WEIGHT/SIGMA are not modified")
+    
+    ms.open(srcfile,nomodify=False)
+    tbwt_new=ms.getdata(['weight','sigma'])
+    ms.putdata(tbwt_old)
+    ms.close()
     tb.open(srcfile,nomodify=False)
     if  wts_exist==True:
         tb.putcol('WEIGHT_SPECTRUM',tswt_old)
     else:
         copyweight(srcfile)
-    tb.close() 
+    tb.close()
+    
+    if  len(tag.flat)!=0:
+        news("")
+        news("add table keyword WEIGHT_SCALING="+str(sf)+" to "+srcfile)
+        news("")
+        tb.open(srcfile,nomodify=False)
+        tb.putkeyword('WEIGHT_SCALING',sf)
+        tb.close()
     
     return sf
 
