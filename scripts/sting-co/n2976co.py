@@ -35,7 +35,6 @@ mirfile_list= [ '../../../../raw/co10/bima/n2976/n2976/old/n2976.1.lc.usb',
                 '../../../../raw/co10/n2976/vis/ngc2976_C6_10OCT14.co.cal',
                 '../../../../raw/co10/n2976/vis/ngc2976_C7_10OCT29.co.cal',
                 '../../../../raw/co10/n2976/vis/ngc2976_C8_10NOV01.co.cal']
-# NOTE:
 
 for i in range(0,len(mirfile_list)):
 
@@ -53,11 +52,6 @@ for i in range(0,len(mirfile_list)):
     xp['clean_width']       ='5km/s'
     xp['restfreq']          ='115.2712GHz'
     xp['outframe']          ='LSRK'
-    if  telescopes[i]=='bima':
-        # avoid merging bima (YY) and carma (RR) data into a single spw
-        xp['clean_nchan']       =(200)/5+2
-        
-    xp['scalewt']           =True
     xp['fitspw']            ='*:0~2;38~40'
 
     xp['phasecenter']       ='J2000 09h47m15.40 67d54m59.00'
@@ -65,12 +59,12 @@ for i in range(0,len(mirfile_list)):
     execfile(xlib+'ximport.py')
     execfile(xlib+'xconsol.py')
 
-
 execfile(xlib+'xinit.py')
 
 # CONSOLIDATING 
 xp['prefix']            ='n2976co'
 xp['prefix_comb']       =track_list     
+xp['scalewt']           =True
 
 xp['spwrgd']             ='spw'
 xp['freqtol']           ='0.5MHz'
