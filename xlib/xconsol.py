@@ -155,7 +155,7 @@ if  len(xp['prefix_comb'])==1:
         #   mstransform:
         #        pre-averaging will adjust weight_spectrum by scaling up by nbin
         #        regridding will not adjust weight_spectrum
-        #   However, cvel and mstransform doesn't WEIGHT
+        #   However, cvel and mstransform doesn't change WEIGHT
         #   and the new SIGMA is adjusted, however incorrectly in the statistical sense.
         #   cvel is still better :)
         #### 
@@ -273,7 +273,8 @@ if  len(xp['prefix_comb'])==1:
                uvrange=xp['scalewt_uvrange'],
                fitspw=xp['scalewt_fitspw'],
                datacolumn='data',
-               modify=xp['scalewt'])
+               minsamp=xp['scalewt_minsamp'],
+               modify=False)
 
     # note:  below lines can help to check weight/noise in
     #        calibrated MS before split.
@@ -337,7 +338,7 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
         #mincw=0
         for i in range(len(xp['prefix_comb'])): 
             xp['srcfile_comb'][i]=xp['prefix_comb'][i]+'.src.ms'+loop
-            delmod(vis=xp['srcfile_comb'][i],otf=True,scr=False)
+            delmod(vis=xp['srcfile_comb'][i],otf=True,scr=True)
         #    tb.open(xp['srcfile_comb'][i]+'/SPECTRAL_WINDOW')
         #    mincw=[mincw]+tb.getcol('CHAN_WIDTH')
         #    tb.close()
@@ -348,20 +349,38 @@ if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
         #freqtol=str(mincw/1.e6/4.)+'MHz'
         if  xp['freqtol']!='':
             freqtol=xp['freqtol']
+        
+        #    ADJUST WEIGHT SCALING
+        wtscale=[1.0]*len(xp['prefix_comb'])
+        if  xp['scalewt']==True:
+            for isf in range(0,len(xp['prefix_comb'])):
+                tb.open(xp['prefix_comb'][isf]+'.src.ms')
+                tbk=tb.keywordnames()
+                if  'WEIGHT_SCALING' in tbk:
+                    wtscale[isf]=tb.getkeyword('WEIGHT_SCALING')
+                tb.close()
+            xu.news("")
+            xu.news("default weight scaling factor: "+str(wtscale))
+            if  xp['visweightscale']!=[]:
+                wtscale=xp['visweightscale']
+            xu.news("   used weight scaling factor: "+str(wtscale))
+            xu.news("")
+        else:
+            wtscale=[]
         if  xp['usevconcat']==False:
             concat(vis=xp['srcfile_comb'],
                    concatvis=xp['srcfile']+loop,
                    freqtol=xp['freqtol'],
                    dirtol=xp['dirtol'],
                    timesort=False,
-                   visweightscale=xp['wtscale'],
+                   visweightscale=wtscale,
                    copypointing=True)
         else:
             virtualconcat(vis=xp['srcfile_comb'],
                    concatvis=xp['srcfile']+loop,
                    freqtol=xp['freqtol'],
                    dirtol=xp['dirtol'],
-                   visweightscale=xp['wtscale'],
+                   visweightscale=wtscale,
                    keepcopy=True,
                    copypointing=True)
         
