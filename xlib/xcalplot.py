@@ -55,7 +55,7 @@
 #
 #   HISTORY
 #       
-#       20130910    RX  use global dict variable <xp> to wrap pipeline parameters
+#       20130910    RX  use the variable <xp> to wrap pipeline parameters
 #
 #   AUTHOR
 #

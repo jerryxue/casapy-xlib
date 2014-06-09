@@ -17,63 +17,13 @@
 #                           <prefix>.fcal
 #                           -- flux-corrected gain solution table
 #
-#   INPUT KEYWORD [ OPTIONAL | DEFAULT VALUE]
-#
-#       prefix|'test'           name of the measurment Set
-#
-#       source|''               source name
-#       phasecal|''             phase calibrator name
-#       phasecal_uvrange|''     uvrange selection for the phase calibrator
-#                               (check the VLA CALIBRATOR MANUAL)
-#       fluxcal|''              flux calibrator name
-#       fluxcal_uvrange|''      uvrange selection for the flux calibrator
-#                               (check the VLA CALIBRATOR MANUAL)       
-#       passcal|<fluxcal>       passband calibrator name
-#                               the default value is the flux calibrator
-#       passcal_uvrange|<fluxcal_uvrange>   
-#                               uvrange selection for the passband calibrator
-#       
-#       spw_source|''                  spectral windows for source
-#       spw_fluxcal|<spw_source>       spectral Windows for fluxcal     
-#       spw_phasecal|<spw_source>      spectral Windows for phasecal
-#       spw_passcal|<spw_fluxcakl>     spectral Windows for passcal
-
-#       ref_ant|'15'            reference antenna name. 
-#       syscal                  system pre-calibration
-#
-#       flagreset|True          reset flagging, if False, the previous flagging info
-#                               saved in 'flagged' will be reused
-#
-#       flagselect|''           string list for selecting the data to be flagged.
-#       flagtest|False          True: the script will stop after flagging
-#       calwt|True              set False for data taken without reliable weighting info
-#
-#       bcant|''                antennas for baseline correction
-#       bctype|'antposvla'      baseline correction type
-#       bcpara|[]               baseline correction parameter
-#
-#       Example for Baseline Corrections:
-#           bcant='VA06,VA02,VA03,VA07,VA10,VA11,VA16,VA17,VA18,VA19'
-#           bcpara=[    -0.0063, -0.0205,  0.0102,
-#                        0.0000,  0.0003, -0.0007,
-#                       -0.0011,  0.0003, -0.0005,
-#                       -0.0013,  0.0000,  0.0000,
-#                       -0.0013,  0.0004,  0.0000,
-#                       -0.0007,  0.0000,  0.0000,
-#                        0.0000, -0.0006,  0.0000,
-#                       -0.0008,  0.0000,  0.0000,
-#                        0.0000, -0.0004,  0.0000,
-#                        0.0000, -0.0004,  0.0000]
-#
 #   HISTORY
 #
-#       20090324    RX  deriving refspw_map
 #       20110617    RX  add calwt for data without valid weights
-#       20110916    RX  minor fixes for v3.3 / dual-pol tracks
-#       20111006    RX  fix a bug for dual-pol tracks
+#       20110916    RX  fixes for v3.3 / dual-pol tracks
 #       20130214    RX  use <gencal> for gaincurve/baseline calibrations
-#                       bandpass transfer implemented
-#       20130910    RX  use global dict variable <xp> to wrap pipeline parameters
+#                       automatically deriving refspw_map for bandpass transfer
+#       20130910    RX  use the variable <xp> to wrap pipeline parameters
 #
 #   AUTHOR
 #
@@ -208,15 +158,16 @@ if  type(xp['flagselect'])==type(''):
 if  xp['flagspw']!='':
     xp['flagselect']=xp['flagselect']+["spw='"+xp['flagspw']+"'"]
 
-xp['flagselect']=xp['flagselect']+["antenna='*&&&'"]+xp['flagselect_default']
+xp['flagselect']=xp['flagselect']+xp['flagselect_default']
 os.system('rm -rf '+xp['msfile']+'.flagcmd.log')
 
-flagcmd(vis=xp['msfile'],
-        inpmode='list',
-        inpfile=xp['flagselect'],
-        savepars=True,
-        outfile=xp['msfile']+'.flagcmd.log',        
-        flagbackup=False)
+if  xp['flagselect']!=[]:
+    flagcmd(vis=xp['msfile'],
+            inpmode='list',
+            inpfile=xp['flagselect'],
+            savepars=True,
+            outfile=xp['msfile']+'.flagcmd.log',        
+            flagbackup=False)
 
 if  xp['flagtest']==True:
     xu.news("---------------------")
@@ -414,7 +365,6 @@ if  len(spwid_passcal)==2*len(spwid_source):
                  solnorm=True,
                  refant=xp['ref_ant'],
                  selectdata=False,
-                 gaincurve=False,
                  bandtype='B',
                  uvrange=xp['uvrange_passcal'],
                  combine='spw,scan',

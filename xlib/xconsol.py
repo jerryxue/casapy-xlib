@@ -17,29 +17,11 @@
 #                           <prefix>.src.ms.cont
 #                           <prefix>.src.ms.contsub 
 #
-#   INPUT KEYWORD [ OPTIONAL | DEFAULT VALUE ]
 #
-#       prefix|'test'       Name of the Measurment Set
-#       prefix_comb|[]      Names of MS files to be combined 
-#
-#       source|''           source name
-#       spw_source|''       spectral windows for source
-#
-#       uvcs|False          True: the script will perform UVCONTSUB 
-#       uvcs_combine|'spw'  data axes to combine for the continuum estimate.
-#                           example: combine='spw' --> form spw-merged continuum estimate
-#                           This may have significant impacts for tracks taken with 
-#                           multiple spws.
-#       fitspw|''           spectral window-channel selection for line-free channels
-#                           used in UVCONTSUB.
-#       fitorder|0          polynomial order for fitting the continuum in UVCONTSUB
-#                           high-order polynomial may work better of the continuum source
-#                           is off-center (Sault 1994)
-
 #   HISTORY
 #
-#       20110916    RX  minor fixing for v3.3
-#       20130910    RX  use global dict variable <xp> to wrap pipeline parameters
+#       20110916    RX  fix for r3.3
+#       20130910    RX  use the variable <xp> to wrap pipeline parameters
 #
 #   AUTHOR
 #

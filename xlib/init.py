@@ -1,10 +1,10 @@
-##
-# CASAPY initialization file 
+###########################################################
+# CASAPY INITIALIZATION FILE 
 #
 # To load the pipeline scripts automatically, please:
 #   1) place this file to ~/.casa/
 #   2) alias casapy='casapy --log2term'
-##
+###########################################################
 
 import socket
 import sys

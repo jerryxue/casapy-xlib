@@ -19,18 +19,44 @@ from email.MIMEText import MIMEText
 from email import Encoders
 
 
-def sumwt(visfile=''):
-    
+def sumwt(visfile='',
+          restfreq='',
+          oldstyle=False):
+    #    
+    #    calculate sum(weight) each channel for a sensitivity analysis 
+    #
+    c=3.0e5
+    if  restfreq=='':
+        restfreq=me.spectralline('HI')['m0']['value']
+    news("")
+
     vsfile=open(visfile+'.sumwt.log','w')
-    
     tb.open(visfile+'/SPECTRAL_WINDOW',nomodify=False)
     num_chan = np.min(tb.getcol('NUM_CHAN'))
+    chan_freq=tb.getcol('CHAN_FREQ')
     tb.close()
-    for ic in range(0,num_chan):
-        #vs=ms.statistics(useflags=True,spw='*:'+str(ic),column='WEIGHT_SPECTRUM')
-        vs=visstat(vis=visfile,axis='weight_spectrum',useflags=True,spw='*:'+str(ic))
-        print "chan"+' '+str(ic)+' '+str(vs['WEIGHT_SPECTRUM']['sum'])
-        print >>vsfile,str(vs['WEIGHT_SPECTRUM']['sum'])
+    tb.open(visfile+'',nomodify=False)
+    swt=tb.getcol('WEIGHT_SPECTRUM')
+    flg=tb.getcol('FLAG')
+    flg=1.0-flg
+    swt=swt*flg
+    tb.close()
+    cwt=np.ma.sum(swt,axis=-1)
+    cwt=np.ma.sum(cwt,axis=0)
+    req_freq=chan_freq[:,0]
+    v=c*(restfreq-req_freq)/restfreq
+    news("   channel:       velocity : sum(weight)")
+    for ic in range(0,len(v)):
+        news(" "+'ch'+"{0:5.0f}".format(ic)+'   :   '+"{0:>10.2f}".format(v[ic])+'km/s   :   '+"{0:15.2f}".format(cwt[ic]))
+        if  oldstyle==False:
+            print >>vsfile,str(" "+''+"{0:5.0f}".format(ic)+'   '+"{0:>10.2f}".format(v[ic])+'   '+"{0:15.2f}".format(cwt[ic]))
+        else:
+            print >>vsfile,str(cwt[ic])
+    # for ic in range(1,num_chan-3):
+    #     #vs=ms.statistics(useflags=True,spw='*:'+str(ic),column='WEIGHT_SPECTRUM')
+    #     vs=visstat(vis=visfile,axis='weight_spectrum',useflags=True,spw='*:'+str(ic))
+    #     print "chan"+' '+str(ic)+' '+str(vs['WEIGHT_SPECTRUM']['sum'])
+    #     print >>vsfile,str(vs['WEIGHT_SPECTRUM']['sum'])
     
     vsfile.close()
 
@@ -46,7 +72,7 @@ def importmir(mirfile='',
               mirbin='',
               extenv={}):
     #
-    #    import data in a mir file into a CASA MS
+    #    import visbility data from a MIRIAD file into a CASA MS
     #
     if  mirbin=='':
         mirbin=os.environ['MIRBIN']+os.sep
@@ -285,7 +311,7 @@ def emailsender(myemail,subject,maintext,attachs,\
                 eusrname='yourname@gmail.com',\
                 epassword='yourpassword'):
     #
-    #send an reduction run log email back to you
+    #    send out a reduction log email
     #
     msg = MIMEMultipart()
     
@@ -338,9 +364,9 @@ def importmiriad(mirfile='',
                 telescope='CARMA',
                 extenv=''    ):
     #
-    #    import the data in a miriad file into a CASA MS using CARMAFILLER (experimental)
+    #    import visbility data from a miriad file into a CASA MS using CARMAFILLER (experimental)
     #
-
+    
     # FIX UV HEADR FOR BIMA DATA
     if  telescope=='BIMA' or telescope=='bima' :
         
@@ -556,7 +582,7 @@ def checkbeam(outname,method='maximum'):
 
 def resmoothpsf(outname):
     #
-    #    calculate the "ultimate" psf when resmooth='common' 
+    #    calculate the "ultimate" psf when resmooth=True
     #
     os.system('rm -rf cpsf.tmp')
     os.system('cp -r '+outname+'.psf cpsf.tmp')
@@ -712,7 +738,7 @@ def checkpsf(outname):
 
 def blsearch(logname=casalog.logfile()):
     #
-    #    search for unique baselines from PLOTMS identifying log
+    #    search for unique baselines from the last PLOTMS locating log
     #
     news("")
     news("----------- antfilter Begin: -----------")
@@ -773,7 +799,7 @@ def news(msg,origin='++++++'):
     
 def genmask0(imfile):    
     #
-    # produce a mask image with unmask values=1
+    #     produce a mask image with unmask values=1
     #
     os.system('rm -rf '+imfile+'.mask0')
     os.system('rm -rf tmp0')
@@ -802,8 +828,8 @@ def genmask0(imfile):
 
 def mask0clean(outname,mask0):
     #
-    # mask a cube using a mask image 
-    # note: used as a trimmer for masking out x-y pixels with partial coverages   
+    #    mask a cube using a mask image 
+    #    note: used as a trimmer for masking out x-y pixels with partial coverages   
     #
     version=['mask','cm','residual','model','cmodel',
             'psf','image','sen',
@@ -820,7 +846,7 @@ def mask0clean(outname,mask0):
 
 def getuvrange(msfile):
     #
-    #    evaluate uv-spacing
+    #    inspect the uv sampling
     #
     news("")
     news("--visstat--")
@@ -862,9 +888,9 @@ def getuvrange(msfile):
 
 def uvspec(msfile,restfreq='1420405752.0Hz'):
     #
-    # shortcut for a miriad-like uvspec
+    #   shortcut for a miriad-like uvspec
     #
-     plotms(msfile,xaxis='velocity',yaxis='amp',avgtime='999999s',
+    plotms(msfile,xaxis='velocity',yaxis='amp',avgtime='999999s',
         avgscan=True,transform=True,restfreq=restfreq,
         xdatacolumn='corrected',ydatacolumn='corrected',
         coloraxis='spw')
@@ -882,7 +908,6 @@ def modelconv(outname,mode=''):
     #
     #    calculate a convolved model
     #
-
     # use *.residual *.image to get cmodel
     os.system('rm -rf '+outname+'.cmodel')
     os.system('rm -rf '+outname+'.cmodel2')
@@ -949,10 +974,10 @@ def copyweight(srcfile,
 def checkchflag(msfile):
     #
     #    check flag consistancy in channel
-    #    currently only handle the single spw case
+    #    currently only handle the case with a single spw
     #    
     #    note: miriad/invert slop=1,zero could include
-    #          partionally flagged vis records into imaging
+    #          partionally flagged records into imaging
     #          In CASA, we can unlflag and zero-out such data
     #          to have a similar treatment:
     #          http://www.atnf.csiro.au/computing/software/miriad/userguide/node144.html)
@@ -1151,6 +1176,7 @@ def scalewt(srcfile,
         
         #plt.show()
         plt.savefig(srcfile+".scalewt.pdf")
+        plt.close()
         news("")
         news("save scatter plot for the WEIGHT change to:")
         news(srcfile+".scalewt.pdf")
@@ -1235,8 +1261,12 @@ def xmoments(imagename,
                box='',
                chans='',
                region=''):
-    # imagename: root name of clean products
-
+    #
+    #    a function which will replace the idl-moments
+    #    currely only "smooth-masking" is implemented
+    #
+    #    imagename: root name of clean products
+    #    
     if  errfile=='':
         errfile=imagename+'.flux'
     
@@ -1288,7 +1318,9 @@ def xmoments(imagename,
               outfile=imagename+'.cm.moms1')
     
 def getevladata(url,user='',password='',extenv={}):
-    
+    #
+    #    a shortcut to download VLA data
+    #
     cmd="wget -r -w 2 -nH -c --cut-dirs=2 --no-check-certificate --user="+\
         user+" --password="+password+" -e robots=off "+url
     
@@ -1328,7 +1360,6 @@ def flagtsys(caltable='',
     #
     # flag bad tsys records in the swpow caltable.
     #
-    
     news("")
     news("--flagtsys--")
     news("")
@@ -1470,6 +1501,9 @@ def xplotcal(tbfile,iterant=False,
 def checkvrange(srcfile='',
                 outframe='',
                 restfreq=''):
+    #
+    #    check the velocity coverage of a spectral line observation
+    #
     """
     me.list()
     me.spectralline('CO_1_0')['m0']['value']

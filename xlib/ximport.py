@@ -1,4 +1,4 @@
-﻿#########################################################################################
+﻿###########################################################
 #
 #    PURPOSE
 #
@@ -16,49 +16,18 @@
 #        Measurement Set (MS)       <prefix>.ms
 #        Observation Summary Log    <prefix>.listobs.log
 #
-#   INPUT KEYWORD [ OPTIONAL | 'DEFAULT VALUE' ]
-#       
-#        prefix|'test'         Name of the Measurement Set
-#        rawfiles|''           Name(s) of the data file(s) to be imported
-#       
-#        importmode|'vla'      Importing Mode      
-#                              'vla':    import data in the VLA archive format
-#                              'uvfits': import data from a uvfits file
-#                              'evla':   import data from a EVLA ASDM file
-#                              'mir':    import data in the MIRIAD format
-#                              'miriad': import data in the MIRAID format (CARMAFILLER)
-#                                        experimental
-#                              'ms':     copy/split data from a MS file
-#
-#        starttime|''              start time to search for data
-#        stoptime|''               end time to search for data
-#        importspw|''              spectral windows to be imported
-#                                  note: spw starts with 1 in miriad
-#                                  examples: '1,2,7'
-#        importscan|''             select the scans to be imported
-#        importtimerange|''        select the timerange to be imported
-#        importfield|''            select the fields to be imported
-#        importband|''             band to be imported
-#        importchanbin|''            channel averaging during splitting 
-#        importcorr|''             import correlation
-#       
-
-#        importmirarray|'CARMA'    telescope name, CARMA, BIMA, SMA,
-#                                  only for importmode='mir'
-#
 #   HISTORY
 #
 #       20100414    RX  use SPLIT to extract the wanted data based on 
 #                       scan/spw/timerange/field selection rules. This option is helpful
 #                       if several science targets exsit in one track.
 #       20110528    RX  add email notification function
-#       20110916    RX  minor fixes for v3.3
+#       20110916    RX  fixes for v3.3
 #                       add importmode 'evla' to import elva data from a ASDM file
 #                       switchedpower=True will bring caldevice/syspower tables into
 #                       MS files                      
-#       20111120    RX  mir2ms has been merged into this script
-#       20130213    RX  add into Git
-#       20130910    RX  use global dict variable <xp> to wrap pipeline parameters
+#       20111120    RX  merge mir2ms.py into this script
+#       20130910    RX  use <xp> to wrap up pipeline settings
 
 #    AUTHOR
 #       
@@ -250,8 +219,10 @@ if  (   xp['importscan']!=''
     """
     os.system('rm -rf '+xp['msfile'])
     os.system('rm -rf '+xp['msfile']+'.flagversions')
-    os.system('mv '+xp['msfile']+'.select '+xp['msfile'])
-    os.system('mv '+xp['msfile']+'.select.flagversions '+xp['msfile']+'.flagversions')
+    if  os.path.exists(xp['msfile']+'.select'):
+        os.system('mv '+xp['msfile']+'.select '+xp['msfile'])
+    if  os.path.exists(xp['msfile']+'.select.flagversions'):
+        os.system('mv '+xp['msfile']+'.select.flagversions '+xp['msfile']+'.flagversions')
 
 #----------------------------------------------------------------------------------------
 #   Obs List: List a summary of the MS

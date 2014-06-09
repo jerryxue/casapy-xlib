@@ -10,90 +10,9 @@
 #                           <prefix>.src.ms.contsub 
 #
 #
-#   INPUT KEYWORD [ OPTIONAL | DEFAULT VALUE ]
-
-#       prefix|'test'       Name of the Measurment Set
-#
-#       imcs|False          True: the script will perform IMCONTSUB. 
-#       fitchans|''         image cube channel selection for fitting the continuum in 
-#                           IMCONTSUB (e.g., fitchans='1~7;79~85')    
-#       fitorder|0          polynomial order for fitting the continuum in IMCONTSUB
-#
-#       imsize|512          imaging size (numbers of pixels)
-#       cell|'4.0arcsec'    imaging pixel size.
-
-#       clean_mask|0.2      some other examples (see help->clean):
-#                           [0,0,511,511]        use a box
-#                           TrueL                use the minpb value
-#                           'cleanbox.txt'       use a cleanbox file 
-#
-#       imstat_box_spec     Box for the <sig> calculation default: inner quarters
-#       imstat_box_cont     Box for the <sig> calculation default: four corners
-#
-#       imstat_chan|''      channels for the <sig> calculation
-#
-#       imstat_rg_spec|''   region for the <sig> calculation
-#       imatst_rg_cont|''   region for the <sig> calculation
-#
-#       sigcutoff_spec|2.0  <sigcutoff_spec>*<sig> is the default threshold value for
-#                           spectral-cube CLEAN 
-#                           <sig> is calculated from the dirty cube using line-free 
-#                           channels&region.
-#       sigcutoff_cont|2.0  <sigcutoff_cont>*<sig> is the default threshold value for
-#                           continuum-image MSF CLEAN 
-#                           <sig> is calculated from the dirty image using line-free 
-#                           region
-#
-#       threshold_spec|<sigcutoff_spec>*<sig>/ units-mJy:  
-#                           threshold for spec cleaning
-#       threshold_cont|<sigcutoff_cont>*<sig>/ units-mJy:  
-#                           threshold for mfs cleaning
-#       n_iter|10000        iteration threshold for clean
-#
-#       cleanmode:          "channel" or "velocity"
-#       clean_start:        First channel/velocity to clean
-#       clean_nchan:        Number of planes in the output image
-#       clean_width:        Number of input channels to average 
-#                           or the velocity width for each image plane
-#       restfreq|'1420405752.0Hz'    
-#                           rest frequency for imaging
-#       outframe|'BARY'     frame of the output image
-#       spinterpmode|'linear' 
-#                           spectral gridding interpolation mode in CLEAN                         
-#
-#       phasecenter|''      phasecenter for clean 
-#                           e.g. 'J2000 12h18m49.6 14d24m59.01' or '2' (=fieldid2)
-
-#       imagermode          imagermode for clean, options include: 'csclean', 'mosaic' 
-#                           'mosaic' must be be used if your science target is in 
-#                           multiple fields or it's heterogeneous-array observation.
-#                           'csclean' for single point+homogeneous array data. 
-#       ftmachine|'ft'      ftmachine='mosaic' may be buggy for track combination 
-#                           right now. For CARMA, you must always use 
-#                           ftmachine='mosaic', because it is a heterogeneous array.
-#       weight|'briggs'     other options: 'briggs', 'uniform' or 'natural'
-#       wrobust|0.5         robust weight R parameter
-#
-#       outertaper|[]       taper function for weighting
-#       multiscale|[]       using multi-scale clean is not the default setting
-#                           multi_scale=[0,1,3,10,30] is recommened, and units is pixel
-#       clean_gain|0.1      gain factor for clean, 
-#                           for multiscale clean, clean_gain=0.7 is recommended
-
-#       restorbeam|['']     use a specified restor beam for imaging
-#                           default values are calculated from invert results
-#       minpb|0.1           cutoff for pb correction
-#       gridemode|'aprojection'
-#
-#       cleancont|False     MFS Imaging for the continuum data
-#       cleanspec|True      channel by channel imaging for the spectral line data
-#
-#       mosweight|False     mosweight=True to better deal with few fields+ different
-#                           nosie level case in the archival data#
-#
 #   HISTORY
 #
-#       20130910    RX  use global dict variable <xp> to wrap pipeline parameters
+#       20130910    RX  use the variable <xp> to wrap pipeline parameters
 #
 #   AUTHOR
 #
@@ -173,8 +92,10 @@ if  xp['imagermode']==None:
     xu.news("ftmachine  -> "+xp['ftmachine'])
     xu.news("")
 
+"""
 if  xp['uvcs']==True:
     xp['cleancont']=True
+"""
 
 #----------------------------------------------------------------------------------------
 #   Make a dirty spectral cube, and determine the cube sigma level
