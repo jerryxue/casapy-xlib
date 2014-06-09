@@ -2,7 +2,7 @@ execfile(xlib+'xinit.py')
 
 # IMPORT
 xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-xp['rawfiles']          =['/Volumes/Scratch/reduc/sting-hi/msc/n4536/raw/AL731_L090518.xp1']
+xp['rawfiles']          =['../n4536/AL731_L090518.xp1']
 
 # CALIBRATION
 xp['source']            ='NGC4536'
@@ -29,6 +29,8 @@ xp['niter']             =0
 
 # RUN SCRIPTS:
 execfile(xlib+'ximport.py')
-execfile(xlib+'xcal.py')
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
+xu.checkvrange(xp['prefix']+'.ms')
+au.timeOnSource(xp['prefix']+'.ms')
+#execfile(xlib+'xcal.py')
+#execfile(xlib+'xconsol.py')
+#execfile(xlib+'xclean.py')

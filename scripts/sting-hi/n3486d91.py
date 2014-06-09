@@ -3,7 +3,7 @@ execfile(xlib+'xinit.py')
 # IMPORT
 
 xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0] 
-xp['rawfiles']          ='/Volumes/Scratch/reduc/sting-hi/msc/n3486/raw/AS428_1'
+xp['rawfiles']          ='../n3486/AS428_1'
 xp['importscan']        ='1,12,13,15'
 xp['importspw']         ='0,1,8,9'
 
@@ -26,30 +26,14 @@ xp['flagselect']        =["antenna='VA18'",
 xp['flagselect_default']=[]     # mode='shadow' doesn't work with B1960 in v4.2
 
 # CONSOLIDATING
-xp['spwrgd']            ='spw'
-xp['scalewt']           =True
-xp['uvcs']              =True
-xp['fitspw']            ='*:0~3;44~46'
-xp['fitorder']          =1
-xp['combinespws']       =False   # polarization type varies with row
-
-# IMAGING
-xp['cleanspec']         =True
-xp['cleancont']         =True
-
-xp['imsize']            =256
-xp['cell']              ='20.0arcsec'
-
-xp['cleanmode']         ='velocity'
-xp['clean_start']       ='400km/s'
-xp['clean_width']       ='10.4km/s'
-xp['clean_nchan']       =48
-xp['phasecenter']       ='J2000 11h00m23.9 +28d58m29.0'
+execfile(stinghi+'n3486_config.py')
 xp['niter']             =0
 
 # RUN SCRIPTS:
 execfile(xlib+'ximport.py')
-execfile(xlib+'xcal.py')
+xu.checkvrange(xp['prefix']+'.ms')
+au.timeOnSource(xp['prefix']+'.ms')
+#execfile(xlib+'xcal.py')
 #execfile(xlib+'xcalplot.py')
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
+#execfile(xlib+'xconsol.py')
+#execfile(xlib+'xclean.py')

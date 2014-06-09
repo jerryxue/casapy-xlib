@@ -2,11 +2,11 @@ execfile(xlib+'xinit.py')
 
 # IMPORT
 xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0] 
-xp['rawfiles']          ='/Volumes/Scratch/reduc/evla/n3486/13B-363.sb24635611.eb28563417.56632.4332934375.ms'
+xp['rawfiles']          ='../n3486/13B-363.sb24635611.eb28563417.56632.4332934375.ms'
 xp['importspw']         ='2,12'
 xp['importscan']        ='2~13'
 xp['importmode']        ='ms'
-xp['importchanbin']     =4
+xp['importchanbin']     =6
 
 
 # CALIBRATION
@@ -23,29 +23,11 @@ xp['flagtsys_range']    =[5.0,200.0]
 xp['syscal']            =''
 
 # CONSOLIDATING
-xp['spwrgd']            ='spw'
-xp['scalewt']           =True
-xp['uvcs']              =True
-xp['fitspw']            ='*:0~3;44~46'
-xp['fitorder']          =1
-
-# IMAGING
-xp['cleanspec']         =True
-xp['cleancont']         =True
-
-xp['imsize']            =512+128
-xp['cell']              ='2.0arcsec'
-
-xp['cleanmode']         ='velocity'
-xp['clean_start']       ='400km/s'
-xp['clean_width']       ='10.4km/s'
-xp['clean_nchan']       =47
-xp['phasecenter']       ='J2000 11h00m23.9 +28d58m29.0'
-xp['niter']             =0
+execfile(stinghi+'n3486_config.py')
 
 # RUN SCRIPTS:
-#execfile(xlib+'ximport.py')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xcalplot.py')
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
+execfile(xlib+'ximport.py')
+xu.checkvrange(xp['prefix']+'.ms')
+au.timeOnSource(xp['prefix']+'.ms')
+#execfile(xlib+'xconsol.py')
+#execfile(xlib+'xclean.py')

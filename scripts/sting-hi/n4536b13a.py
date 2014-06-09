@@ -2,11 +2,11 @@ execfile(xlib+'xinit.py')
 
 # IMPORT
 xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-xp['rawfiles']          ='/Volumes/Scratch/reduc/evla/n4536/13B-363.sb24635609.eb28587662.56645.42906541667.ms'
+xp['rawfiles']          ='../n4536/13B-363.sb24635609.eb28587662.56645.42906541667.ms'
 xp['importspw']         ='2,12'
 xp['importscan']        ='2~15'
 xp['importmode']        ='ms'
-xp['importchanbin']     =8
+xp['importchanbin']     =6
 
 
 # CALIBRATION
@@ -27,6 +27,8 @@ xp['niter']             =0
 
 # RUN SCRIPTS:
 execfile(xlib+'ximport.py')
-execfile(xlib+'xcal.py')
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
+xu.checkvrange(xp['prefix']+'.ms')
+au.timeOnSource(xp['prefix']+'.ms')
+#execfile(xlib+'xcal.py')
+#execfile(xlib+'xconsol.py')
+#execfile(xlib+'xclean.py')

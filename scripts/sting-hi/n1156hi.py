@@ -1,47 +1,34 @@
-#
-# this CASA reduction script was automatically generated from configuration files:
-#   /Users/Rui/Dropbox/Worklib/casapy/scripts/sting-hi/n1156_config.inp
-#   /Users/Rui/Dropbox/Worklib/casapy/scripts/sting-hi/n1156_comb.inp
-# by Rui on Wed Feb 13 20:47:13 CST 2013
-#
+#280->460
+#execfile(stinghi+'n1156b.py')
+#execfile(stinghi+'n1156c.py')
+#execfile(stinghi+'n1156d.py')
 
-######################################################
-#              track-independent setting
-######################################################
+execfile(xlib+'xinit.py')
 
-clean_mode = 'velocity'
-clean_start='300km/s'
-clean_nchan=58
-clean_width='2.6km/s'
+# CONSOLIDATING
+xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
+xp['prefix_comb']       =['n1156b',
+                          'n1156c',
+                          'n1156d']
 
-phase_center='J2000 02h59m42.2 +25d14m14.0'
+execfile(stinghi+'n1156_config.py')
+xp['uvcs']              =True
+xp['fitspw']            ='0:4~7;119~122,1:4~7;119~122'
 
-uvcs=True
+xp['imsize']            =2**7*10
+xp['cell']              ='4.0arcsec'
 
-line_vrange=[280,460]
+xp['clean_start']       ='298.05km/s'
+xp['clean_width']       ='1.29km/s'
+xp['clean_nchan']       =117
 
-######################################################
-#               track-dependent setting
-######################################################
+xp['multiscale']        =[0,4,12]
+xp['clean_gain']        =0.3
+xp['cyclefactor']       =5.0
+xp['negcomponent']      =0
+xp['usescratch']        =True
 
-# ---------- B+C+D ARRAY COMBINATION 
-
-prefix_combine=['../b/n1156b',
-				'../c/n1156c',
-				'../d/n1156d']
-prefix=os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-
-# CLEANING, IMAGING, & ANALYSIS
-
-im_size=1024
-cell_size='2arcsec'
-
-multi_scale=[0,4,12]
-clean_gain=0.3
-cycle_factor=5.0
-
-min_pb=0.2
 
 # RUN SCRIPTS:
-execfile(script_home+'xmerge'+script_version+'.py')
-execfile(script_home+'xclean'+script_version+'.py')
+#execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')

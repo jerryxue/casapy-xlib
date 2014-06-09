@@ -5,22 +5,9 @@ xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(insp
 xp['prefix_comb']       =['n3486d91',
                           'n3486b13a',
                           'n3486b13b']
-xp['spwrgd']            ='spw'
-xp['uvcs']              =True
-xp['fitspw']            ="*:0~3;44~46"
 
-# IMAGING
-xp['cleanspec']         =True
-xp['cleancont']         =True
-
-xp['imsize']            =512+128
-xp['cell']              ='2.0arcsec'
-
-xp['cleanmode']         ='velocity'
-xp['clean_start']       ='400km/s'
-xp['clean_width']       ='10.4km/s'
-xp['clean_nchan']       =47
-xp['phasecenter']       ='J2000 11h00m23.9 +28d58m29.0'
+# CONSOLIDATING
+execfile(stinghi+'n3486_config.py')
 
 xp['outertaper']        =['10arcsec']
 xp['multiscale']        =[0,4,12]

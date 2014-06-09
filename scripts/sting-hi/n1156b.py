@@ -1,13 +1,9 @@
-
-#
 execfile(xlib+'xinit.py')
 
-
 xp['prefix']   = os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0] 
-xp['rawfiles'] = ['../../../raw/21cm/n1156/AM418_5',
-                  '../../../raw/21cm/n1156/AM418_6']
-
-
+xp['rawfiles'] = ['../n1156/AM418_5',
+                  '../n1156/AM418_6']
+                  
 xp['source']            = 'NGC1156'
 xp['spw_source']        = '0,1'
 
@@ -43,32 +39,14 @@ xp['flagselect'] = [    "antenna='VA20&VA26'  spw='0' timerange='09:36:35~09:36:
                  "antenna='VA03&VA26'"
                 ]
 
-xp['spwrgd']            ='spw'
-xp['scalewt']           =True
-xp['uvcs']              =True
-xp['fitspw']            ='0:4~7;119~122,1:4~7;119~122'
-xp['fitorder']          =1
-
-# IMAGING
-xp['cleanspec']         =True
-xp['cleancont']         =True
-xp['imsize']            =512+256
-xp['cell']              ='2.0arcsec'
-
-xp['cleanmode'] = 'velocity'
-xp['clean_start']='300km/s'
-xp['clean_nchan']=58
-xp['clean_width']='2.6km/s'
-xp['phasecenter']='J2000 02h59m42.2 +25d14m14.0'
-
-
-
-line_vrange=[280,460]
+execfile(stinghi+'n1156_config.py')
+xp['niter']             =0
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xcalplot.py')
-#execfile(xlib+'xconsol.py')
-#execfile(xlib+'xclean.py')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')
 

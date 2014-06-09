@@ -1,67 +1,56 @@
-#
-# this CASA reduction script was automatically generated from configuration files:
-#   /Users/Rui/Dropbox/Worklib/casapy/scripts/sting-hi/n6503_config.inp
-#   /Users/Rui/Dropbox/Worklib/casapy/scripts/sting-hi/n6503_comb.inp
-# by Rui on Wed Feb 13 20:47:17 CST 2013
-#
+# line_vrange=[1760,2060]
+execfile(xlib+'xinit.py')
 
-######################################################
-#              track-independent setting
-######################################################
-
-clean_mode = 'velocity'
-clean_start='2288km/s'
-clean_nchan=34
-clean_width='20.8km/s'
-
-phase_center='J2000 13h55m39.9 +40d27m42.0'
-
-uvcs=True
-
-line_vrange=[1760,2060]
-
-######################################################
-#               track-dependent setting
-######################################################
-
-
-# ---------- D 87Jun ARRAY REDUCTION
-
-prefix   = os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0] 
-rawfiles = ['../raw/AD211_A880125.xp1']
-import_spw='3,8'
+xp['prefix']        =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
+xp['rawfiles']      =['../n6503/AD211_A880125.xp1']
+xp['starttime']     =''
+xp['stoptime']      =''
+xp['importscan']    =''
+xp['importspw']     ='3,8'
 
 # TRACK INFORMATION
-source = 'NGC5371'
-fluxcal = '1409+524'
-phasecal = '1419+419'
+xp['source']        = 'NGC5371'
+xp['fluxcal']       = '1409+524'
+xp['phasecal']      = '1419+419'
 
-spw_source = '2'
-spw_fluxcal= '1'
-spw_phasecal='2'
+xp['spw_source']    = '2'
+xp['spw_fluxcal']   = '1'
+xp['spw_phasecal']  ='2'
 
-spw_edge = '*:0~20;58~62'
+xp['flagspw']       = '*:0~20;58~62'
+xp['flagselect']    =["antenna='VA02'","antenna='VA06&VA17'"]
 
-# CALIBRATION & OPTIONS
-flagselect=["antenna='VA02'","antenna='VA06&VA17'"]
+xp['uvcs']          =True
+xp['fitspw']        = '0:21~23;55~57'
+xp['fitorder']      = 1
+
+xp['imsize']        =512+128
+xp['cell']          ='4.0arcsec'
+
+xp['multiscale']        =[0,4,12]
+xp['clean_gain']        =0.3
+xp['cyclefactor']       =5.0
+xp['negcomponent']      =0
+xp['usescratch']        =True
+xp['niter']             =0
+
+xp['cleanmode']     = 'velocity'
+xp['clean_start']   ='2288km/s'
+xp['clean_nchan']   =34
+xp['clean_width']   ='20.8km/s'
+
+xp['phasecenter']   ='J2000 13h55m39.9 +40d27m42.0'
 
 
-# CLEANING, IMAGING, & ANALYSIS
-
-fit_spw    = '0:21~23;55~57'
-fit_order  = 1
-
-
-im_size=512+128
-
-multi_scale=[0,4,12]
-clean_gain=0.3
-cycle_factor=5.0
-
-min_pb=0.25
+# RUN SCRIPTS
+execfile(xlib+'ximport.py')
+xu.checkvrange(xp['prefix']+'.ms')
+au.timeOnSource(xp['prefix']+'.ms')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')
 
 
 
-# RUN SCRIPTS:
-execfile(script_home+'xmerge'+script_version+'.py')
-execfile(script_home+'xclean'+script_version+'.py')
+
+

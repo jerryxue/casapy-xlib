@@ -1,10 +1,8 @@
-
-#
 execfile(xlib+'xinit.py')
 
 
 xp['prefix']   = os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0] 
-xp['rawfiles'] = '../../../raw/21cm/n1156/AM418_4'
+xp['rawfiles'] = '../n1156/AM418_4'
 
 
 xp['source']            = 'NGC1156'
@@ -35,32 +33,14 @@ xp['flagselect'] = [    "timerange='22:00:00~24:43:20'",
                 "uvrange='<500lambda' field='0318+164' timerange='22:33:20~24:56:40'",
                 "uvrange='<500lambda' field='NGC1156' timerange='23:23:20~24:30:00'"]
 
-xp['spwrgd']            ='spw'
-xp['scalewt']           =True
-xp['uvcs']              =True
-xp['fitspw']            ='0:4~7;119~122,1:4~7;119~122'
-xp['fitorder']          =1
-
-# IMAGING
-xp['cleanspec']         =True
-xp['cleancont']         =True
-xp['imsize']            =512+256
-xp['cell']              ='2.0arcsec'
-
-xp['cleanmode'] = 'velocity'
-xp['clean_start']='300km/s'
-xp['clean_nchan']=58
-xp['clean_width']='2.6km/s'
-xp['phasecenter']='J2000 02h59m42.2 +25d14m14.0'
-
-
-
-line_vrange=[280,460]
+execfile(stinghi+'n1156_config.py')
+xp['niter']             =0
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xcalplot.py')
-#execfile(xlib+'xconsol.py')
-#execfile(xlib+'xclean.py')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')
 

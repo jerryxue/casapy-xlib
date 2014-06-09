@@ -2,8 +2,8 @@ execfile(xlib+'xinit.py')
 
 # IMPORT
 xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-xp['rawfiles']          =['/Volumes/Scratch/raw/21cm/n4254/AL731_5',
-                          '/Volumes/Scratch/raw/21cm/n4254/AL731_6']
+xp['rawfiles']          =['../n4254/AL731_5',
+                          '../n4254/AL731_6']
 xp['importspw']         ='0'
 
 # CALIBRATION
@@ -35,12 +35,14 @@ xp['flagselect']        =["timerange='2009/05/16/03:45:46~2009/05/16/03:46:06'",
                           "antenna='EA02&EA18'"]
 
 # CONSOLIDATING & IMAGING
-execfile(stinghi+'n4254/n4254_config.py')
+execfile(stinghi+'n4254_config.py')
 xp['niter']             =0
 
 # RUN SCRIPTS:
 execfile(xlib+'ximport.py')
-execfile(xlib+'xcal.py')
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
+xu.checkvrange(xp['prefix']+'.ms')
+au.timeOnSource(xp['prefix']+'.ms')
+#execfile(xlib+'xcal.py')
+#execfile(xlib+'xconsol.py')
+#execfile(xlib+'xclean.py')
 

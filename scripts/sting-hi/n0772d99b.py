@@ -16,7 +16,7 @@ xp['phasecal']          = '0204+152'
 xp['uvrange_phasecal']  ='<100klambda'
 
 xp['flagspw']           ='0:0~4;122~126'
-xp['flagselect']        = [ "timerange='16:06:40~17:29:15'", 
+xp['flagselect']        = [ #"timerange='16:06:40~17:29:15'", 
                             "timerange='19:57:25~19:57:35'", 
                             "timerange='17:38:00~17:40:00'",
                             "field='0137+331' uvrange='<800lambda'",
@@ -26,30 +26,21 @@ xp['flagselect']        = [ "timerange='16:06:40~17:29:15'",
                             "antenna='VA14&VA28'",
                             "antenna='VA14&VA12'",
                             "antenna='VA19&VA26'"]
+xp['flagselect']        = [ "timerange='16:06:40~17:29:15' field='ARP78' uvrange='<800lambda'", 
+                            "timerange='19:57:25~19:57:35'", 
+                            "timerange='17:38:00~17:40:00'",
+                            "field='0137+331' uvrange='<800lambda'",
+                            "field='0204+152' uvrange='<800lambda'",
+                            "timerange='19:51:20~19:54:00' antenna='VA05'",
+                            ]
 
-# CONSOLIDATING
-xp['spwrgd']            ='spw'
-xp['scalewt']           =True
-xp['uvcs']              =True
-xp['fitspw']            ='*:0~35;92~126'
-xp['fitorder']          =1
-
-# IMAGING
-xp['cleanspec']         =True
-xp['cleancont']         =True
-
-xp['imsize']            =256
-xp['cell']              ='12.0arcsec'
-
-xp['cleanmode']         ='velocity'
-xp['clean_start']       ='1780km/s'
-xp['clean_width']       ='10.4km/s'
-xp['clean_nchan']       =127
-xp['phasecenter']       ='J2000 01h59m19.58 +19d00m27.10'
+execfile(stinghi+'n0772_config.py')
 xp['niter']             =0
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
 execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

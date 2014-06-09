@@ -2,9 +2,9 @@ execfile(xlib+'xinit.py')
 
 # IMPORT
 xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-xp['rawfiles']          =['/Volumes/Scratch/reduc/sting-hi/msc/n3147/raw/AB1069_4',\
-                          '/Volumes/Scratch/reduc/sting-hi/msc/n3147/raw/AB1069_5',\
-                          '/Volumes/Scratch/reduc/sting-hi/msc/n3147/raw/AB1069_6']
+xp['rawfiles']          =['../n3147/AB1069_4',\
+                          '../n3147/AB1069_5',\
+                          '../n3147/AB1069_6']
 xp['starttime']         ="1989/12/15/05:48:45"
 xp['stoptime']          ="2003/03/04/06:09:25"
 
@@ -25,7 +25,9 @@ execfile(stinghi+'n3147_config.py')
 xp['niter']             =0
 
 # RUN SCRIPTS:
-#execfile(xlib+'ximport.py')
+execfile(xlib+'ximport.py')
+xu.checkvrange(xp['prefix']+'.ms')
+au.timeOnSource(xp['prefix']+'.ms')
 #execfile(xlib+'xcal.py')
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
+#execfile(xlib+'xconsol.py')
+#execfile(xlib+'xclean.py')
