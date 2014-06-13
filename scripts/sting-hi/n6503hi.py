@@ -9,16 +9,16 @@ xp['importscan']    =''
 xp['importspw']     ='3,8'
 
 # TRACK INFORMATION
-xp['source']        = 'NGC5371'
-xp['fluxcal']       = '1409+524'
-xp['phasecal']      = '1419+419'
+xp['source']        = 'N6503'
+xp['fluxcal']       = '1328+307'
+xp['phasecal']      = '1803+784'
 
-xp['spw_source']    = '2'
-xp['spw_fluxcal']   = '1'
-xp['spw_phasecal']  ='2'
+xp['spw_source']    = '1'
+xp['spw_fluxcal']   = '0'
+xp['spw_phasecal']  ='1'
 
-xp['flagspw']       = '*:0~20;58~62'
-xp['flagselect']    =["antenna='VA02'","antenna='VA06&VA17'"]
+xp['flagspw']       =''# '*:0~20;58~62'
+xp['flagselect']    =[]#["antenna='VA02'","antenna='VA06&VA17'"]
 
 xp['uvcs']          =True
 xp['fitspw']        = '0:21~23;55~57'

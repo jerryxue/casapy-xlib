@@ -1,8 +1,8 @@
 #    line_vrange=[1225,1607]
-execfile(stinghi+'n6951b06.py')
-execfile(stinghi+'n6951c02.py')
-execfile(stinghi+'n6951c04.py')
-execfile(stinghi+'n6951d03.py')
+#execfile(stinghi+'n6951b06.py')
+#execfile(stinghi+'n6951c02.py')
+#execfile(stinghi+'n6951c04.py')
+#execfile(stinghi+'n6951d03.py')
 
 execfile(xlib+'xinit.py')
 
@@ -13,7 +13,7 @@ xp['prefix_comb']       =['n6951d03',
                           'n6951b06',
                           'n6951c02']
 
-execfile(stinghi+'n6951_config')
+execfile(stinghi+'n6951_config.py')
 
 
 xp['multiscale']        =[0,4,12]

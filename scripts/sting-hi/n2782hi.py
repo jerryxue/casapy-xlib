@@ -1,6 +1,6 @@
 #2390,2725
 
-execfile(stinghi+'n2782ab.py')
+#execfile(stinghi+'n2782ab.py')
 execfile(stinghi+'n2782c.py')
 execfile(stinghi+'n2782d.py')
 

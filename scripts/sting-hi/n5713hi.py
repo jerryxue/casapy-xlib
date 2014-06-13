@@ -1,8 +1,8 @@
 # [1760,2060]
-execfile(stinghi+'n5713c12a.py')
-execfile(stinghi+'n5713c12b.py')
-execfile(stinghi+'n5713c92.py')
-execfile(stinghi+'n5713d99.py')
+#execfile(stinghi+'n5713c12a.py')
+#execfile(stinghi+'n5713c12b.py')
+#execfile(stinghi+'n5713c92.py')
+#execfile(stinghi+'n5713d99.py')
 
 execfile(xlib+'xinit.py')
 
@@ -13,7 +13,7 @@ xp['prefix_comb']       =['n5713c12a',
                           'n5713c92',
                           'n5713d99']
 
-execfile(stinghi+'n5713_config')
+execfile(stinghi+'n5713_config.py')
 
 xp['imsize']            =2**7*10
 xp['cell']              ='4.0arcsec'

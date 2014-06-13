@@ -14,7 +14,7 @@ xp['phasecal']     = '0859+470'
 xp['phasecal_uvrange']='<15klambda'
 
 xp['spw_source']     = '0'
-xxp['flagspw']        ='*:0~3;58~62'
+xp['flagspw']        ='*:0~3;58~62'
 
 # CALIBRATION & OPTIONS
 xp['flagselect']     =     [
@@ -37,9 +37,9 @@ xp['niter']            =0
 
 
 # RUN SCRIPTS
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
 execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

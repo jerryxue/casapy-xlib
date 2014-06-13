@@ -9,12 +9,12 @@ xp['importchanbin']     =4
 xp['importtimebin']     ='30s'
 
 # CALIBRATION
-xp['source']            ='NGC4536'
-xp['spw_source']        ='0,1'
+xp['source']            ='NGC 5713'
+xp['spw_source']        ='0,1,2,3,4,5'
 
-xp['fluxcal']           ='1331+305=3C286'
+xp['fluxcal']           ='3C286'
 xp['uvrange_fluxcal']   =''
-xp['phasecal']          ='J1254+1141'
+xp['phasecal']          ='J1445+0958'
 xp['uvrange_phasecal']  =''
 
 # rfi at the spw center
@@ -25,9 +25,9 @@ execfile(stinghi+'n5713_config.py')
 xp['niter']             =0
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xconsol.py')
-#execfile(xlib+'xclean.py')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')
