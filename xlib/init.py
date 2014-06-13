@@ -2,7 +2,7 @@
 # CASAPY INITIALIZATION FILE 
 #
 # To load the pipeline scripts automatically, please:
-#   1) place this file to ~/.casa/
+#   1) ln -s yourpath/xlib/init.py ~/.casa/init.py
 #   2) alias casapy='casapy --log2term'
 ###########################################################
 
