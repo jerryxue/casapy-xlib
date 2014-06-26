@@ -45,7 +45,7 @@
 #                   <prefix>.plotxy.phasecal.amp.aftercal.<plotformat>
 #                   -- phase calibrator visibility plot after calibrations:    
 #                        amp-chan & amp-uvdist
-
+#
 #   DEPENDENCE
 #       ghostscript (generating multiple-page PDF plots), 
 #       default path looking for GS:  /sw/bin/gs or /opt/local/bin/gs
