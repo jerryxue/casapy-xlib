@@ -14,7 +14,7 @@ xp['fluxcal']       = '1331+305'
 xp['phasecal']      = '2022+616'
 
 xp['spw_source']    = '0,1'
-xp['spw_edge']      = '*:0~6;57~62'
+xp['flagspw']       = '*:0~6;57~62'
 
 # CALIBRATION & OPTIONS
 xp['flagselect']    =["mode='quack' quackinterval=25.0",
@@ -40,9 +40,9 @@ execfile(stinghi+'n6951_config.py')
 xp['niter']        =0
 
 # RUN SCRIPTS
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
 execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

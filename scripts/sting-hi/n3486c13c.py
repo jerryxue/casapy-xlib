@@ -2,20 +2,21 @@ execfile(xlib+'xinit.py')
 
 # IMPORT
 xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-xp['rawfiles']          ='../n3486/13B-363.sb24635611.eb28558623.56626.60561628472.ms'
-xp['importspw']         ='2,12'
-xp['importscan']        ='2~13'
+xp['rawfiles']          ='/Volumes/Scratch/raw/21cm/n3486/13A-107.sb21767032.eb24161877.56496.99179714121.ms'
+xp['importspw']         ='0'
+xp['importscan']        ='2~9'
 xp['importmode']        ='ms'
-xp['importchanbin']     =6
+xp['importchanbin']     =1
+xp['importtimebin']     ='30s'
 
 
 # CALIBRATION
 xp['source']            ='NGC3486'
-xp['spw_source']        ='0,1'
+xp['spw_source']        ='0'
 
 xp['fluxcal']           = '1331+305=3C286'
 xp['uvrange_fluxcal']   =''
-xp['phasecal']          = 'J1120+1420'
+xp['phasecal']          = 'J1125+2610'
 xp['uvrange_phasecal']  =''
 
 xp['flagselect']        =[]
@@ -25,10 +26,9 @@ xp['flagtsys_range']    =[5.0,200.0]
 execfile(stinghi+'n3486_config.py')
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xcalplot.py')
-#execfile(xlib+'xconsol.py')
-#execfile(xlib+'xclean.py')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')

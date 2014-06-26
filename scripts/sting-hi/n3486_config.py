@@ -1,4 +1,3 @@
-
 # CONSOLIDATING
 xp['spwrgd']            ='spw'
 xp['scalewt']           =True
@@ -18,4 +17,4 @@ xp['clean_start']       ='400km/s'
 xp['clean_width']       ='10.4km/s'
 xp['clean_nchan']       =47
 xp['phasecenter']       ='J2000 11h00m23.9 +28d58m29.0'
-xp['niter']             =0
+

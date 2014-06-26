@@ -20,14 +20,16 @@ xp['uvrange_phasecal']  =''
 
 xp['flagselect']        =[]
 xp['flagtsys_range']    =[5.0,200.0]
-xp['syscal']            =''
+#xp['syscal']            =''
 
 # CONSOLIDATING
 execfile(stinghi+'n3486_config.py')
+xp['niter']             =0
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
-#execfile(xlib+'xconsol.py')
-#execfile(xlib+'xclean.py')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')
