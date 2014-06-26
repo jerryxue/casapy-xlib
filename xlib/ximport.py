@@ -108,8 +108,7 @@ if     xp['importmode']=='evla':
 
     importevla(asdm=xp['rawfiles'],
                vis=xp['msfile'],
-               applyflags=True,
-               switchedpower=True)
+               applyflags=True)
     
 #----------------------------------------------------------------------------------------
 #   Data Export/Import: MIRIAD->UVFITS->CASA MS
