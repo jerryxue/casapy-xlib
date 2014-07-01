@@ -52,6 +52,7 @@ xp={
 'uvrange_phasecal':'',      # uvrange of phasecal used for calibrations (check the VLA CALIBRATOR MANUAL)
 'bpcopy':True,              # perform bandpass transfer
                             # default: bpcopy will be performed if spw from passband doesn't match that from phasecal/source/fluxcal
+#
 # Note for bandpass mapping across different spws:
 #    For BP tables in old format, bandpass is defined in channel, which makes the bandpass transfer between different spws
 #    relatively easy. For BP tables in new format, the bandpass solution is defined in frequency with spectral_window_id table
@@ -110,7 +111,6 @@ xp={
 
 # CONSOLIDATE
 
-
 'spwrgd':'',                # if spwrgd='spw', we will regrid spw to the clean setup
                             # if spwrgd='', we will keep the native spw
                             # 
@@ -129,6 +129,8 @@ xp={
                             #   -> avoid regridding dual-pol and single-pol tracks into the same channel setup.
                             #
 'spwrgd_method':'cvel',     # choose the regridding task: CVEL() or MSTRANSFORM() (not stable now)
+                            # cvel() may not work properly when combing spws with different polns.
+                            # mstransform() may drop edge channels  
 'combinespws':True,         # combine spws when regridding spws
 'chanbin':0,                
 'hs':False,                 # hanning smooth when preparing MS for imaging.
@@ -172,8 +174,8 @@ xp={
 'outframe':'BARY',          # frame of the output image
 'allowchunk':False,
 
-'imsize':512,               # imaging size (numbers of pixels)
-'cell':'4.0arcsec',         # imaging pixel size.
+'imsize':2**5*10,           # imaging size (numbers of pixels)
+'cell':'8.0arcsec',         # imaging pixel size.
 'clean_mask':0.2,           # 0.2:     a clean box with pb response higher 0.2
                             # True:    a clean box with pb response higher <minpb>
                             # [0,0,511,511]:    a clean box specified by bl/tr
@@ -219,36 +221,38 @@ xp={
 'keepcasaimage':True,       # keep a copy casa images after exporting them to FITS
 
 'mosweight':False,          # mosweight in CLEAN()
-# 
-# ???
-# MOSWEIGHT determines whether to calculate the gridding weights for each field independently
-# or together, so mosweight doesn't matter for natural weighting.
-#
-# mosweight=True will produce an image optimzed local SNR, but scarify the uniformity 
-# of noise and psf across the whole mosaicing pattern. Usually it will produced a slight larger
-# beam. Since a global UV sampling density function doesn't make much sense when combing
-# multiple tracks with several pointing because the phase-shifting from different point 
-# will reduce local sensitiviy by bluring phase information.  
-# 
-# mosweight=True is closer to MIRAID's linear-mosaicing approach becaue each pointig are
-# inverted independently (less phase bluring). 
-# Although the primary pattern & the weight for each pointing (from integration time) are still embeded in the
-# the basic weight and the additional PB pattern convolved during UV gridding.
-#
-# If the UV coverage is very different, it might doesn't much difference.
-#
-#   mosweight=True will be invert each pointing by its own weights and 1/noise^2-weight each point
-#   this is just like MIRAID/mossdi and ill give more weight to higher sensitivity fields in the overlap regions.
-#   good for sting-co
-#
-#   mosweight=False will be invert each pointing and equal-weight each pointing
-#   or equal weight each weight in the common regridding UV frame, give more 
-#   or joint weight in the common UV frame
-#   good for sting-hi
-
-
-# ???
-#
+                            # ????
+                            # mosweight=True equivalent as
+                            # 
+                            #   inverting each pointing by its own weights and 1/noise^2-weight each pointing in mosaicing
+                            #   this is similar with MIRAID/MOSSDI and will give more weight to higher sensitivity fields 
+                            #   in the overlap regions.(good for sting-co)
+                            #   will produce an image optimzed local SNR, but scarify the uniformity 
+                            #   of noise and psf across the whole mosaicing pattern. Usually it will produce a slight larger
+                            #   beam.
+                            # 
+                            # mosweight=True is closer to MIRAID's linear-mosaicing approach becaue each pointig are
+                            # inverted independently (less phase bluring). 
+                            # Although the primary pattern & the weight for each pointing (from integration time) are still embeded in the
+                            # the basic weight and the additional PB pattern convolved during UV gridding.                            
+                            #   ??
+                            #   Since a global UV sampling density function doesn't make much sense when combing
+                            #   multiple tracks with several pointing because the phase-shifting from different point 
+                            #   will reduce local sensitiviy by bluring phase information.
+                            #   ??
+                            #
+                            # mosweight=False  equivalent as
+                            #   inverting each pointing and equal-weight each pointing
+                            #   weights from vis in each weight are used in absolute sense afer gridding them into 
+                            #   the common regridding UV frame.
+                            #
+                            # ???
+                            # MOSWEIGHT determines whether to calculate the gridding weights for each field independently
+                            # or together, so mosweight doesn't matter for natural weighting.
+                            #
+                            #
+                            # If the UV coverage is very different, it might doesn't much difference.
+                            # ????
 'psfmode':'clark',          # psfmode in CLEAN()
 'fitpsf':False,             # out-of-date, not verified
 'negcomponent':-1,          # allowed number of negative component for CLEAN components at the largest scale
