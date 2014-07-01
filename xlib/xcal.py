@@ -71,10 +71,6 @@ else:
                 merge='replace')
 
 
-if  xp['passcal']=='':
-    xp['passcal']=xp['fluxcal']
-    xp['uvrange_passcal']=xp['uvrange_fluxcal']
-
 if  xp['spw_phasecal']=='':
     xp['spw_phasecal']=xp['spw_source']
 
@@ -82,8 +78,12 @@ if  xp['spw_fluxcal']=='':
     xp['spw_fluxcal']=xp['spw_source']
 
 if  xp['spw_passcal']=='':
-    xp['spw_passcal']=xp['spw_fluxcal']
+    xp['spw_passcal']=xp['spw_source']
 
+if  xp['passcal']=='':
+    xp['passcal']=xp['fluxcal']
+    xp['uvrange_passcal']=xp['uvrange_fluxcal']
+    xp['spw_passcal']=xp['spw_fluxcal']
 
 spwid_source=xp['spw_source'].split(',')
 spwid_passcal=xp['spw_passcal'].split(',')
@@ -92,6 +92,10 @@ spwid_fluxcal=xp['spw_fluxcal'].split(',')
 spwid_soucal=spwid_source+spwid_passcal+spwid_fluxcal+spwid_phasecal
 spwid_soucal=sorted(list(set(spwid_soucal)))
 
+xu.news('SOURCE:   '+xp['source']+'  '+str(spwid_source))
+xu.news('FLUXCAL:  '+xp['fluxcal']+'  '+str(spwid_fluxcal))
+xu.news('PASSCAL:  '+xp['passcal']+'  '+str(spwid_passcal))
+xu.news('PHASECAL: '+xp['phasecal']+'  '+str(spwid_phasecal))
 
 tb.open(xp['msfile']+"/OBSERVATION",nomodify=True)
 namelist=tb.getcol("TELESCOPE_NAME").tolist()
@@ -337,7 +341,9 @@ bandpass(vis=xp['msfile'],
 xu.news("")
 
 # SPECIAL TREATMENT FOR SOME HI TRACKS
-if  len(spwid_passcal)==2*len(spwid_source):
+if  len(spwid_passcal)==2*len(spwid_source) or \
+    len(spwid_passcal)==2*len(spwid_fluxcal) or \
+    len(spwid_passcal)==2*len(spwid_phasecal):
     
     xu.news("")
     xu.news("--bandpass--")
@@ -357,6 +363,8 @@ if  len(spwid_passcal)==2*len(spwid_source):
         xu.news('save bandpass solution to spw: '+str(spwid_passcal[i]))
         xu.news('->')
         xu.news("")
+        #    bandpass will put the averaged bandpass (channel-wise, not frequency-wsie) 
+        #    into the first spwid specified in spw. 
         bandpass(vis=xp['msfile'],
                  caltable=xp['prefix']+'.bcal_comb',
                  field=xp['passcal'],
@@ -373,6 +381,42 @@ if  len(spwid_passcal)==2*len(spwid_source):
                  interp=interp,
                  append=True)
         xu.news("")
+
+
+if  xp['bpcopy']==True:
+    
+    xu.news("")
+    xu.news("run bpcopy")
+    xu.news("")
+    transfer=[]
+    reference=[]        
+    for i in range(0,len(spwid_source)):
+        transfer=transfer+[str(spwid_source[i])]
+        if  i<len(spwid_passcal):
+            reference=reference+[str(spwid_passcal[i])]
+        else:
+            reference=reference+[str(spwid_passcal[i-len(spwid_passcal)])]
+    for i in range(0,len(spwid_phasecal)):
+        transfer=transfer+[str(spwid_phasecal[i])]
+        if  i<len(spwid_passcal):
+            reference=reference+[str(spwid_passcal[i])]
+        else:
+            reference=reference+[str(spwid_passcal[i-len(spwid_passcal)])]
+    for i in range(0,len(spwid_fluxcal)):
+        transfer=transfer+[str(spwid_fluxcal[i])]
+        if  i<len(spwid_passcal):
+            reference=reference+[str(spwid_passcal[i])]
+        else:
+            reference=reference+[str(spwid_passcal[i-len(spwid_passcal)])]
+    bptables=[xp['prefix']+'.bcal',xp['prefix']+'.bcal_comb']
+    
+    for bptable in bptables:
+        if  os.path.exists(bptable):
+            xu.news("processing: "+bptable)
+            xu.bpcopy(bptable,
+                      transfer=','.join(transfer),
+                      reference=','.join(reference),
+                      replace=True)
 
 #----------------------------------------------------------------------------------------
 #   Calculate Gain Solutions
@@ -412,33 +456,29 @@ xu.news("-orginal gaincal spwmap: ")
 xu.news(spwid)
 xu.news("")
 
-spwmap_phasecal=list(spwid)
-for i in range(0,len(spwid_phasecal)):
-    if  i<len(spwid_passcal):
-        spwmap_phasecal[int(spwid_phasecal[i])]=int(spwid_passcal[i])
-    else:
-        spwmap_phasecal[int(spwid_phasecal[i])]=int(spwid_passcal[i-len(spwid_passcal)])
-
-spwmap_fluxcal=list(spwid)
-for i in range(0,len(spwid_fluxcal)):
-    if  i<len(spwid_passcal):
-        spwmap_fluxcal[int(spwid_fluxcal[i])]=int(spwid_passcal[i])
-    else:
-        spwmap_fluxcal[int(spwid_fluxcal[i])]=int(spwid_passcal[i-len(spwid_passcal)])
+spwmap_bcal2phasecal=list(spwid)
+spwmap_bcal2fluxcal=list(spwid)
+if  xp['bpcopy']==False:
+    for i in range(0,len(spwid_phasecal)):
+        if  i<len(spwid_passcal):
+            spwmap_bcal2phasecal[int(spwid_phasecal[i])]=int(spwid_passcal[i])
+        else:
+            spwmap_bcal2phasecal[int(spwid_phasecal[i])]=int(spwid_passcal[i-len(spwid_passcal)])
+    for i in range(0,len(spwid_fluxcal)):
+        if  i<len(spwid_passcal):
+            spwmap_bcal2fluxcal[int(spwid_fluxcal[i])]=int(spwid_passcal[i])
+        else:
+            spwmap_bcal2fluxcal[int(spwid_fluxcal[i])]=int(spwid_passcal[i-len(spwid_passcal)])
 
 xu.news('')
 xu.news('->')
-xu.news('spwmap_bcal->phasecal:'+str(spwmap_phasecal))
-xu.news('spwmap_bcal->fluxcal:'+str(spwmap_fluxcal))
+xu.news('spwmap_bcal->phasecal:'+str(spwmap_bcal2phasecal))
+xu.news('spwmap_bcal->fluxcal:'+str(spwmap_bcal2fluxcal))
 xu.news('->')
 xu.news('')
 
 
 gainfield[-1]=xp['passcal']
-if  2*len(spwid_fluxcal)==len(spwid_passcal):
-    gaintable[-1]=xp['prefix'] + '.bcal_comb'
-else:
-    gaintable[-1]=xp['prefix'] + '.bcal'
 spwmap=[[]]*len(gaintable)
 interp[-1]='nearest,linear'
 
@@ -451,7 +491,11 @@ for j in range(0,len(spwid_source)):
     if  len(spwid_phasecal)==2*len(spwid_source):
         spw_solvegain_phasecal=spw_solvegain_phasecal+','+str(spwid_phasecal[j+len(spwid_source)])
     
-    spwmap[-1]=spwmap_fluxcal
+    if  2*len(spwid_fluxcal)==len(spwid_passcal):
+        gaintable[-1]=xp['prefix'] + '.bcal_comb'
+    else:
+        gaintable[-1]=xp['prefix'] + '.bcal'
+    spwmap[-1]=spwmap_bcal2fluxcal
     gaincal(vis=xp['msfile'],
             field=xp['fluxcal'],
             uvrange=xp['uvrange_fluxcal'],
@@ -469,8 +513,12 @@ for j in range(0,len(spwid_source)):
             interp=interp,
             calmode='ap',
             append= True)
-
-    spwmap[-1]=spwmap_phasecal
+    
+    if  2*len(spwid_phasecal)==len(spwid_passcal):
+        gaintable[-1]=xp['prefix'] + '.bcal_comb'
+    else:
+        gaintable[-1]=xp['prefix'] + '.bcal'
+    spwmap[-1]=spwmap_bcal2phasecal
     gaincal(vis=xp['msfile'],
             field=xp['phasecal'],
             uvrange=xp['uvrange_phasecal'],
@@ -543,16 +591,24 @@ xu.news("writes calibrated data to the CORRECTED_DATA column..")
 spwmap_bcal2source=list(spwid)
 spwmap_fcal2source=list(spwid)
 for i in range(0, len(spwid_source)):
-    spwmap_bcal2source[int(spwid_source[i])]=int(spwid_passcal[i])
-    spwmap_fcal2source[int(spwid_source[i])]=int(spwid_phasecal[i])
-
+    if  xp['bpcopy']==False:
+        if  i<len(spwid_passcal):
+            spwmap_bcal2source[int(spwid_source[i])]=int(spwid_passcal[i])
+        else:
+            spwmap_bcal2source[int(spwid_source[i])]=int(spwid_passcal[i-len(spwid_passcal)])
+    if  i<len(spwid_phasecal):
+        spwmap_fcal2source[int(spwid_source[i])]=int(spwid_phasecal[i])
+    else:
+        spwmap_fcal2source[int(spwid_source[i])]=int(spwid_phasecal[i-len(spwid_phasecal)])
+        
 spwmap_bcal2phasecal=list(spwid)
 spwmap_fcal2phasecal=list(spwid)
-for i in range(0, len(spwid_phasecal)):    
-    if  i<len(spwid_passcal):
-        spwmap_bcal2phasecal[int(spwid_phasecal[i])]=int(spwid_passcal[i])
-    else:
-        spwmap_bcal2phasecal[int(spwid_phasecal[i])]=int(spwid_passcal[i-len(spwid_passcal)])
+for i in range(0, len(spwid_phasecal)):
+    if  xp['bpcopy']==False:    
+        if  i<len(spwid_passcal):
+            spwmap_bcal2phasecal[int(spwid_phasecal[i])]=int(spwid_passcal[i])
+        else:
+            spwmap_bcal2phasecal[int(spwid_phasecal[i])]=int(spwid_passcal[i-len(spwid_passcal)])
     if  i<len(spwid_source):
         spwmap_fcal2phasecal[int(spwid_phasecal[i])]=int(spwid_phasecal[i])
     else:
@@ -560,11 +616,12 @@ for i in range(0, len(spwid_phasecal)):
 
 spwmap_bcal2fluxcal=list(spwid)
 spwmap_fcal2fluxcal=list(spwid)
-for i in range(0, len(spwid_fluxcal)):    
-    if  i<len(spwid_passcal):
-        spwmap_bcal2fluxcal[int(spwid_fluxcal[i])]=int(spwid_passcal[i])
-    else:
-        spwmap_bcal2fluxcal[int(spwid_fluxcal[i])]=int(spwid_passcal[i-len(spwid_passcal)])
+for i in range(0, len(spwid_fluxcal)):
+    if  xp['bpcopy']==False:      
+        if  i<len(spwid_passcal):
+            spwmap_bcal2fluxcal[int(spwid_fluxcal[i])]=int(spwid_passcal[i])
+        else:
+            spwmap_bcal2fluxcal[int(spwid_fluxcal[i])]=int(spwid_passcal[i-len(spwid_passcal)])
     if  i<len(spwid_source):
         spwmap_fcal2fluxcal[int(spwid_fluxcal[i])]=int(spwid_fluxcal[i])
     else:
@@ -573,66 +630,43 @@ for i in range(0, len(spwid_fluxcal)):
 
 gaintable=gaintable+[xp['prefix']+'.fcal']
 gainfield=gainfield+[xp['phasecal']]
-
-spwmap=spwmap+[spwmap_fcal2source]
-spwmap[-2]=spwmap_bcal2source
+spwmap=spwmap+['']
 interp=interp+['linear,linear']
-applycal(vis=xp['msfile'],
-         field=xp['source'],
-         spw=xp['spw_source'],
-         calwt =xp['calwt'],
-         flagbackup=False,
-         gaintable=gaintable,
-         interp=interp,
-         gainfield=gainfield,
-         spwmap=spwmap)
 
-xu.news('')
-xu.news('->')
-xu.news('spwmap_fcal->source:'+str(spwmap_fcal2source))
-xu.news('spwmap_bcal->source:'+str(spwmap_bcal2source))
-xu.news('->')
-xu.news('')
+field_loop=[xp['source'],xp['phasecal'],xp['fluxcal']]
+spw_loop=[xp['spw_source'],xp['spw_phasecal'],xp['spw_fluxcal']]
+spwmap_bcal_loop=[spwmap_bcal2source,spwmap_bcal2phasecal,spwmap_bcal2fluxcal]
+spwmap_fcal_loop=[spwmap_fcal2source,spwmap_fcal2phasecal,spwmap_fcal2fluxcal]
+spwid_loop=[spwid_source,spwid_phasecal,spwid_fluxcal]
+interp_loop=['linear,linear','nearest,linear','nearest,linear']
+gainfield_loop=[xp['phasecal'],xp['phasecal'],xp['fluxcal']]
 
-spwmap[-2]=spwmap_bcal2phasecal
-spwmap[-1]=spwmap_fcal2phasecal
-interp[-1]='nearest,linear'
-applycal(vis=xp['msfile'],
-         field=xp['phasecal'],
-         spw=xp['spw_phasecal'],
-         calwt =xp['calwt'],
-         flagbackup=False,
-         gaintable=gaintable,
-         interp=interp,
-         gainfield=gainfield,
-         spwmap=spwmap)
+for i in range(0,len(field_loop)):
+    
+    xu.news('')
+    xu.news('->')
+    xu.news('spwmap_fcal->  '+str(field_loop[i])+' '+str(spwmap_fcal_loop[i]))
+    xu.news('spwmap_bcal->  '+str(field_loop[i])+' '+str(spwmap_bcal_loop[i]))
+    xu.news('->')
+    xu.news('')
 
-xu.news('')
-xu.news('->')
-xu.news('spwmap_fcal->phasecal:'+str(spwmap_fcal2phasecal))
-xu.news('spwmap_bcal->phasecal:'+str(spwmap_bcal2phasecal))
-xu.news('->')
-xu.news('')
-
-spwmap[-2]=spwmap_bcal2fluxcal
-spwmap[-1]=spwmap_fcal2fluxcal
-gainfield[-1]=xp['fluxcal']
-applycal(vis=xp['msfile'],
-         field=xp['fluxcal'],
-         spw=xp['spw_fluxcal'],
-         calwt =xp['calwt'],
-         flagbackup=False,
-         gaintable=gaintable,
-         interp=interp,
-         gainfield=gainfield,
-         spwmap=spwmap)
-
-xu.news('')
-xu.news('->')
-xu.news('spwmap_fcal->fluxcal:'+str(spwmap_fcal2fluxcal))
-xu.news('spwmap_bcal->fluxcal:'+str(spwmap_bcal2fluxcal))
-xu.news('->')
-xu.news('')
+    spwmap[-2]=spwmap_bcal_loop[i]
+    spwmap[-1]=spwmap_fcal_loop[i]
+    if  2*len(spwid_loop[i])==len(spwid_passcal):
+        gaintable[-2]=xp['prefix'] + '.bcal_comb'
+    else:
+        gaintable[-2]=xp['prefix'] + '.bcal'
+    interp[-1]=interp_loop[i]
+    gainfield[-1]=gainfield_loop[i]
+    applycal(vis=xp['msfile'],
+             field=field_loop[i],
+             spw=spw_loop[i],
+             calwt =xp['calwt'],
+             flagbackup=False,
+             gaintable=gaintable,
+             interp=interp,
+             gainfield=gainfield,
+             spwmap=spwmap)
 
 #----------------------------------------------------------------------------------------
 #   Save flagging information
