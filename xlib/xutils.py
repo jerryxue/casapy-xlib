@@ -1550,3 +1550,62 @@ def checkvrange(srcfile='',
     
     news("0 REST 1 LSRK2 LSRD 3 BARY 4 GEO 5 TOPO 6 GALACTO 7 LGROUP")
     news("")
+
+def bpcopy(table,
+           reference='0',
+           transfer='1',
+           replace=False):
+    ###
+    #    transfer bandpass from one spw to another spw
+    #    note: different from spwmap+frequency-wise interpolation across spws
+    #
+    #    bpcopy will not performed if:
+    #    * reference and transfer (target) spw are the same
+    #    * transfer (target) spw bandpass already exists
+    #
+    #    replace=False: results will be saved in table"_bpcopy"
+    #
+    # example:
+    #    reference='0,0'
+    #    transfer='1,2'
+    #    use the bandpass from spw=0 to spw=1,2
+    #
+    #   table='n5371hi.bcal'
+    #   reference='1,1'
+    #   transfer='2,2'
+    #   xu.bpcopy(table,reference=reference,transfer=transfer,replace=True)
+    #
+    ###
+    idr=reference.split(',')
+    idt=transfer.split(',')
+
+    if  replace==False:
+        
+        os.system("rm -rf "+table+"_bpcopy")
+        os.system("cp -rf "+table+" "+table+"_bpcopy")
+        table=table+"_bpcopy"
+        
+    for k in range(len(idr)):
+
+        os.system("rm -rf tmp.bcal")
+        
+        tb.open(table,nomodify=False)
+        subtb=tb.query('SPECTRAL_WINDOW_ID=='+str(idr[k]))
+        subtb1=tb.query('SPECTRAL_WINDOW_ID=='+str(idt[k]))
+        docopy=(subtb1.nrows()==0 and subtb.nrows()!=0)
+        news(" reference: "+str(idr[k])+" transfer: "+str(idt[k])+" copy: "+str(docopy))
+        if  docopy:
+            copytb=subtb.copy('tmp.bcal',deep=True,valuecopy=True,memorytable=True,returnobject=True)
+        subtb.close()
+        subtb1.close()
+        tb.close()
+        if  docopy:
+            spws=copytb.getcol("SPECTRAL_WINDOW_ID").tolist()
+            for i in range(len(spws)):
+                spws[i]=int(idt[k])
+            copytb.putcol("SPECTRAL_WINDOW_ID",spws)
+            copytb.copyrows(table)
+            copytb.close()
+            
+        os.system("rm -rf tmp.bcal")
+    
