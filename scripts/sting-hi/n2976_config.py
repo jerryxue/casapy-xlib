@@ -1,8 +1,8 @@
 # CONSOLIDATING
 xp['spwrgd']            ='spw'
 xp['scalewt']           =True
-xp['uvcs']              =False
-xp['fitspw']            ='0:0~2;45~47'
+xp['uvcs']              =True
+xp['fitspw']            ='*:0~11;53~60'
 xp['fitorder']          =1
 
 # IMAGING

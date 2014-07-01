@@ -1,7 +1,7 @@
 #280->460
-execfile(stinghi+'n1156b.py')
-execfile(stinghi+'n1156c.py')
-execfile(stinghi+'n1156d.py')
+#execfile(stinghi+'n1156b.py')
+#execfile(stinghi+'n1156c.py')
+#execfile(stinghi+'n1156d.py')
 
 execfile(xlib+'xinit.py')
 
@@ -15,7 +15,7 @@ execfile(stinghi+'n1156_config.py')
 xp['uvcs']              =True
 
 xp['imsize']            =2**7*10
-xp['cell']              ='4.0arcsec'
+xp['cell']              ='2.0arcsec'
 
 xp['clean_start']       ='298.05km/s'
 xp['clean_width']       ='1.29km/s'
@@ -29,5 +29,5 @@ xp['usescratch']        =True
 
 
 # RUN SCRIPTS:
-execfile(xlib+'xconsol.py')
+#execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

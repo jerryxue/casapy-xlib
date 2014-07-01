@@ -15,9 +15,9 @@ xp['fluxcal']           ='1331+305'
 xp['fluxcal_uvrange']   =''
 xp['phasecal']          ='0841+708' 
 xp['phasecal_uvrange']  ='<20klambda'
-xp['spw_source']        ='0,1'
+xp['spw_source']        ='1,0'
 
-xp['flagspw']           ='*:0;62'
+xp['flagspw']           ='0:0~1;62,1:0;59~62'
 xp['flagselect']        =["mode='quack' quackinterval=8.0",
                           "field='NGC3147' timerange='02:45:00~02:50:00'",
                           "field='NGC3147' timerange='04:39:40~04:39:50'",
@@ -26,11 +26,15 @@ xp['flagselect']        =["mode='quack' quackinterval=8.0",
 
 execfile(stinghi+'n3147_config.py')
 xp['niter']             =0
+xp['spwrgd_method']     ='mstransform'
+xp['fitorder']          =0
+# some record with half spw flagged; oder=1 will create bad line data
+
 
 # RUN SCRIPTS:
 #execfile(xlib+'ximport.py')
 #xu.checkvrange(xp['prefix']+'.ms')
 #au.timeOnSource(xp['prefix']+'.ms')
-execfile(xlib+'xcal.py')
+#execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

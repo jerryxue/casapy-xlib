@@ -35,6 +35,7 @@ xp['flagselect']     =    [
                     "antenna='VA07&VA08'"
                 ]
 execfile(stinghi+'n2976_config.py')
+xp['spwrgd_method'] ='mstransform'
 xp['niter']        =0
 
 

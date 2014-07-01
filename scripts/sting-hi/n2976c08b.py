@@ -16,14 +16,13 @@ xp['spw_source']         = '0'
 xp['flagspw']            ='*:0~40;117~126'
 
 # CALIBRATION & OPTIONS
-flagselect = [
-                "antenna='VA08&EA17'",
+xp['flagselect'] = [  "antenna='VA08&EA17'",
                 "antenna='EA11&VA20'",
                 "antenna='EA21'",
-                "antenna='VA20&EA23' timerange='21:47:20.0~21:47:30.0'",
-                "antenna='VA09&EA17' timerange='21:11:52.0~21:11:58.0'",
-                "antenna='VA12&EA17' timerange='22:45:00.0~22:45:10.0'",
-                "antenna='EA17&EA19' timerange='22:45:00.0~22:45:10.0'",
+                "antenna='VA20&EA23' timerange='21:47:10.0~21:47:40.0'",
+                "antenna='VA09&EA17' timerange='21:11:45.0~21:12:00.0'",
+                "antenna='VA12&EA17' timerange='22:45:00.0~22:45:20.0'",
+                "antenna='EA17&EA19' timerange='22:45:00.0~22:45:20.0'",
                 "antenna='VA10&EA11'",
                 "antenna='VA12&EA25'",
                 "antenna='VA15&EA25'",
@@ -38,7 +37,7 @@ xp['niter']        =0
 #execfile(xlib+'ximport.py')
 #xu.checkvrange(xp['prefix']+'.ms')
 #au.timeOnSource(xp['prefix']+'.ms')
-execfile(xlib+'xcal.py')
+#execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')
 

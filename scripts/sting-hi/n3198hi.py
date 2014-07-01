@@ -25,11 +25,11 @@ xp['prefix_comb']       =[  'n3198d04',
                             'n3198b05']
 
 execfile(stinghi+'n3198_config.py')
-xp['fitchans']           ='0~13,85~101'
+xp['fitchans']           ='0~13,85~100'
 xp['clean_start']        ='406.8km/s'
 xp['clean_width']        ='5.2km/s'
-xp['clean_nchan']        =102
-xp['imsize']            =2**6*10
+xp['clean_nchan']        =101
+xp['imsize']            =2**7*10
 xp['cell']              ='2.0arcsec'
 
 xp['multiscale']        =[0,4,12]

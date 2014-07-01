@@ -21,11 +21,11 @@ xp['flagspw']       = '*:0;60~62'
 
 # CALIBRATION & OPTIONS
 xp['flagselect']    =[
-                    " antenna='VA08&VA12' ",
-                    " timerange='24:55:50~25:40:00' ",
-                    " timerange='17:11:40~17:36:40' ",
-                    " antenna='VA02&VA06'",
-                    " antenna='VA06&VA22'"
+                    "antenna='VA08&VA12'",
+                    "timerange='24:55:50~25:40:00'",
+                    "timerange='17:11:40~17:36:40'",
+                    "antenna='VA02&VA06'",
+                    "antenna='VA06&VA22'"
                     ] 
 execfile(stinghi+'n2976_config.py')     
 xp['niter']     =0  
