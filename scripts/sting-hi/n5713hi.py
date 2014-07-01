@@ -1,6 +1,6 @@
 # [1760,2060]
 #execfile(stinghi+'n5713c12a.py')
-#execfile(stinghi+'n5713c12b.py')
+#execfi le(stinghi+'n5713c12b.py')
 #execfile(stinghi+'n5713c92.py')
 #execfile(stinghi+'n5713d99.py')
 
@@ -14,8 +14,14 @@ xp['prefix_comb']       =['n5713c12a',
                           'n5713d99']
 
 execfile(stinghi+'n5713_config.py')
+xp['scalewt']           =True
+xp['clean_start']       ='1653.2km/s'
+xp['clean_width']       ='20.8km/s'
+xp['clean_nchan']       =20
+xp['fitchans']          ='0~2,17~19'
+xp['fitorder']          =1
 
-xp['imsize']            =2**7*10
+xp['imsize']            =2**6*10
 xp['cell']              ='4.0arcsec'
 
 xp['multiscale']        =[0,4,12]
@@ -23,7 +29,6 @@ xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 xp['usescratch']        =True
-xp['niter']             =0
 
 # RUN SCRIPTS:
 execfile(xlib+'xconsol.py')

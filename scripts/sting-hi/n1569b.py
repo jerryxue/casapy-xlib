@@ -6,15 +6,17 @@ xp['rawfiles']          ='../n1569/AW605_12'
 
 # CALIBRATION
 xp['source']            ='NGC1569'
-xp['spw_source']        ='4,5'
 
 xp['fluxcal']           ='0538+498'
 xp['uvrange_fluxcal']   ='<50klambda'
-xp['spw_fluxcal']       ='0,1,2,3'
 xp['phasecal']          ='0404+768'
 xp['uvrange_phasecal']  =''
 
-xp['flagspw']           ='*:0~10;112~126'
+xp['spw_source']        ='4,5'
+xp['spw_fluxcal']       ='0,1,2,3'
+xp['spw_phasecal']       ='0,1,2,3'
+xp['flagspw']            ='*:0~2;121~126'
+
 xp['flagselect']        =[    "mode='quack' quackinterval=6.0",
                 "antenna='VA26' timerange='05:54:10~05:55:10'",
                 "antenna='VA26' timerange='05:54:10~05:55:10'",

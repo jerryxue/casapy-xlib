@@ -17,7 +17,7 @@ xp['phasecal_uvrange']  ='<20klambda'
 xp['spw_source']        = '0,1'
 xp['spw_fluxcal']       ='2,3,4,5'
 xp['spw_phasecal']      ='2,3,4,5'
-xp['flagspw']           ='*:0~5;116~126'
+xp['flagspw']           ='*:0~2;120~126'
 
 # CALIBRATION & OPTIONS
 xp['flagselect']     =    [

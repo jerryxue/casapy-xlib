@@ -13,7 +13,7 @@ xp['fluxcal']       = '1331+305'
 xp['phasecal']      = '0921+622'
 
 xp['spw_source']    = '0'
-xp['flagspw']       ='*:0~3;57~62'
+xp['flagspw']       ='*:0;60~62'
 
 # CALIBRATION & OPTIONS
 

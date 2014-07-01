@@ -13,6 +13,7 @@ xp['phasecal']          ='1254+116'
 xp['phasecal_uvrange']  =''
 xp['spw_source']        ='0'
 
+xp['flagspw']           ='*:0;122~126'
 xp['flagselect']        =["timerange='2009/05/10/06:40:45.0~2009/05/10/06:41:05.0' antenna='EA16&VA20'",
                           "timerange='2009/05/10/07:49:55.0~2009/05/10/07:50:15.0' antenna='EA01&VA20'",
                           "timerange='2009/05/10/06:34:25.0~2009/05/10/06:34:45.0'",
@@ -27,10 +28,10 @@ execfile(stinghi+'n4254_config.py')
 xp['niter']             =0
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xconsol.py')
-#execfile(xlib+'xclean.py')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')
 

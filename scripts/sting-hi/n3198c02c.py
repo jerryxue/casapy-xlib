@@ -1,7 +1,7 @@
 execfile(xlib+'xinit.py')
 
 xp['prefix']        =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-xp['rawfiles']      =[rawdir+'/n3198/AT285_8']
+xp['rawfiles']      =['../n3198/AT285_8']
 xp['starttime']     ='2002/11/26/11:25:50'
 xp['stoptime']      ='2002/11/26/12:19:50'
 
@@ -17,6 +17,7 @@ xp['phasecal_uvrange']    ='<30klambda'
 spw_edge =6
 
 # CALIBRATION & OPTIONS
+xp['flagspw']       ='*:0;60~62'
 xp['flagselect'] = [    "timerange='2002/11/26/11:40:09~2002/11/26/11:40:10'",
                 "timerange='2002/11/26/11:45:46~2002/11/26/11:45:53'",
                 "timerange='2002/11/26/11:51:48~2002/11/26/11:51:54'",
@@ -31,9 +32,9 @@ execfile(stinghi+'n3198_config.py')
 xp['niter']        =0
 
 # RUN SCRIPTS
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
 execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

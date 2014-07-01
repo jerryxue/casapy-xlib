@@ -12,6 +12,7 @@ xp['phasecal']          ='1150-003'
 xp['phasecal_uvrange']  =''
 xp['spw_source']        ='0'
 
+xp['flagspw']           ='*:0~1:120~126'
 xp['flagselect']        =["antenna='EA08'",
                           "timerange='00:00:01~01:10:20' field='1150-003'",
                           "timerange='02:26:45.0~02:27:05.0' antenna='EA14&EA23'",
@@ -31,10 +32,10 @@ execfile(stinghi+'n4536_config.py')
 xp['niter']             =0
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xconsol.py')
-#execfile(xlib+'xclean.py')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')
 

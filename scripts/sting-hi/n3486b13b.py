@@ -20,7 +20,6 @@ xp['uvrange_phasecal']  =''
 
 xp['flagselect']        =[]
 xp['flagtsys_range']    =[5.0,200.0]
-#xp['syscal']            =''
 
 # CONSOLIDATING
 execfile(stinghi+'n3486_config.py')

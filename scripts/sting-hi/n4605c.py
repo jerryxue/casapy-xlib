@@ -16,7 +16,7 @@ xp['fluxcal']       = '1331+305'
 xp['phasecal']      = '1313+675'
 
 xp['spw_source']    ='0'
-xp['spw_edge']      ='*:0~4;57~62'
+xp['flagspw']       ='*:0;61~62'
 
 # CALIBRATION & OPTION
 xp['flagselect'] = ["antenna='VA20'",
@@ -29,9 +29,9 @@ execfile(stinghi+'n4605_config.py')
 xp['niter']        =0
 
 # RUN SCRIPTS
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
 execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

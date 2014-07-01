@@ -13,6 +13,7 @@ xp['phasecal']          ='1221+282'
 xp['phasecal_uvrange']  =''
 xp['spw_source']        ='0'
 
+xp['flagspw']           ='*:60~62'
 xp['flagselect']        =["antenna='VA27'"]
 
 # CONSOLIDATING & IMAGING
@@ -20,10 +21,10 @@ execfile(stinghi+'n4254_config.py')
 xp['niter']             =0
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xconsol.py')
-#execfile(xlib+'xclean.py')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')
 

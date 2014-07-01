@@ -19,8 +19,7 @@ xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 xp['usescratch']        =True
-xp['niter']             =0
 
 # RUN SCRIPTS:
-execfile(xlib+'xconsol.py')
+#execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

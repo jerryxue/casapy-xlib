@@ -1,11 +1,11 @@
-#execfile(stinghi+'n3486c13a.py')
-#execfile(stinghi+'n3486c13b.py')
-#execfile(stinghi+'n3486c13c.py')
-#execfile(stinghi+'n3486c13d.py')
-#execfile(stinghi+'n3486c13e.py')
-execfile(stinghi+'n3486b13b.py')
-#execfile(stinghi+'n3486b13a.py')
-#execfile(stinghi+'n3486d91.py')
+# execfile(stinghi+'n3486c13a.py')
+# execfile(stinghi+'n3486c13b.py')
+# execfile(stinghi+'n3486c13c.py')
+# execfile(stinghi+'n3486c13d.py')
+# execfile(stinghi+'n3486c13e.py')
+# execfile(stinghi+'n3486b13b.py')
+# execfile(stinghi+'n3486b13a.py')
+# execfile(stinghi+'n3486d91.py')
 
 execfile(xlib+'xinit.py')
 
@@ -22,13 +22,15 @@ xp['prefix_comb']       =['n3486d91',
 
 # CONSOLIDATING
 execfile(stinghi+'n3486_config.py')
+xp['imsize']            =2**7*10
+xp['cell']              ='2.0arcsec'
 
-xp['imsize']            =2**6*10
 xp['multiscale']        =[0,4,12]
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
+xp['usescratch']        =True
 
 # RUN SCRIPTS:
-execfile(xlib+'xconsol.py')
+#execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

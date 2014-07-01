@@ -21,7 +21,7 @@ xp['phasecal_uvrange']=''
 
 
 # CALIBRATION & OPTIONS
-xp['spw_edge']        ='*:0~4;58~62'
+xp['flagspw']        ='*:0;60~62'
 xp['flagselect']     = [     "antenna='VA11'",
                 "mode='quack' quackinterval=4.0",
                 "timerange='1993/04/24/05:26:40~06:33:20' field='1328+307' antenna='VA21&VA22'",
@@ -33,10 +33,10 @@ execfile(stinghi+'n4151_config.py')
 xp['niter']        =0
 
 # RUN SCRIPTS
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
-execfile(xlib+'xcal.py')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
+#execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')
 

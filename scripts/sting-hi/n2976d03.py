@@ -1,5 +1,6 @@
 execfile(xlib+'xinit.py')
 
+rawdir='../'
 xp['prefix']        =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0] 
 xp['rawfiles']      =[rawdir+'n2976/AB1038_15',rawdir+'n2976/AB1038_16']
 xp['starttime']     ='2003/05/10/02:46:15.0'
@@ -14,7 +15,7 @@ xp['fluxcal'] = '1331+305'
 xp['phasecal'] = '0921+622'
 
 xp['spw_source'] = '0'
-xp['flagspw']='0:0~4;57~62'
+xp['flagspw']='0:0;60~62'
 
 # CALIBRATION & OPTIONS
 xp['flagselect'] =    [

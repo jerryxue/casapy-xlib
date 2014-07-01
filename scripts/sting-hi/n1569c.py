@@ -1,10 +1,18 @@
 execfile(xlib+'xinit.py')
 
 # IMPORT
-xp['prefix']        =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
+xp['prefix']        ='tmp1'
 xp['rawfiles']      ='../n1569/AW325_6'
-xp['starttime']     ='1993/06/29/12:06:45.0'
-xp['stoptime']      ='1993/06/29/17:57:15.0'
+xp['importfield']   ='0,1,2'
+#execfile(xlib+'ximport.py')
+xp['prefix']        ='tmp2'
+xp['rawfiles']      ='../n1569/AW325_7'
+xp['importfield']   ='0,2'
+#execfile(xlib+'ximport.py')
+xp['prefix']        =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
+#os.system("rm -rf "+xp['prefix']+'.ms')
+#concat(vis=['tmp1.ms','tmp2.ms'],concatvis=xp['prefix']+'.ms',freqtol='50kHz')
+os.system("rm -rf tmp?.ms")
 
 # TRACK INFORMATION
 xp['source']             = 'NGC1569'
@@ -17,7 +25,7 @@ xp['phasecal_uvrange']    =''
 xp['spw_source']         = '4,5'
 xp['spw_fluxcal']         = '0,1'
 xp['spw_phasecal']         = '0,1,2,3'
-xp['flagspw']            ='*:0~10;112~126'
+xp['flagspw']            ='*:0~2;121~126'
 
 # CALIBRATION & OPTIONS
 xp['flagselect']         =[
@@ -55,7 +63,7 @@ execfile(stinghi+'n1569_config.py')
 xp['niter']        =0
 
 # RUN SCRIPTS
-#execfile(xlib+'ximport.py')
+
 #xu.checkvrange(xp['prefix']+'.ms')
 #au.timeOnSource(xp['prefix']+'.ms')
 execfile(xlib+'xcal.py')

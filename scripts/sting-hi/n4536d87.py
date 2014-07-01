@@ -24,13 +24,12 @@ xp['flagselect']        =["timerange='1987/06/07/02:51:00~02:52:00'",
 # CONSOLIDATING & IMAGING
 execfile(stinghi+'n4536_config.py')
 xp['niter']             =0
-xp['clean_nchan']       =25
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xconsol.py')
-#execfile(xlib+'xclean.py')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')
 

@@ -1,6 +1,6 @@
 xp['spwrgd']            =''
 xp['uvcs']              =True
-xp['fitspw']            ='0:4~7;119~122,1:4~7;119~122'
+xp['fitspw']            ='*:4~7;120~122'
 xp['fitorder']          =1
 
 # IMAGING

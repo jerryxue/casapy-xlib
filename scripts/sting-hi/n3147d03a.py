@@ -16,6 +16,7 @@ xp['phasecal']          ='0836+710'
 xp['phasecal_uvrange']  ='<20klambda'
 xp['spw_source']        ='0'
 
+xp['flagspw']           ='*:60~62'
 xp['flagselect']        =["timerange='03:43:40~03:44:00'",
                           "timerange='01:58:55~01:59:15'",
                           "mode='quack' quackinterval='5.0'",
@@ -25,9 +26,9 @@ execfile(stinghi+'n3147_config.py')
 xp['niter']             =0
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xconsol.py')
-#execfile(xlib+'xclean.py')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')

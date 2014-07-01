@@ -1,6 +1,6 @@
 # CONSOLIDATING
 xp['spwrgd']            ='spw'
-xp['spwrgd_method']     ='mstransform'
+xp['spwrgd_method']     ='cvel'
 xp['uvcs']              =True
 xp['fitspw']            ='*:4~9;75~80'
 xp['scalewt_minsamp']   =12

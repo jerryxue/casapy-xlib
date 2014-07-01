@@ -17,13 +17,12 @@ xp['spw_source']        ='2,3'
 xp['spw_phasecal']      ='2,3'
 xp['spw_fluxcal']       ='0,1'
 
-xp['flagspw']           ='*:0;62'
+xp['flagspw']           ='*:0;60~62'
 xp['flagselect']        =["antenna='VA18'",
                           "uvrange='<1200lambda' field='0134+329'",
                           "timerange='23:40:00~23:45:00' field='0134+329'",
                           "timerange='23:55:00~23:58:20' antenna='VA10'",
                           "timerange='23:55:00~23:58:20' antenna='VA14&VA17'"]
-xp['flagselect_default']=[]     # mode='shadow' doesn't work with B1960 in v4.2
 
 # CONSOLIDATING
 execfile(stinghi+'n3486_config.py')
@@ -34,6 +33,5 @@ xp['niter']             =0
 # xu.checkvrange(xp['prefix']+'.ms')
 # au.timeOnSource(xp['prefix']+'.ms')
 execfile(xlib+'xcal.py')
-execfile(xlib+'xcalplot.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

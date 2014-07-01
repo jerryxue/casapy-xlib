@@ -12,7 +12,7 @@ xp['phasecal']            ='0917+449'
 xp['phasecal_uvrange']    ='<20klambda'
 
 xp['spw_source']        ='0'
-xp['flagsp']            ='*:0~3;58~62'
+xp['flagsp']            ='*:0;60~62'
 
 xp['flagselect']         =     [
                     "timerange='06:10:40~06:10:50' field='0134+329'",
@@ -20,8 +20,8 @@ xp['flagselect']         =     [
                     "antenna='VA01&VA12'"
                 ]        
 
-execfile(stinghi+'n2782_config.py')
-xp['niter']                =0
+execfile(stinghi+'n2782_config.py')                            
+xp['niter']            =0
 
 #execfile(xlib+'ximport.py')
 #xu.checkvrange(xp['prefix']+'.ms')

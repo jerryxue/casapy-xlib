@@ -14,7 +14,7 @@ xp['phasecal']     = '0859+470'
 xp['phasecal_uvrange']='<15klambda'
 
 xp['spw_source']     = '0'
-xp['flagspw']        ='*:0~3;58~62'
+xp['flagspw']        ='*:0;60~62'
 
 # CALIBRATION & OPTIONS
 xp['flagselect']     =     [
@@ -32,7 +32,8 @@ xp['flagselect']     =     [
                     "timerange='04:25:50~04:28:00'",
                     "timerange='04:54:10~04:55:00'",
                     "antenna='VA11&VA20' timerange='03:00:00~03:06:40'"
-                    ]        
+                    ]
+execfile(stinghi+'n2782_config.py')                            
 xp['niter']            =0
 
 

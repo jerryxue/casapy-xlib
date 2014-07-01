@@ -15,6 +15,7 @@ xp['phasecal']             = '1035+564'
 xp['phasecal_uvrange']    =''
 
 # CALIBRATION & OPTIONS
+xp['flagspw']       ='*:0;60~62'
 xp['flagselect']    = [  "timerange='2005/04/26/23:30:13.0~2005/04/26/23:30:18' field='0542+498'",
                 "timerange='2005/04/27/06:00:45.0~2005/04/27/06:01:02' field='1035+564'",
                 #"clipexpr(ABS I)++clipminmax(0,10)++field(1035+564)",
@@ -35,9 +36,9 @@ xp['flagselect']    = [  "timerange='2005/04/26/23:30:13.0~2005/04/26/23:30:18' 
 execfile(stinghi+'n3198_config.py')
 xp['niter']        =0
 
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
 execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

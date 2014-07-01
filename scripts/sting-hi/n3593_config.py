@@ -7,7 +7,7 @@ xp['fitorder']      =1
 xp['cleanspec']         =True
 xp['cleancont']         =True
 
-xp['imsize']            =512
+xp['imsize']            =2**6*10
 xp['cell']              ='4.0arcsec'
 
 xp['cleanmode']      = 'velocity'

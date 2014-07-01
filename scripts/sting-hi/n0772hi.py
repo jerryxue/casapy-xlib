@@ -1,12 +1,12 @@
 #2172->2716
-#execfile(stinghi+'n0772b13a.py')
-#execfile(stinghi+'n0772b13b.py')
-#execfile(stinghi+'n0772b13c.py')
-#execfile(stinghi+'n0772bc13a.py')
-#execfile(stinghi+'n0772bc13b.py')
+execfile(stinghi+'n0772b13a.py')
+execfile(stinghi+'n0772b13b.py')
+execfile(stinghi+'n0772b13c.py')
+execfile(stinghi+'n0772bc13a.py')
+execfile(stinghi+'n0772bc13b.py')
 #execfile(stinghi+'n0772bc00.py') # short track / low velocity resolution
-#execfile(stinghi+'n0772d99a.py')
-#execfile(stinghi+'n0772d99b.py')
+execfile(stinghi+'n0772d99a.py')
+execfile(stinghi+'n0772d99b.py')
 
 execfile(xlib+'xinit.py')
 

@@ -13,9 +13,9 @@ xp['fluxcal']             = '1331+305'
 xp['fluxcal_uvrange']    =''
 xp['phasecal']             = '1006+349'
 xp['phasecal_uvrange']    ='<30klambda'
-spw_edge =6
 
 # CALIBRATION & OPTIONS
+xp['flagspw']       ='*:0;60~62'
 xp['flagselect'] =  [    "timerange='2003/03/27/06:04:10~06:25:25' field='1331+305'",
                 "mode='quack' quackinterval=20.0 field='1006+349'"]
 
@@ -25,9 +25,9 @@ execfile(stinghi+'n3198_config.py')
 xp['niter']        =0
 
 # RUN SCRIPTS
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
 execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

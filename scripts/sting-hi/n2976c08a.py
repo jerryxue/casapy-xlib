@@ -1,5 +1,5 @@
 execfile(xlib+'xinit.py')
-
+rawdir='../'
 xp['prefix']        =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0] 
 xp['rawfiles']      =[rawdir+'n2976/AC921_17']
 xp['starttime']     ='2008/05/04/21:20:45.0'

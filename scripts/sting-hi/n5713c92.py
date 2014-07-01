@@ -18,7 +18,7 @@ xp['phasecal']          = '1445+099'
 xp['phasecal_uvrange']  =''
 
 xp['flagspw']           ="*:0~4;56~62"
-xp['flagselect']        =[    "timerange='12:33:40.0~12:36:30.0'"            ]
+xp['flagselect']        =["timerange='12:33:40.0~12:36:30.0'"]
 
 execfile(stinghi+'n5713_config.py')
 xp['niter']        =0

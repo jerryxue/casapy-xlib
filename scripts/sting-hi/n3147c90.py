@@ -15,6 +15,7 @@ xp['phasecal']          ='0945+664'
 xp['phasecal_uvrange']  ='<15klambda'
 xp['spw_source']        ='0'
 
+xp['flagspw']           ='*:0;60~62'
 xp['flagselect']        =["timerange='16:26:40~16:40:00' antenna='VA02&VA24'",
                           "timerange='16:40:20~16:41:40'",
                           "timerange='19:16:35~19:17:00'",
@@ -29,9 +30,9 @@ execfile(stinghi+'n3147_config.py')
 xp['niter']             =0
 
 # RUN SCRIPTS:
-execfile(xlib+'ximport.py')
-xu.checkvrange(xp['prefix']+'.ms')
-au.timeOnSource(xp['prefix']+'.ms')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xconsol.py')
-#execfile(xlib+'xclean.py')
+#execfile(xlib+'ximport.py')
+#xu.checkvrange(xp['prefix']+'.ms')
+#au.timeOnSource(xp['prefix']+'.ms')
+execfile(xlib+'xcal.py')
+execfile(xlib+'xconsol.py')
+execfile(xlib+'xclean.py')
