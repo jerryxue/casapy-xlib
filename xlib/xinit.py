@@ -130,7 +130,7 @@ xp={
                             #
 'spwrgd_method':'cvel',     # choose the regridding task: CVEL() or MSTRANSFORM() (not stable now)
                             # cvel() may not work properly when combing spws with different polns.
-                            # mstransform() may drop edge channels  
+                            # mstransform() may drop edge channels, but much faster and good for frame transform
 'combinespws':True,         # combine spws when regridding spws
 'chanbin':0,                
 'hs':False,                 # hanning smooth when preparing MS for imaging.
@@ -142,6 +142,11 @@ xp={
 'fitorder':0,               # polynomial order for fitting the continuum
                             # high-order polynomial may work better of the continuum source
                             # is off-center when uvcs=True (Sault 1994)
+                            # order=1 is not stable for the case where line-free channel is at one-side edge, which
+                            # will become serious problem in uvcontsub than imcontsub. Choose order=0 or imcontsub
+                            # to eliminate the problem.
+                            # xu.checkchflag() can help you to examine channel-wise flagging tags existing in MSs, and
+                            # tell you if some vis records are partially flagged at one edge.
 'uvcs':False,               # continumm subtraction before imaging
 'fitspw':'',                # spw selecting for continumm subtraction after imaging
 'imcs':False,               # continumm subtraction after imaging
@@ -176,13 +181,14 @@ xp={
 
 'imsize':2**5*10,           # imaging size (numbers of pixels)
 'cell':'8.0arcsec',         # imaging pixel size.
-'clean_mask':0.2,           # 0.2:     a clean box with pb response higher 0.2
+'clean_mask':0.3,           # 0.3:     a clean box with pb response higher 0.2
                             # True:    a clean box with pb response higher <minpb>
                             # [0,0,511,511]:    a clean box specified by bl/tr
-                            # 'cleanbox.txt'    a cleanbox file   
+                            # 'cleanbox.txt'    a cleanbox file
+'clean_mask_cont':0.2,      # clean mask for continuue                               
 'niter':10000,              # clean iteration threshold
-'sigcutoff_spec':2.0,       # <sigcutoff_spec>*<sig> is the default threshold value for spectral-cube CLEAN
-'sigcutoff_cont':2.0,       # <sigcutoff_cont>*<sig> is the default threshold value for continuum MFS CLEAN
+'sigcutoff_spec':2.5,       # <sigcutoff_spec>*<sig> is the default threshold value for spectral-cube CLEAN
+'sigcutoff_cont':2.5,       # <sigcutoff_cont>*<sig> is the default threshold value for continuum MFS CLEAN
 'threshold_spec':'0.0mJy',  # threshold for spec cleaning, the default value is <sigcutoff_spec>*<sig>
 'threshold_cont':'0.0mJy',  # threshold for mfs cleaning, the default values is <sigcutoff_cont>*<sig>
 
