@@ -1559,7 +1559,7 @@ def bpcopy(table,
     #    transfer bandpass from one spw to another spw
     #    note: different from spwmap+frequency-wise interpolation across spws
     #
-    #    bpcopy will not performed if:
+    #    bpcopy will not performe if:
     #    * reference and transfer (target) spw are the same
     #    * transfer (target) spw bandpass already exists
     #
