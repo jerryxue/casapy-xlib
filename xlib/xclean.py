@@ -110,6 +110,7 @@ cleanspw_loop=[]
 restorbeam_loop=[]
 resmooth_loop=[]
 multiscale_loop=[]
+cleanmask_loop=[]
 
 if  xp['cleanspec']==True:
     
@@ -132,6 +133,7 @@ if  xp['cleanspec']==True:
         restorbeam_loop+=[xp['restorbeam']]
         resmooth_loop+=[False]
         multiscale_loop+=[[]]
+        cleanmask_loop+=[xp['clean_mask']]
 
     vis_loop+=[vis]
     outname_loop+=[outname]
@@ -142,7 +144,8 @@ if  xp['cleanspec']==True:
     restorbeam_loop+=[xp['restorbeam']]
     resmooth_loop+=[xp['resmooth']]
     multiscale_loop+=[xp['multiscale']]
-
+    cleanmask_loop+=[xp['clean_mask']]
+    
 if  xp['cleancont']==True:
     
     vis=xp['srcfile']
@@ -161,6 +164,7 @@ if  xp['cleancont']==True:
         restorbeam_loop+=[xp['restorbeam']]
         resmooth_loop+=[False]
         multiscale_loop+=[[]]
+        cleanmask_loop+=[xp['clean_mask_cont']]
 
     vis_loop+=[vis]
     outname_loop+=[outname]
@@ -171,6 +175,7 @@ if  xp['cleancont']==True:
     restorbeam_loop+=[xp['restorbeam']]
     resmooth_loop+=[False]
     multiscale_loop+=[xp['multiscale']]
+    cleanmask_loop+=[xp['clean_mask_cont']]
 
 for i in range(0,len(vis_loop)):
     
@@ -205,7 +210,7 @@ for i in range(0,len(vis_loop)):
           interpolation=interpolation,
           threshold=threshold_loop[i],
           psfmode=xp['psfmode'],
-          mask=xp['clean_mask'],
+          mask=cleanmask_loop[i],
           imsize=xp['imsize'],
           cell=xp['cell'],
           weighting=xp['cleanweight'],
