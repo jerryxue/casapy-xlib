@@ -15,5 +15,5 @@ xp['clean_start']='410km/s'
 xp['clean_nchan']=88
 xp['clean_width']='5.2km/s'
 
-xp['phase_center']='J2000 11h14m37.0 +12d49m3.6'
+xp['phasecenter']='J2000 11h14m37.0 +12d49m3.6'
 

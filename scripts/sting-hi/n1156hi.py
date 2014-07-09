@@ -17,15 +17,16 @@ xp['uvcs']              =True
 xp['imsize']            =2**7*10
 xp['cell']              ='2.0arcsec'
 
-xp['clean_start']       ='298.05km/s'
-xp['clean_width']       ='1.29km/s'
-xp['clean_nchan']       =117
+xp['clean_start']       ='301.95km/s'
+xp['clean_width']       ='3.9km/s'
+xp['clean_nchan']       =37
 
 xp['multiscale']        =[0,4,12]
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
-xp['negcomponent']      =0
+xp['negcomponent']      =-1
 xp['usescratch']        =True
+xp['clean_mask']        ='circle[[02h59m42.2s,+25d14m14.0s],375arcsec]'
 
 
 # RUN SCRIPTS:

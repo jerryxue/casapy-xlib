@@ -12,7 +12,7 @@ execfile(xlib+'xinit.py')
 
 # CONSOLIDATING
 xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-xp['prefix_comb']       =['n4151a1',
+xp['prefix_comb']       =[#'n4151a1', large bandpass offset 
                           'n4151a2',
                           'n4151a3',
                           'n4151b93',
@@ -26,11 +26,13 @@ xp['clean_start']        ='726.4km/s'
 xp['clean_width']        ='20.8km/s'
 xp['clean_nchan']        =int((1267.2-726.4)/20.8+1)
 
-xp['multiscale']        =[0,3,9]
+xp['multiscale']        =[0,4,12]
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 xp['usescratch']        =True
+xp['outertaper']        =['8arcsec']
+xp['clean_mask']        ='circle[[12h10m32.6,+39d24m21.0],650arcsec]'
 
 # RUN SCRIPTS:
 #execfile(xlib+'xconsol.py')

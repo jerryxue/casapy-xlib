@@ -13,7 +13,7 @@ xp['fluxcal']           ='0137+331'
 xp['uvrange_fluxcal']   ='<40klambda'
 xp['phasecal']          ='0059+001'
 
-xp['flagspw']           ="0:0~4;60~62,1:0~2;58~62"
+xp['flagspw']           ="0:0~4;60~62,1:0;58~62"
 xp['flagselect']        =[  "timerange='2003/02/16/22:06:02~22:06:30' field='0137+331'",
                             "antenna='VA08&VA11'",
                             "antenna='VA20&VA11'",
@@ -37,13 +37,15 @@ addselect=["antenna='VA12&VA28'",
  "antenna='VA07&VA17'"]
 xp['flagselect']=xp['flagselect']+addselect
 execfile(stinghi+'n0337_config.py')
+xp['fitorder']          =0
+
 xp['niter']             =0
 
 # RUN SCRIPTS:
 #execfile(xlib+'ximport.py')
 #xu.checkvrange(xp['prefix']+'.ms')
 #au.timeOnSource(xp['prefix']+'.ms')
-execfile(xlib+'xcal.py')
+#execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')
 

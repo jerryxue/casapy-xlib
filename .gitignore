@@ -1,1 +1,4 @@
 *.pyc
+.pydevproject
+.dropbox.attr
+.project

@@ -9,11 +9,11 @@ xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(insp
 xp['prefix_comb']       =['n0337d03','n0337c06']
 
 execfile(stinghi+'n0337_config.py')
-xp['fitchans']          ='0~13;77~94'
+#xp['fitchans']          ='0~13;77~94'
 
 xp['clean_start']       ='1401.6km/s'
 xp['clean_width']       ='5.2km/s'
-xp['clean_nchan']       =95
+xp['clean_nchan']       =int((1895.6-1410.6)/5.2+1.0)
 
 xp['multiscale']        =[0,3,9]
 xp['clean_gain']        =0.3

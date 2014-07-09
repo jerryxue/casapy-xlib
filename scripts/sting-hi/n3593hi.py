@@ -19,5 +19,5 @@ xp['negcomponent']      =0
 xp['usescratch']        =True
 
 # RUN SCRIPTS:
-execfile(xlib+'xconsol.py')
+#execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

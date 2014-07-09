@@ -1,7 +1,7 @@
 # CONSOLIDATING
 xp['spwrgd']            ='spw'
-xp['imcs']              =True
-xp['fitchans']          ='0~22;84~106'
+xp['uvcs']              =True
+xp['fitspw']          	='*:0~6;88~105'
 xp['fitorder']          =1
 
 # IMAGING

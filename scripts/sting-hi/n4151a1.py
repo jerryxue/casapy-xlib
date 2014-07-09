@@ -20,8 +20,10 @@ xp['phasecal_uvrange']=''
 xp['spw_fluxcal']     ='2'
 xp['spw_phasecal']    ='1'
 
-xp['flagspw']       ='*:0;59~62'
-xp['flagselect']    =["field='1225+368' antenna='VA09&VA25' spw='1:25'",
+xp['flagspw']       ='*:0;57~62'
+xp['flagselect']    =["antenna='VA25'",
+                      "antenna='VA26'",
+                      "field='1225+368' antenna='VA09&VA25' spw='1:25'",
                       "field='1225+368' antenna='VA09&VA13' spw='1:25'",
                       "field='1225+368' antenna='VA25&VA26' spw='1:25'",
                       "field='1225+368' antenna='VA13&VA25' spw='1:25'",
@@ -38,7 +40,7 @@ xp['niter']        =0
 #execfile(xlib+'ximport.py')
 #xu.checkvrange(xp['prefix']+'.ms')
 #au.timeOnSource(xp['prefix']+'.ms')
-#execfile(xlib+'xcal.py')
+execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')
 

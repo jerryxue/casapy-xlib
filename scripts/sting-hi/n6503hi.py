@@ -26,6 +26,9 @@ xp['uvcs']          =True
 xp['fitspw']        ='0:11~30;219~225'
 xp['fitorder']      =1
 
+xp['cleanspec']         =True
+xp['cleancont']         =True
+
 xp['imsize']        =2**6*10
 xp['cell']          ='4.0arcsec'
 
@@ -40,7 +43,7 @@ xp['clean_start']   ='-161km/s'
 xp['clean_nchan']   =49
 xp['clean_width']   ='10.4km/s'
 
-xp['phasecenter']   ='J2000 13h55m39.9 +40d27m42.0'
+xp['phasecenter']   ='J2000 17h49m26.5 +70d08m39.6'
 
 # RUN SCRIPTS
 #execfile(xlib+'ximport.py')

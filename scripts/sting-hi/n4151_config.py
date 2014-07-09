@@ -1,7 +1,7 @@
 xp['spwrgd']            ='spw'
 xp['scalewt']           =True
 xp['uvcs']              =True
-xp['fitspw']            ='0:5~20;35~51'
+xp['fitspw']            ='0:12~20;35~40'
 xp['fitorder']          =1
 
 # IMAGING

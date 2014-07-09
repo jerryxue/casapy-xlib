@@ -24,12 +24,14 @@ xp['flagtsys_range']    =[5.0,200.0]
 
 # CONSOLIDATING
 execfile(stinghi+'n0772_config.py')
+xp['spwrgd_method']     ='mstransform'
 xp['niter']             =0
+
 
 # RUN SCRIPTS:
 #execfile(xlib+'ximport.py')
 #xu.checkvrange(xp['prefix']+'.ms')
 #au.timeOnSource(xp['prefix']+'.ms')
-#execfile(xlib+'xcal.py')
+execfile(xlib+'xcal.py')
 execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')

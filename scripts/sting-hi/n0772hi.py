@@ -22,8 +22,6 @@ xp['prefix_comb']       =['n0772d99a',
                           'n0772b13c']
 
 execfile(stinghi+'n0772_config.py')
-xp['scalewt']           =True
-xp['fitspw']            ='*:0~5;75~79'
 
 # IMAGING
 xp['cleanspec']         =True
@@ -42,9 +40,11 @@ xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 xp['usescratch']        =True
+xp['clean_mask']        ='circle[[01h59m25.7s,+18d59m14.0s],750arcsec]'
+xp['niter']             =0
 
 # RUN SCRIPTS:
-#execfile(xlib+'xconsol.py')
+execfile(xlib+'xconsol.py')
 execfile(xlib+'xclean.py')
 
 

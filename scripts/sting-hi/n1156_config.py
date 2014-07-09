@@ -1,5 +1,6 @@
 xp['spwrgd']            =''
 xp['uvcs']              =True
+xp['scalewt']           =True
 xp['fitspw']            ='*:4~7;120~122'
 xp['fitorder']          =1
 
