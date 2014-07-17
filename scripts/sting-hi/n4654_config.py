@@ -1,12 +1,12 @@
 # CONSOLIDATING
 xp['spwrgd']            =''
 xp['scalewt']           =True
-xp['uvcs']              =False
-xp['fitspw']            ='0:1~15;56~59'
+xp['uvcs']              =True
+xp['fitspw']            ='*:1~15;56~59'
 xp['fitorder']          =1
 
 # IMAGING
-xp['cleanspec']         =True
+xp['cleanspec']         =False
 xp['cleancont']         =True
 
 xp['imsize']            =2**6*10
