@@ -197,6 +197,7 @@ xp={
 'imstat_chan':'',           # 
 'imstat_box_cont':'',       # a box selected for the RMS calculations, default: inner quarters
 'imstat_rg_cont':'',        # a region selected for RMS calculations
+'imstat_sigcalc':'median',  # choose 'min' or 'median' sigma for noise estimate
 
 'imagermode':None,          # imagermode for clean, options include: 'csclean', 'mosaic' 
                             # 'mosaic' must be be used if your science target is in 

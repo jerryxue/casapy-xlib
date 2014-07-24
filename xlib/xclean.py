@@ -225,6 +225,7 @@ for i in range(0,len(vis_loop)):
           minpb=xp['minpb'],
           pbcor=False,
           uvtaper=True,
+          innertaper=[],
           outertaper=xp['outertaper'],
           cyclefactor=xp['cyclefactor'],
           restoringbeam=restorbeam_loop[i],
@@ -249,7 +250,10 @@ for i in range(0,len(vis_loop)):
                        chans=xp['imstat_chan'],
                        axes=[0,1],
                        region=xp['imstat_rg_spec'])
-        sigmjy=np.median(ds_stat['sigma'])*1000.
+        if  xp['imstat_sigcalc']=='min':
+            sigmjy=np.nanmin(ds_stat['sigma'])*1000.
+        else:
+            sigmjy=np.median(ds_stat['sigma'])*1000.
         if  outname_loop[i][-2:]=='_d':
             if  threshold_loop[i+1]=='0.0mJy':
                 threshold_loop[i+1]=str(sigmjy*xp['sigcutoff_spec'])+'mJy'
