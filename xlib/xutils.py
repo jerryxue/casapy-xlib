@@ -11,7 +11,6 @@ import subprocess
 import smtplib
 import scipy.constants as sci_const
 import matplotlib.pyplot as plt
-import pyfits
 
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
