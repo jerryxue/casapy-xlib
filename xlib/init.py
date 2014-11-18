@@ -62,6 +62,7 @@ extenv={"PATH":os.pathsep.join(pathlist),
         "HOME":"~/"}
 
 sys.path.insert(1,xlib_path)
+sys.path.insert(1,'/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages')
 import xutils as xu                 # xlib modules 
 #import xexp as xe                   # exlib-exp modules
 
@@ -77,7 +78,14 @@ print xlib_path
 print ''
 print '>>>> MiriadPath:'
 print mir_path
-
+print ''
+print '>>>> current CASA Version:'
+print casadef.casa_version
+print 'r'+casadef.subversion_revision
+print ''
+print '>>>> Compatible CASA Version:'
+print '4.2.1/4.2.2/4.3.0'
+print 'r>=29610' 
 print ""
 print ""
 print "+"*70
