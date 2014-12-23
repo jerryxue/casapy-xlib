@@ -141,10 +141,11 @@ if  xp['importmode']=='miriad':
     xu.news("Write the data into the Measurement Set (MS):")
     xu.news(xp['msfile'])
     xu.news("")
-    xu.importmiriad(mirfile=xp['rawfiles'],
-                    vis=xp['msfile'],
-                    telescope=xp['importmirarray'],
-                    extenv=extenv)
+    importmiriad(mirfile=xp['rawfiles'],
+                 vis=xp['msfile'],
+                 tsys=True,
+                 spw=xp['importmirspw'],
+                 linecal=False)
 
 #----------------------------------------------------------------------------------------
 #   Additional Data Selection

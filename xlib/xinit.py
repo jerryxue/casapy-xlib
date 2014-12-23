@@ -17,9 +17,8 @@ xp={
                             # 'uvfits': import data from a uvfits file
                             # 'evla':   import data from a EVLA ASDM file
                             # 'mir':    import data in the MIRIAD format using MIRIAD
-                            # 'miriad': import data in the MIRAID format using 
-                            #           CARMAFILLER (experimental.. you have to compile CASACORE
-                            #           and FILLER on your system.)
+                            # 'miriad': import data in the MIRAID format using importmiriad available in r4.3
+                            #           importmiriad doesn't work with BIMA data -> try importmode='mir'  
                             # 'ms':     copy/split data from a MS file, leave the orginal file untouched
 'importspw':'',             # MS spectral windows to be imported (note: spw starts with 1 in MIRIAD, e.g. '1,2,7')
 'importmirspw':'',          # MIRIAD spectral windows to ve imported 
