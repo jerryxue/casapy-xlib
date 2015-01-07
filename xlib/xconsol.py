@@ -95,10 +95,9 @@ if  len(xp['prefix_comb'])==1:
         mstransform(vis=xp['msfile'],
                     outputvis=xp['srcfile'],
                     createmms=False,
-                    separationaxis='both',
+                    separationaxis='auto',
                     field=xp['source'],
                     spw=xp['spw_source'],
-                    useweights='spectrum',#spectrum
                     usewtspectrum=True,
                     datacolumn=datacolumn,
                     chanaverage=False,
@@ -109,6 +108,7 @@ if  len(xp['prefix_comb'])==1:
                     start=0,
                     width=1,
                     nspw=1,
+                    keepflags=False,
                     interpolation=xp['spinterpmode'],
                     outframe=xp['outframe'],
                     restfreq=xp['restfreq'],
@@ -130,97 +130,89 @@ if  len(xp['prefix_comb'])==1:
         tb.putcol('WEIGHT_SPECTRUM',wts)
         tb.close()
         """
-        ####
-        #   optionally, cvel() can be selected for test
-        #   mstransform is x3 faster in a test case
-        #   mstransform() might drop extra edge channels
-        #   mstransform:
-        #        pre-averaging will adjust weight_spectrum by scaling up by nbin
-        #        regridding will not adjust weight_spectrum
-        #   However, cvel and mstransform doesn't change WEIGHT
-        #   and the new SIGMA is adjusted, however incorrectly in the statistical sense.
-        #   cvel is still better :)
-        #### 
-        if  datacolumn=='corrected':
-            if  xp['spwrgd_method']=='cvel':
-                os.system("rm -rf "+xp['srcfile']+'.tmp')
-                split(vis=xp['msfile'],
+        
+        if  xp['spwrgd_method']=='cvel':
+            os.system("rm -rf "+xp['srcfile']+'.tmp')
+            msfile=xp['msfile']
+            if  datacolumn=='corrected':
+                postfix='.tmp'
+                split(vis=msfile,
                       outputvis=xp['srcfile']+'.tmp',
+                      field=xp['source'],
                       spw=xp['spw_source'],
-                      datacolumn='corrected',
+                      datacolumn=datacolumn,
                       keepflags=False)
-                cvel(vis=xp['srcfile']+'.tmp',
-                     outputvis=xp['srcfile'],
-                     passall=False,
-                     field=xp['source'],
-                     selectdata=True,
-                     mode=xp['cleanmode'],
-                     nchan=xp['clean_nchan'],
-                     start=xp['clean_start'],
-                     width=xp['clean_width'],
-                     interpolation=xp['spinterpmode'],
-                     outframe=xp['outframe'],
-                     restfreq=xp['restfreq'],
-                     veltype='radio',
-                     phasecenter='',
-                     hanning=xp['hs'])
-                os.system("rm -rf "+xp['srcfile']+'.tmp')
-            if  xp['spwrgd_method']=='mstransform':
-                if  xp['chanbin']==0:
-                    chanaverage=False
-                    chanbin=1
-                if  xp['chanbin']!=0:
-                    chanaverage=True
-                    chanbin=xp['chanbin']
-                mstransform(vis=xp['msfile'],
-                            outputvis=xp['srcfile'],
-                            createmms=False,
-                            numsubms=4,
-                            separationaxis='both',
-                            field=xp['source'],
-                            spw=xp['spw_source'],
-                            useweights='spectrum',#only matter is chanaverge=False
-                            usewtspectrum=True,
-                            datacolumn=datacolumn,
-                            chanaverage=chanaverage,
-                            chanbin=chanbin,
-                            regridms=True,
-                            combinespws=xp['combinespws'],
-                            mode=xp['cleanmode'],
-                            nchan=xp['clean_nchan'],
-                            start=xp['clean_start'],
-                            width=xp['clean_width'],
-                            nspw=1,
-                            interpolation=xp['spinterpmode'],
-                            outframe=xp['outframe'],
-                            restfreq=xp['restfreq'],
-                            phasecenter='',
-                            hanning=xp['hs'])
-
-        else:
-            cvel(vis=xp['msfile'],
-                outputvis=xp['srcfile'],
-                passall=False,
-                field=xp['source'],
-                spw=xp['spw_source'],
-                selectdata=True,
-                mode=xp['cleanmode'],
-                nchan=xp['clean_nchan'],
-                start=xp['clean_start'],
-                width=xp['clean_width'],
-                interpolation=xp['spinterpmode'],
-                outframe=xp['outframe'],
-                restfreq=xp['restfreq'],
-                veltype='radio',
-                phasecenter='',
-                hanning=xp['hs'])
-
+                msfile=xp['srcfile']+'.tmp'
+            cvel(vis=msfile,
+                 outputvis=xp['srcfile'],
+                 passall=False,
+                 field=xp['source'],
+                 selectdata=True,
+                 mode=xp['cleanmode'],
+                 nchan=xp['clean_nchan'],
+                 start=xp['clean_start'],
+                 width=xp['clean_width'],
+                 interpolation=xp['spinterpmode'],
+                 outframe=xp['outframe'],
+                 restfreq=xp['restfreq'],
+                 veltype='radio',
+                 phasecenter='',
+                 hanning=xp['hs'])
+            os.system("rm -rf "+xp['srcfile']+'.tmp')
+        
+        if  xp['spwrgd_method']=='mstransform':
+            os.system("rm -rf "+xp['srcfile']+'.tmp')
+            if  xp['chanbin']<=1:
+                chanaverage=False
+                chanbin=1
+            if  xp['chanbin']>1:
+                chanaverage=True
+                chanbin=xp['chanbin']
+            mstransform(vis=xp['msfile'],
+                        outputvis=xp['srcfile']+'.tmp',
+                        createmms=False,
+                        numsubms=64,
+                        separationaxis='spw',
+                        field=xp['source'],
+                        spw=xp['spw_source'],
+                        keepflags=True,
+                        usewtspectrum=True,
+                        datacolumn=datacolumn,
+                        chanaverage=chanaverage,
+                        chanbin=chanbin,
+                        regridms=True,
+                        combinespws=False,
+                        mode=xp['cleanmode'],
+                        nchan=xp['clean_nchan'],
+                        start=xp['clean_start'],
+                        width=xp['clean_width'],
+                        nspw=1,
+                        interpolation=xp['spinterpmode'],
+                        outframe=xp['outframe'],
+                        restfreq=xp['restfreq'],
+                        phasecenter='',
+                        hanning=xp['hs'])
+            mstransform(vis=xp['srcfile']+'.tmp',
+                        outputvis=xp['srcfile'],
+                        keepflags=False,
+                        datacolumn='all',
+                        combinespws=xp['combinespws'])            
+            os.system("rm -rf "+xp['srcfile']+'.tmp')
+            
         xu.news("")
         xu.news("checking flagging consistency among channels:")
         xu.news("")
         xu.checkchflag(xp['srcfile'])
-        
-    #  COPY MEAN(WEIGHT_SPECTRUM) TO WEIGHT
+    
+    #    
+    #   COPY MEAN(WEIGHT_SPECTRUM) TO WEIGHT
+    #   or
+    #   COPY WEIGHT TO MEAN(WEIGHT_SPECTRUM)
+    #   The resulted WEIGHT/WEIGHT_SPECTRUM will be consistent with the definition in CASA>=4.2.2
+    #
+    #   mstransform() and cvel() will modify weights but may not be statistically  
+    #   correct during spw regridding.
+    # 
     if  xp['unchflag']==True:
         xu.unchflag(xp['srcfile'])
     tb.open(xp['srcfile'],nomodify=False)
@@ -230,16 +222,7 @@ if  len(xp['prefix_comb'])==1:
         xu.copyweight(xp['srcfile'],copyback=True)
     else:
         xu.copyweight(xp['srcfile'])
-    #  Note:
-    #
-    #  mstransform() accumulates weight_spectrum from each spw
-    #  and fill them into the final weight_spectrum using the gridding function. 
-    #  However it doesn't address the scaling due to the channel width change.
-    #  WEIGHT/SIGMA are copied from the first spw of each visibility record
-    #  it encounters, so the values are not a result of averaging/summing
-    #  weight from different spws.
-    #
-
+    
     xu.news("")
     xu.news("--check split data & weight--")
     xu.news("")
@@ -247,10 +230,7 @@ if  len(xp['prefix_comb'])==1:
     
     if  xp['scalewt_fitspw']=='':
         xp['scalewt_fitspw']=xp['fitspw']
-    # note:  channel regridding will change
-    #        the noise level (sometimes interp='nearest'
-    #        or 'linear' will make a difference depending)
-
+        
     xu.scalewt(xp['srcfile'],
                uvrange=xp['scalewt_uvrange'],
                fitspw=xp['scalewt_fitspw'],

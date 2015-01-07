@@ -127,11 +127,22 @@ xp={
                             #   one corr and ignore another corr. You want to void two corr-setup in one spw
                             #   -> avoid regridding dual-pol and single-pol tracks into the same channel setup.
                             #
-'spwrgd_method':'cvel',     # choose the regridding task: CVEL() or MSTRANSFORM() (not stable now)
-                            # cvel() may not work properly when combing spws with different polns.
-                            # mstransform() may drop edge channels, but much faster and good for frame transform
+'spwrgd_method':'cvel',     
+                            # choose the regridding task: CVEL (default) or MSTRANSFORM 
+                            # mstransform() is much faster with less I/O (mx3 faster in a test case) 
+                            # However, some tests indicated that it might overflag channels 
+                            # when regridms=True + combinespws=True for MSs with multiple partly overlapping windows. 
+                            # The current solution in the pipline is running MTRANSFORM twice: 
+                            # one for regridms=True+combinespw=False, one for regridms=True+combinespw=False. 
+                            # But mstransform() still has some issues under certain circumstances as CASA 4.3-prerelease12:
+                            #    e.g. combining 3 adjucent windows
+                            # * ??cvel() may not work properly when combing spws with different polns?? * 
+                            # * cvel() and mstransform() will adjust weight_spectrum by scaling up with nbin in CASA>=4.2.2 
+                            #   not strictly correct in the statistical sense.
+                            # ?the new SIGMA column is also adjusted?
+                            #
 'combinespws':True,         # combine spws when regridding spws
-'chanbin':0,                
+'chanbin':1,                
 'hs':False,                 # hanning smooth when preparing MS for imaging.
 'unchflag':False,           # unflag records with several channel flagged, so each channel has the same flagging
                             # this will be like slop=1 in MIRIAD in some sense 

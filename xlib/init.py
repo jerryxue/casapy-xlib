@@ -66,8 +66,8 @@ sys.path.insert(1,'/opt/local/Library/Frameworks/Python.framework/Versions/2.7/l
 import xutils as xu                 # xlib modules 
 #import xexp as xe                   # exlib-exp modules
 
-#sys.path.insert(1,borrow_path+os.sep+'analysis_scripts')
-#import analysisUtils as au          # borrowed modules
+sys.path.insert(1,borrow_path+os.sep+'analysis_scripts')
+import analysisUtils as au          # borrowed modules
 
 print '>>>> MachineName:'
 machinename=socket.gethostname()
