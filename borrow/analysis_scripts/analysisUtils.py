@@ -227,7 +227,7 @@ bandDefinitions = {
     }
 
 casaRevisionWithAlmaspws = '27481' # nominally '26688', but a pipeline version of 27480 does not have it
-casaVersionWithMSMD = '4.1.0'
+casaVersionWithMSMD = '4.4.0'
 casaVersionWithUndefinedFrame = '4.3.0'
 
 def version(short=False):
@@ -20070,8 +20070,9 @@ def lstrange(vis, verbose=True, vm='', intent='OBSERVE_TARGET#ON_SOURCE', fieldI
           if ('SCHEDULE' in tb.colnames()):
               if (tb.iscelldefined('SCHEDULE',0)):
                   sched = tb.getcol('SCHEDULE')
-                  sbname = '%s' % (sched[0][0].split()[1])  # This is the SB UID.
-                  exec_uid = '%s' % (sched[1][0].split()[1])
+                  if  sched[0][0]!='unavailable':
+                      sbname = '%s' % (sched[0][0].split()[1])  # This is the SB UID.
+                      exec_uid = '%s' % (sched[1][0].split()[1])
           tb.close()
           if (i==0):
               wikiline2 += "| %s | %s | %s | %s-%s | %02d:%02d-%02d:%02d | %.1f | " % (utmin[0:10],sbname,exec_uid,utmin[10:-6],utmax[11:-6],np.floor(LST[0]),np.floor(60*(LST[0]-np.floor(LST[0]))), np.floor(LST[1]), np.floor(60*(LST[1]-np.floor(LST[1]))), clockTimeMinutes)
