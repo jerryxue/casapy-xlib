@@ -23,7 +23,7 @@ Utilities for getting TMCDB data and plotting time-series data.
                     in some methods.
 2010-04-30 tsawada
 
-$Id: tmUtils.py,v 1.33 2014/05/19 23:48:01 thunter Exp $
+$Id: tmUtils.py,v 1.44 2014/11/28 02:11:01 dbarkats Exp $
 """
 import os
 import math
@@ -128,7 +128,7 @@ def get_available_monitorpoints_in_device_on_date(date, antenna, device):
     for line in furl:
         mount = re.search(regexp, line)
         if mount != None:
-            monpoint_name=mount.group(0).split('.txt')[0].split('="')[1]
+            monpoint_name=mount.group(0).split('.txt')[0].split('download=')[1]
             result.append(monpoint_name)
 
     if len(result) > 0:
@@ -138,7 +138,7 @@ def get_available_monitorpoints_in_device_on_date(date, antenna, device):
     return result
 
 
-def retrieve_daily_tmc_data_file(antenna, device, monitorpoint, date, outpath='./'):
+def retrieve_daily_tmc_data_file(antenna, device, monitorpoint, date, verbose = True, outpath='./'):
     """
     Retrieve TMC monitor data via HTTP.
 
@@ -158,32 +158,30 @@ def retrieve_daily_tmc_data_file(antenna, device, monitorpoint, date, outpath='.
     
     rooturl = get_root_url_for_curl(date)
 
-    today = datetime.datetime.today()
-    twentydaysago = today + datetime.timedelta(days=-20)
-
-    if inputdate < twentydaysago:
-        unzip = 1
-        extension = 'txt.bz2'
-    else:
-        unzip = 0
-        extension = 'txt'
-
+    extension = 'txt'
     targeturl = 'CONTROL_%s_%s/%s.%s' % (antenna, device, monitorpoint, extension)
     completeurl = '%s/%s' % (rooturl, targeturl)
-    print completeurl
     outfile = '%s%s_%s_%s_%s.%s' % (outpath,isodate, antenna, device, monitorpoint, extension)
-    print "Retrieving %s/%s" % (date, targeturl)
-
+    if verbose == True: print date, rooturl,targeturl,completeurl
     exitcode = os.system('curl -s -f %s -o %s' % (completeurl, outfile))
-
+        
     if exitcode == 0:
-        if  unzip:
-            os.system('bunzip2 %s' %outfile)
-            outfile = outfile[0:-4]
         return outfile
     else:
-        print 'Retrieval failed. Check permissions on directory and set outpath if necessary'
-        return '_CURL_FAILED_'
+        extension = 'txt.bz2'
+        targeturl = 'CONTROL_%s_%s/%s.%s' % (antenna, device, monitorpoint, extension)
+        completeurl = '%s/%s' % (rooturl, targeturl)
+        outfile = '%s%s_%s_%s_%s.%s' % (outpath,isodate, antenna, device, monitorpoint, extension)
+        if verbose == True: print date, rooturl,targeturl,completeurl
+        exitcode = os.system('curl -s -f %s -o %s' % (completeurl, outfile))
+
+        if exitcode == 0:
+            os.system('bunzip2 %s' %outfile)
+            outfile = outfile[0:-4]
+            return outfile
+        else:
+            if verbose == True: print 'Retrieval failed. Check permissions on directory and set outpath if necessary'
+            return '_CURL_FAILED_'
 
 
 def retrieve_daily_tmc_data_file_name_only(antenna, device, monitorpoint, 
@@ -230,7 +228,8 @@ def get_datetime_from_isodatetime(isodatetime):
     else:
         print "Date %s is invalid." % isodatetime
         return datetime.date(1, 1, 1)
-
+    
+    
     if (len(datelist) == 3) and (len(timelist) == 3):
         microsec = int(1e6 * (float(timelist[2]) - int(float(timelist[2]))))
         timelist[2] = int(float(timelist[2]))
@@ -242,7 +241,7 @@ def get_datetime_from_isodatetime(isodatetime):
         return datetime.date(1, 1, 1)
 
 
-def retrieve_tmc_data_files(antenna, device, monitorpoint, startdate, enddate,outpath='./'):
+def retrieve_tmc_data_files(antenna, device, monitorpoint, startdate, enddate,verbose = True, outpath='./'):
     """
     Retrieve TMC monitor data files for given antenna, device, and period.
 
@@ -276,6 +275,7 @@ def retrieve_tmc_data_files(antenna, device, monitorpoint, startdate, enddate,ou
             device=device, \
             monitorpoint=monitorpoint, \
             date=targetdate.strftime('%Y-%m-%d'),
+            verbose = verbose, 
             outpath=outpath)
         if filename != '_CURL_FAILED_':
             files.append(filename)
@@ -304,9 +304,13 @@ def read_tmc_data_file(filename, removefile=False):
             continue
 #        (strdatetime, value) = line.split()
         tokens = line.split()
+        dt = get_datetime_from_isodatetime(tokens[0])
+        # check that the date was valid
+        if dt == datetime.date(1,1,1):
+            continue
         datetimelist.append(get_datetime_from_isodatetime(tokens[0]))
         valuelist.append([float(x) for x in tokens[1:]])
-
+            
     if removefile:
         os.system('rm %s' % filename)
 
@@ -314,7 +318,7 @@ def read_tmc_data_file(filename, removefile=False):
 
 
 def get_tmc_data(antenna, device, monitorpoint, startdate, enddate, \
-    removefile=False, outpath='./'):
+    removefile=False, verbose = True, outpath='./'):
     """
     Obtain monitor values recorded in TMCDB for given set of parameters.
 
@@ -333,7 +337,7 @@ def get_tmc_data(antenna, device, monitorpoint, startdate, enddate, \
     # import os
 
     files = retrieve_tmc_data_files(antenna, device, monitorpoint, \
-        startdate, enddate, outpath=outpath)
+        startdate, enddate, verbose = verbose , outpath=outpath)
     if len(files) == 0:
         raise Exception, "Failed to retrieve data files."
 
@@ -347,7 +351,7 @@ def get_tmc_data(antenna, device, monitorpoint, startdate, enddate, \
 
 
 def show_time_series_in_subplot(subpl, datetimelist, datalist, \
-    startdatetime, enddatetime=None, yrange=None, ylabel=None, label=None, \
+    startdatetime, enddatetime=None, yrange=None, ylabel=None, tickmark='.',label=None, \
     title=None, showxticklabels=True, col='b', removediscontinuity=False, \
     removeoutlier=False, index=0):
     """
@@ -404,7 +408,7 @@ def show_time_series_in_subplot(subpl, datetimelist, datalist, \
         thedata = remove_outlier(thedata)
 
     subpl.plot_date(datetimearray[timeinrange], thedata, \
-        '.', ms=2.4, label=label, color=col)
+        tickmark, ms=2.4, label=label, color=col)
 
     if title != None:
         subpl.set_title(title)
@@ -430,7 +434,8 @@ def show_time_series_in_subplot(subpl, datetimelist, datalist, \
         subpl.xaxis.set_major_formatter( \
             pl.matplotlib.dates.DateFormatter('%m-%d %H:%M'))
     subpl.yaxis.set_major_formatter( \
-        pl.matplotlib.ticker.ScalarFormatter('%f'))
+        pl.matplotlib.ticker.ScalarFormatter(useOffset=False))
+    #        pl.matplotlib.ticker.ScalarFormatter('%f'))
     
     if not showxticklabels:
         subpl.set_xticklabels('')
@@ -440,7 +445,7 @@ def show_time_series_in_subplot(subpl, datetimelist, datalist, \
 
 
 def show_monitor_data_in_subplot(subpl, antenna, device, monitorpoint, \
-    startdatetime, enddatetime=None, yrange=None, ylabel=None, label=None, \
+    startdatetime, enddatetime=None, yrange=None, ylabel=None, tickmark='.',label=None, \
     title=None, showxticklabels=True, col='b', removediscontinuity=False, \
     removeoutlier=False, index=0):
 
@@ -494,7 +499,7 @@ def show_monitor_data_in_subplot(subpl, antenna, device, monitorpoint, \
         ylabel = '%s' % (monitorpoint)
     show_time_series_in_subplot(subpl, \
         tmcdata['datetime'], tmcdata['value'], \
-        startdatetime, enddatetime, yrange, ylabel, label, title, \
+        startdatetime, enddatetime, yrange, ylabel, tickmark,label, title, \
         showxticklabels, col,removediscontinuity, removeoutlier, index)
 
 def check_for_time_gaps(antenna='DV01', device='IFProc0', monitorpoint='GAINS',
@@ -566,10 +571,11 @@ def plot_monitor_data_to_png(antenna, device, monitorpoint, \
                 (sdate, antenna, device)
     else :
         monitorpointlist = [monitorpoint]
-        
+
+    
     outfiles = []
     for mp in monitorpointlist:
-        
+        print mp
         plf = pl.figure()
         subpl = plf.add_subplot(1, 1, 1)
 
@@ -608,10 +614,11 @@ def plot_monitor_data_to_png(antenna, device, monitorpoint, \
     pl.close('all')
     return outfiles
 
+################################
+### for weather station data ###
+################################
 
-### for weather station data (experimental) ###
-
-def retrieve_daily_weather_data_file(date):
+def retrieve_daily_weather_data_file(date, station):
     """
     Retrieve AOS temperature data via HTTP.
     
@@ -619,18 +626,14 @@ def retrieve_daily_weather_data_file(date):
 
     Return the name of the file if succeeded, otherwise '_CURL_FAILED_'.
     """
-    # import os
-
+    
     isodate = get_datetime_from_isodatetime(date).date().strftime('%Y-%m-%d')
 
-    rooturl = 'http://weather.aiv.alma.cl/all'
-    targeturl = ('advanced_data.php?start=+%s' % isodate) + \
-        ('&idsensor=%s' % '2') + \
-        ('&idweatherstation=%s' % '1') + \
-        '&format=txt'
+    rooturl = 'http://weather.aiv.alma.cl/data/data/files/'
+    outfile = '%s_%s.dat'%(station,date)
+    targeturl = '%s/%s/%s'%(date[0:4],date[5:7], outfile)
     completeurl = '"%s/%s"' % (rooturl, targeturl)
-    outfile = 'weather_%s_%s_%s.txt' % (isodate, '2', '1')
-    print 'Retrieving %s weather (will take a while ...)' % isodate
+    print 'Retrieving %s weather' % isodate
     exitcode = os.system('curl -s -f %s -o %s' % (completeurl, outfile))
 
     if exitcode == 0:
@@ -640,17 +643,16 @@ def retrieve_daily_weather_data_file(date):
         return '_CURL_FAILED_'
 
 
-def retrieve_weather_data_files(startdate, enddate):
+def retrieve_weather_data_files(startdate, enddate, station):
     """
     Retrieve weather data files for given period.
 
     Parameters are something like:
     startdate = '2010-04-24'  # ISO-8601 date or datetime string
     enddate = '2010-04-24'    # ISO-8601 date or datetime string
-
+    
     Return a list of filenames.
-    """
-    # import datetime
+    """    
 
     sdate = get_datetime_from_isodatetime(startdate).date()
     edate = get_datetime_from_isodatetime(enddate).date()
@@ -665,21 +667,16 @@ def retrieve_weather_data_files(startdate, enddate):
     ndays = (edate-sdate).days + 1
     files = []
 
-    if ndays > 5:
-        print 'Warning: retrieving weather data for %d days.' % ndays
-        print 'It will take very long ...'
-
     for i in range(ndays):
         targetdate = sdate + datetime.timedelta(i)
-        filename = retrieve_daily_weather_data_file( \
-            date=targetdate.strftime('%Y-%m-%d'))
+        filename = retrieve_daily_weather_data_file(date=targetdate.strftime('%Y-%m-%d'), station=station)
         if filename != '_CURL_FAILED_':
             files.append(filename)
 
     return files
 
 
-def read_weather_data_file(filename, removefile=False):
+def read_weather_data_file(filename, removefile=True):
     """
     Read given weather data file.
 
@@ -687,54 +684,177 @@ def read_weather_data_file(filename, removefile=False):
     Return is a dictionary of lists of datetime.datetime and float values:
     {'datetime': [datetime], 'value': [value]}
     """
-    # import os
 
     if not os.path.exists(filename):
         raise Exception, ("File %s not found." % filename)
 
     datetimelist = []
-    valuelist = []
+    H = [] # Humidity
+    T = [] # Temp
+    D = [] #Dewpoint
+    WD = []  # Wind direction
+    WS = [] # Wind Speed
+    P = [] # Pressure
     for line in open(filename, 'r'):
         if line[0] == '#':
             continue
-        (strdatetime, value) = line.split(';')[:2]
+        (strdatetime, h, t, d, wd, ws, p) = line.split(';')
         datetimelist.append(get_datetime_from_isodatetime(strdatetime))
-        valuelist.append(float(value))
+        H.append(float(h))
+        T.append(float(t))
+        D.append(float(d))
+        WD.append(float(wd))
+        WS.append(float(ws))
+        P.append(float(p))
 
     if removefile:
         os.system('rm %s' % filename)
 
-    return {'datetime': datetimelist, 'value': valuelist}
+    return {'datetime': datetimelist, 'H': H, 'T':T,'D':D,'WD':WD,'WS':WS, 'P':P}
 
 
-def get_weather_data(startdate, enddate, removefile=False):
+def get_weather_data(startdate, enddate, station = 'Meteo1',removefile=False):
     """
-    Obtain monitor values recorded in TMCDB for given set of parameters.
+    Obtain monitor values recorded in weather monitoring for given set of parameters.
 
     Parameters are something like:
     startdate = '2010-04-24'  # ISO-8601 date or datetime string
     enddate = '2010-04-24'    # ISO-8601 date or datetime string
+    station = 'Meteo1'  # can be Meteo1 or Meteo2 for AOS
     removefile = False        # optional: set True to delete files once read
     
     Files are automatically retrieved via HTTP, read, and deleted.
     Return is a dictionary of lists of datetime.datetime and float values:
     {'datetime': [datetime], 'value': [value]}
     """
-    # import os
 
-    files = retrieve_weather_data_files(startdate, enddate)
+    if (station is not 'Meteo1') and (station is not 'Meteo2'):
+        raise Exception,  'Station must be Meteo1 or Meteo2. check again...'
+    
+    files = retrieve_weather_data_files(startdate, enddate, station)
     if len(files) == 0:
         raise Exception, "Failed to retrieve data files."
-
-    datetimelist = []
-    datalist = []
+    
+    datalist = {}
     for filename in files:
         weatherdata = read_weather_data_file(filename, removefile)
-        datetimelist += weatherdata['datetime']
-        datalist += weatherdata['value']
+        for k in weatherdata.keys():
+            try:
+                datalist[k] += weatherdata[k]
+            except:
+                datalist[k]=[]
+                datalist[k] += weatherdata[k]
+                
+    return datalist
 
-    return {'datetime': datetimelist, 'value': datalist}
+def get_ASTE_weather_data(startdate, enddate):
+    """
+    retrieves the Aste weather data and  returns it in a dictionnary.
+    startdate should be format 2014-10-02
+    end date should be format 2014-10-02
+    """
+    import datetime
+    
+    sdate = get_datetime_from_isodatetime(startdate).date()
+    edate = get_datetime_from_isodatetime(enddate).date()
+        
+    ndays = (edate-sdate).days + 1
+    fileList = []
 
+    for i in range(ndays):
+        targetdate = sdate + datetime.timedelta(i)
+        date=targetdate.strftime('%Y%m%d')
+        print date
+        filename = '/data/dbarkats/meteo_data/aste_meteo/weather_%s_0000.log'%(date)
+        fileList.append(filename)
+
+    datetimelist = []
+    H = [] # Humidity
+    T = [] # Temp
+    WD = []  # Wind direction
+    WS = [] # Wind Speed
+    P = [] # Pressure
+
+    for filename in fileList:
+        for line in open(filename, 'r'):
+            if line[0] == '#' or line[0] == '\n':
+                continue
+            l = line.split()
+            
+            y = l[0].split('/')[0]
+            m = l[0].split('/')[1]
+            d = l[0].split('/')[2]
+            strdatetime = '%s-%s-%sT%s:00'%(y,m,d,l[1])
+            datetimelist.append(get_datetime_from_isodatetime(strdatetime))
+            if l[5] != '---':
+                H.append(float(l[5]))
+            else:
+                H.append(np.nan)
+            if l[4] != '---':
+                T.append(float(l[4]))
+            else:
+                T.append(np.nan)
+            if l[10] != '---':
+                WD.append(float(l[10]))
+            else:
+                WD.append(np.nan)
+            if l[9] != '---':
+                WS.append(float(l[9]))
+            else:
+                WS.append(np.nan)
+            if l[8] != '---':
+                P.append(float(l[8]))
+            else:
+                P.append(np.nan)                     
+        
+    return {'datetime': datetimelist, 'H': H, 'T':T,'WD':WD,'WS':WS, 'P':P}
+
+def get_Nanten_weather_data(startdate, enddate):
+    """
+    retrieves the Nanten weather data and  returns it in a dictionnary.
+    """
+    import datetime
+    
+    sdate = get_datetime_from_isodatetime(startdate).date()
+    edate = get_datetime_from_isodatetime(enddate).date()
+        
+    ndays = (edate-sdate).days + 1
+    fileList = []
+
+    for i in range(ndays):
+        targetdate = sdate + datetime.timedelta(i)
+        date=targetdate.strftime('%Y%m%d')
+        print date
+        filename = '/users/dbarkats/nanten_meteo/%s%s/%s.nwd'%(date[0:4],date[4:6],date)
+        fileList.append(filename)
+
+    datetimelist = []
+    H = [] # Humidity
+    T = [] # Temp
+    WD = []  # Wind direction
+    WS = [] # Wind Speed
+    P = [] # Pressure
+
+    for filename in fileList:
+        for line in open(filename, 'r'):
+            if line[0] == '#' or line[0] == '\n':
+                continue
+            l = line.split(',')
+            strdatetime = '%s-%s-%sT%s:%s:%s'%(l[0].strip(),l[1].strip(),l[2].strip(),l[3].strip(),l[4].strip(),l[5].strip())
+            datetimelist.append(get_datetime_from_isodatetime(strdatetime))
+            H.append(float(l[9]))
+            T.append(float(l[7]))
+            WD.append(float(l[10]))
+            WS.append(float(l[11]))
+            P.append(float(l[12]))
+        
+    return {'datetime': datetimelist, 'H': H, 'T':T,'WD':WD,'WS':WS, 'P':P}
+
+
+
+#### 20141111 These next two function are not funtionnal after recent changes by dB to
+# read_weather_data_files
+#####
 
 def show_weather_data_in_subplot(subpl, \
     startdatetime, enddatetime=None, yrange=None, ylabel=None, label=None, \
@@ -946,14 +1066,17 @@ def remove_outlier(value, sigma_th=100., width=200, ntrim=20):
     niter = int(ndata/width)+1
 
     result = value[:]
-
+    #pl.clf()
     for i in range(niter):
+        #pl.clf()
         idx = width*i
         if (idx+width) >= ndata:
             idx = ndata-width-1
 
         subarr = pl.array(value[idx:idx+width])
         tsubarr = pl.sort(subarr)[ntrim:width-ntrim]
+        #pl.plot(abs((subarr-tsubarr.mean())/tsubarr.std()),'.')
+        #raw_input()
 
         subarr[abs(subarr-tsubarr.mean()) > sigma_th*tsubarr.std()] = pl.nan
         result[idx:idx+width] = subarr

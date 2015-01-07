@@ -6,7 +6,7 @@
 #entering and retrieving  measurements from the calibrator catalog database.
 #
 #
-#$Id: calDatabaseQuery.py,v 1.91 2014/04/28 20:29:25 itoledo Exp $
+#$Id: calDatabaseQuery.py,v 1.93 2014/10/22 15:30:54 itoledo Exp $
 
 
 import datetime
@@ -50,10 +50,10 @@ def defineGridNames():
                  'J0538-440','J0635-7516','J0750+125','J0854+201',
                  'J1037-295','J1058+015','J1107-448','J1146+399',
                  '3c273','3c279','J1337-129','J1427-421',
-                 'J1517-243','J1550+054','J1613-586','3c345', '3c454.3',
+                 'J1517-243','J1550+054','J1613-586','3c345',
                  'J1733-130','J1751+096','J1924-292','J2025+337',
-                 'J2056-472','J2148+069','J2232+117','J2258-279',
-                 'J2357-5311']
+                 'J2056-472','J2148+069','J2232+117','3c454.3',
+                 'J2258-279','J2357-5311']
     # old obsolete ones
     #gridNames = ['J0106-405','J0132-169','J0237+288','J0238+166','3c84',
     #             'J0334-401','J0423-013','J0510+180','J0519-454','J0522-364',
@@ -239,7 +239,7 @@ class CalibratorCatalogUpdate:
             sourceNameList.append(realName)
           
             # Get latest measurement which ALSO belong to SMA, ALMA, or ATCA, or CRATES or VLA
-            measurements = self.wrapSearch(name = realName, limit = 1, sourceBandLimit = 1,sortBy = 'date_observed', asc=False,catalogues = [1,5,21,3,2])
+            measurements = self.wrapSearch(name = realName, limit = 1, sourceBandLimit = 1,sortBy = 'date_observed', asc=False,catalogues = [1,5,21,3,2,41])
             # get the latest measurement only
             if measurements != []:
                 m = measurements[0]

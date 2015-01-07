@@ -4,6 +4,7 @@
 # have this library installed.  - Todd Hunter
 
 import os
+import math
 from xml.dom import minidom
 
 def readSoftwareVersionFromASDM_minidom(asdm):
@@ -153,4 +154,115 @@ def getSubscanTimesFromASDM_minidom(asdm, field=''):
     print "Total latency = %g/%g seconds = %g percent" % (latency, totalTime, latency*100/totalTime)
     return(scandict)
 
-
+def readDecorrelationFromASDM_minidom(asdm):
+    """
+    -Todd Hunter
+    """
+    mydict = {}
+    seeingxml = asdm + '/CalPhase.xml'
+    if (os.path.exists(seeingxml) == False):
+        print "Could not open %s" % (seeingxml)
+        return
+    xml = minidom.parse(seeingxml)
+    rowlist = xml.getElementsByTagName("row")
+    mydict['basebandName'] = []
+    mydict['receiverBand'] = []
+    mydict['numReceptor'] = []
+    mydict['baselineLengths'] = []
+    mydict['decorrelationFactor'] = []
+    mydict['startValidTime'] = []
+    mydict['endValidTime'] = []
+    mydict['atmPhaseCorrection'] = []
+    mydict['integrationTime'] = []
+    mydict['azimuth'] = []
+    mydict['elevation'] = []
+    mydict['calDataId'] = []
+    for rownode in rowlist:
+        row = rownode.getElementsByTagName("startValidTime")
+        mydict['startValidTime'].append(int(row[0].childNodes[0].nodeValue))
+        row = rownode.getElementsByTagName("endValidTime")
+        mydict['endValidTime'].append(int(row[0].childNodes[0].nodeValue))
+        row = rownode.getElementsByTagName("atmPhaseCorrection")
+        mydict['atmPhaseCorrection'].append(str(row[0].childNodes[0].nodeValue))
+        row = rownode.getElementsByTagName("receiverBand")
+        mydict['receiverBand'].append(str(row[0].childNodes[0].nodeValue))
+        row = rownode.getElementsByTagName("basebandName")
+        mydict['basebandName'].append(str(row[0].childNodes[0].nodeValue))
+        row = rownode.getElementsByTagName("numReceptor")
+        mydict['numReceptor'].append(int(row[0].childNodes[0].nodeValue))
+        row = rownode.getElementsByTagName("calDataId")
+        mydict['calDataId'].append(int(str(row[0].childNodes[0].nodeValue).split('_')[1]))
+        row = rownode.getElementsByTagName("integrationTime")
+        mydict['integrationTime'].append(float(row[0].childNodes[0].nodeValue)*1e-9)
+        row = rownode.getElementsByTagName("baselineLengths")
+        r = filter(None,(row[0].childNodes[0].nodeValue).split(' '))
+        baselineLengths = []
+        for i in range(2,len(r)):
+            baselineLengths.append(float(r[i]))
+        mydict['baselineLengths'].append(baselineLengths)
+        row = rownode.getElementsByTagName("decorrelationFactor")
+        r = filter(None,(row[0].childNodes[0].nodeValue).split(' '))
+        decorrelationFactor = []
+        for i in range(3,len(r)):
+            decorrelationFactor.append(float(r[i]))
+        mydict['decorrelationFactor'].append(decorrelationFactor)
+        row = rownode.getElementsByTagName("direction")
+        r = filter(None,(row[0].childNodes[0].nodeValue).split(' '))
+        direction = []
+        for i in range(2,len(r)):
+            direction.append(float(r[i]))
+        mydict['azimuth'].append(math.degrees(direction[0]))
+        mydict['elevation'].append(math.degrees(direction[1]))
+    print "Found %d measurements on %d baselines" % (len(mydict['atmPhaseCorrection']), len(mydict['baselineLengths'][0]))
+    return mydict
+    
+    
+def readSeeingFromASDM_minidom(asdm):
+    """
+    Reads information from CalSeeing.xml into a dictionary
+    Returns a dictionary with the following keys:
+    atmPhaseCorrection: AP_UNCORRECTED or AP_CORRECTED
+    baselineLengths: typically 3 values (in meters)
+    startValidTime: MJD nano seconds
+    endValidTime: MJD nano seconds
+    phaseRMS:  a value for each baselineLength (radians?) for each timestamp
+    seeing: one value per timestamp (arcseconds)
+    -Todd Hunter
+    """
+    mydict = {}
+    seeingxml = asdm + '/CalSeeing.xml'
+    if (os.path.exists(seeingxml) == False):
+        print "Could not open %s" % (seeingxml)
+        return
+    xml = minidom.parse(seeingxml)
+    rowlist = xml.getElementsByTagName("row")
+    mydict['seeing'] = []
+    mydict['phaseRMS'] = []
+    mydict['startValidTime'] = []
+    mydict['endValidTime'] = []
+    mydict['atmPhaseCorrection'] = []
+    mydict['baselineLengths'] = []
+    mydict['phaseRMS'] = []
+    for rownode in rowlist:
+        row = rownode.getElementsByTagName("seeing")
+        mydict['seeing'].append(float(row[0].childNodes[0].nodeValue)*206264.8)
+        row = rownode.getElementsByTagName("startValidTime")
+        mydict['startValidTime'].append(int(row[0].childNodes[0].nodeValue))
+        row = rownode.getElementsByTagName("endValidTime")
+        mydict['endValidTime'].append(int(row[0].childNodes[0].nodeValue))
+        row = rownode.getElementsByTagName("atmPhaseCorrection")
+        mydict['atmPhaseCorrection'].append(str(row[0].childNodes[0].nodeValue))
+        row = rownode.getElementsByTagName("baselineLengths")
+        r = filter(None,(row[0].childNodes[0].nodeValue).split(' '))
+        baselineLengths = []
+        for i in range(2,len(r)):
+            baselineLengths.append(float(r[i]))
+        mydict['baselineLengths'].append(baselineLengths)
+        row = rownode.getElementsByTagName("phaseRMS")
+        r = filter(None,(row[0].childNodes[0].nodeValue).split(' '))
+        phaseRMS = []
+        for i in range(2,len(r)):
+            phaseRMS.append(float(r[i]))
+        mydict['phaseRMS'].append(phaseRMS)
+    print "Found %d measurements" % (len(mydict['atmPhaseCorrection']))
+    return mydict

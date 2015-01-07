@@ -409,7 +409,11 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
 
 import numpy
 import types
-import scipy.lib.blas
+import scipy
+if (scipy.__version__ < '0.10'):
+    import scipy.lib.blas
+else:
+    import scipy.linalg.blas
 
 #	 Original FORTRAN documentation
 #	 **********
