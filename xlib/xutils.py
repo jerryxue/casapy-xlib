@@ -972,14 +972,14 @@ def copyweight(srcfile,
     
 def checkchflag(msfile):
     #
-    #    check flag consistancy in channel
-    #    currently only handle the case with a single spw
+    #    check flag consistancy across channels
+    #    only useful in the case with a single spw
     #    
     #    note: miriad/invert slop=1,zero could include
     #          partionally flagged records into imaging
-    #          In CASA, we can unlflag and zero-out such data
-    #          to have a similar treatment:
-    #          http://www.atnf.csiro.au/computing/software/miriad/userguide/node144.html)
+    #          We can run xutils.unchflag() and zero-out such data
+    #          to implement a similar treatment:
+    #          http://www.atnf.csiro.au/computing/software/miriad/userguide/node145.html
     #  
     tb.open(msfile)
     flag=tb.getcol('FLAG')

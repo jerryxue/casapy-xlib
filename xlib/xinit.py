@@ -134,7 +134,7 @@ xp={
                             # when regridms=True + combinespws=True for MSs with multiple partly overlapping windows. 
                             # The current solution in the pipline is running MTRANSFORM twice: 
                             # one for regridms=True+combinespw=False, one for regridms=True+combinespw=False. 
-                            # But mstransform() still has some issues under certain circumstances as CASA 4.3-prerelease12:
+                            # But mstransform() still has some issues under certain circumstances as CASA 4.3.0:
                             #    e.g. combining 3 adjucent windows
                             # * ??cvel() may not work properly when combing spws with different polns?? * 
                             # * cvel() and mstransform() will adjust weight_spectrum by scaling up with nbin in CASA>=4.2.2 

@@ -84,10 +84,13 @@ print casadef.casa_version
 print 'r'+casadef.subversion_revision
 print ''
 print '>>>> Compatible CASA Version:'
-print '4.2.1/4.2.2/4.3.0'
-print 'r>=29610' 
+print '4.2.2/4.3.0'
+print 'r>=31941' 
 print ""
 print ""
 print "+"*70
 print ""
 print ""
+
+#   !create-symlinks
+#   !update-data
