@@ -142,6 +142,9 @@ xp={
                             # ?the new SIGMA column is also adjusted?
                             #
 'combinespws':True,         # combine spws when regridding spws
+'meanwt':True,              # replace WEIGHT_SPECTRUM with MEAN(WEIGHT_SPECTRUM)
+                            # this could avoid undesired small beam variations on a channel by channel basis 
+                            # (e.g. spws edges, error in the original WEIGHT_SPECTRUM) 
 'chanbin':1,                
 'hs':False,                 # hanning smooth when preparing MS for imaging.
 'unchflag':False,           # unflag records with several channel flagged, so each channel has the same flagging

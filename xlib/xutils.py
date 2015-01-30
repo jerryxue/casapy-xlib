@@ -19,15 +19,14 @@ from email import Encoders
 
 
 def sumwt(visfile='',
-          restfreq='',
+          restfreq='115.2712GHz',
           oldstyle=False):
     #    
     #    calculate sum(weight) each channel for a sensitivity analysis 
-    #
+    #    oldstyle=True doesn't calculate frame velocity (no restfreq is required)
+    # 
     c=3.0e5
-    if  restfreq=='':
-        restfreq=me.spectralline('HI')['m0']['value']
-    news("")
+    restfreq=qa.convertfreq(restfreq)['value']
 
     vsfile=open(visfile+'.sumwt.log','w')
     tb.open(visfile+'/SPECTRAL_WINDOW',nomodify=False)
@@ -44,6 +43,12 @@ def sumwt(visfile='',
     cwt=np.ma.sum(cwt,axis=0)
     req_freq=chan_freq[:,0]
     v=c*(restfreq-req_freq)/restfreq
+    
+    #   make sure: freq-increasing / v-decreasing in the output table.
+    if  req_freq[0]>req_freq[1]:
+        cwt=cwt[::-1]
+        v=v[::-1]
+    
     news("   channel:       velocity : sum(weight)")
     for ic in range(0,len(v)):
         news(" "+'ch'+"{0:5.0f}".format(ic)+'   :   '+"{0:>10.2f}".format(v[ic])+'km/s   :   '+"{0:15.2f}".format(cwt[ic]))
@@ -588,7 +593,7 @@ def resmoothpsf(outname):
     
     imhead(imagename='cpsf.tmp',mode='add',hdkey='bunit',hdvalue='Jy/beam')
     
-    ia.open(outname+'_d.image')
+    ia.open(outname+'.image')
     rb=ia.restoringbeam()
     ia.close()
     ia.open('cpsf.tmp')

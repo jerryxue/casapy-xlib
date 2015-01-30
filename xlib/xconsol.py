@@ -212,6 +212,22 @@ if  len(xp['prefix_comb'])==1:
     #
     #   mstransform() and cvel() will modify weights but may not be statistically  
     #   correct during spw regridding.
+    #
+    #
+    #   MS from xu.importmir() will have WEIGHT_SPECTRUM initialized from MIRIAD. 
+    #   The filled values are based on the theoretical prediction using Tsys etc. 
+    #   If the pipeline detects WEIGHT_SPECTRUM, WEIGHT will be replaced with mean(WEIGHT_SPECTRUM)
+    #   For CASA<4.2.2, CLEAN will use WEIGHT -> no channel-dependent dirty beam, 
+    #       if flagging is consistent. 
+    #   For CASA>4.2.2, CLEAN will use WEIGHT_SPECTRUM, which may lead to a channel-dependent beam,
+    #       even flagging is consistent.
+    #   Here we add another optional step with <MEANWT>=True:
+    #       replace WEIGHT_SPECTRUM with mean(WEIGHT_SPECTRUM)
+    #   This could avoid undesired small beam variations on a channel by channel basis 
+    #   (e.g. spws edges, error in the original WEIGHT_SPECTRUM)
+    #
+    #   In any case, we HAVE maintained the CASA>=4.2.2 WEIGHT/WEIGHT_SPECTRUM convention in the 
+    #   pipeline since we introduced the WEIGHT_SPECTRUM manipulation (even before CASA 4.2.2 came out).
     # 
     if  xp['unchflag']==True:
         xu.unchflag(xp['srcfile'])
@@ -220,6 +236,8 @@ if  len(xp['prefix_comb'])==1:
     tb.close()
     if  wts_exist==True:
         xu.copyweight(xp['srcfile'],copyback=True)
+        if  xp['meanwt']==True:
+            xu.copyweight(xp['srcfile'])  
     else:
         xu.copyweight(xp['srcfile'])
     

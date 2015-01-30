@@ -189,11 +189,16 @@ for i in range(0,len(vis_loop)):
     width=xp['clean_width']
     if  cleanmode_loop[i]=='mfs':
         start=0
-        width=1
+        width=1 
     if  xp['spwrgd']=='spw':
+        #
+        # if the MS already has the desired channel setup, we will
+        # turn off CLEAN interpolation and dump SUM(weight) for each plane
+        # 
         interpolation='nearest'
+        xu.sumwt(vis_loop[i],oldstyle=True)  
     else:
-        interpolation=xp['spinterpmode']  
+        interpolation=xp['spinterpmode']
     clean(vis=vis_loop[i],
           imagename=outname_loop[i],
           field=xp['clean_field'],
