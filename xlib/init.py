@@ -3,7 +3,8 @@
 #
 # To load the pipeline scripts automatically, please:
 #   1) ln -s yourpath/xlib/init.py ~/.casa/init.py
-#   2) alias casapy='casapy --log2term'
+#   2) alias casapy='casapy --log2term' or 
+#            casapy='casapy --log2term --nologger'
 ###########################################################
 
 import socket

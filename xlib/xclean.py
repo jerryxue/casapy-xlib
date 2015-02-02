@@ -276,12 +276,6 @@ for i in range(0,len(vis_loop)):
         if  outname_loop[i][-2:]=='_d':
             if  threshold_loop[i+1]=='0.0mJy':
                 threshold_loop[i+1]=str(sigmjy*xp['sigcutoff_cont'])+'mJy'
-            #    resmooth='common' might be better than hacking <restorbeam> on 
-            #    maching flux scales in model & residual
-            #
-            #if  restorbeam_loop[i+1]==['']:
-            #    restorbeam_loop[i+1]=\
-            #        xu.checkbeam(outname_loop[i],method=xp['restorbeam_method'])
     
     xu.news("")
     xu.news("-------------------------------------------------------------------------")
