@@ -64,7 +64,17 @@ extenv={"PATH":os.pathsep.join(pathlist),
 
 sys.path.insert(1,xlib_path)
 sys.path.insert(1,'/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages')
-import xutils as xu                 # xlib modules 
+import xutils as xu                 # xlib modules
+from ximport import ximport 
+from xclean import xclean
+from xcal import xcal
+from xconsol import xconsol
+
+xu.ximport=ximport
+xu.xclean=xclean
+xu.xcal=xcal
+xu.xconsol=xconsol
+ 
 #import xexp as xe                   # exlib-exp modules
 
 sys.path.insert(1,borrow_path+os.sep+'analysis_scripts')
