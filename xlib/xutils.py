@@ -3,6 +3,7 @@ import os
 import string
 import math
 import casac
+import glob
 from tasks import *
 from taskinit import *
 import socket
@@ -315,29 +316,46 @@ def init():
 def sumwt(visfile='',
           restfreq='115.2712GHz',
           oldstyle=False):
-    #    
-    #    calculate sum(weight) each channel for a sensitivity analysis 
-    #    oldstyle=True doesn't calculate frame velocity (no restfreq is required)
-    # 
+    """
+    calculate sum(weight) each channel for a sensitivity analysis 
+    oldstyle=True doesn't calculate frame velocity (therefore no restfreq is required)
+    It will correctly handle multiple polarization setup now, providing a single spw in MS!
+    """ 
     c=3.0e5
     restfreq=qa.convertfreq(restfreq)['value']
-
+    
     vsfile=open(visfile+'.sumwt.log','w')
+    
     tb.open(visfile+'/SPECTRAL_WINDOW',nomodify=False)
     num_chan = np.min(tb.getcol('NUM_CHAN'))
     chan_freq=tb.getcol('CHAN_FREQ')
     tb.close()
-    tb.open(visfile+'',nomodify=False)
-    swt=tb.getcol('WEIGHT_SPECTRUM')
-    flg=tb.getcol('FLAG')
-    flg=1.0-flg
-    swt=swt*flg
-    tb.close()
-    cwt=np.ma.sum(swt,axis=-1)
-    cwt=np.ma.sum(cwt,axis=0)
     req_freq=chan_freq[:,0]
     v=c*(restfreq-req_freq)/restfreq
     
+    tb.open(visfile+'',nomodify=False)
+    ids=np.unique(tb.getcol("DATA_DESC_ID"))
+    cwt=0
+    for id in ids:
+        news("")
+        news('query: DATA_DESC_ID=='+str(id))
+        subtb=tb.query('DATA_DESC_ID=='+str(id))
+        news('nrows: '+str(subtb.nrows()))
+        news("")
+        flg=subtb.getcol('FLAG')
+        if  'WEIGHT_SPECTRUM' in subtb.colnames(): 
+            swt=subtb.getcol('WEIGHT_SPECTRUM')
+        else:
+            swt=subtb.getcol('FLAG')*1.0
+            tmp=subtb.getcol('WEIGHT')
+            for i in range(0,tmp.shape[0]):
+                swt[i,:,:]=tmp[i,:]
+        flg=1.0-flg
+        swt=swt*flg
+        subtb.close()
+        swt=np.ma.sum(swt,axis=-1)
+        cwt=np.ma.sum(swt,axis=0)+cwt
+
     #   make sure: freq-increasing / v-decreasing in the output table.
     if  req_freq[0]>req_freq[1]:
         cwt=cwt[::-1]
@@ -812,7 +830,43 @@ def exportclean(outname,keepcasaimage=True):
             if  keepcasaimage==False:
                 os.system("rm -rf "+outname+'.'+version[i])
 
+def savedisk(path='./'):
+    #
+    #    export imaging products into fits files
+    #
+    fitslist=glob.glob(path+'*.fits')
+    for i in range(0,len(fitslist)):
+        tmp=fitslist[i]
+        tmp=tmp.replace(".fits","")
+        news("remove: "+tmp)
+        os.system("rm -rf "+tmp)            
+    
+    fitslist=glob.glob(path+'*.ms')
+    for i in range(0,len(fitslist)):
+        tmp=fitslist[i]
+        news("remove: "+tmp)
+        os.system("rm -rf "+tmp)
+        tmp=tmp+'.flagversions'
+        news("remove: "+tmp)
+        os.system("rm -rf "+tmp)
+        
+    fitslist=glob.glob(path+'*.ms.contsub')
+    for i in range(0,len(fitslist)):
+        tmp=fitslist[i]
+        news("remove: "+tmp)
+        os.system("rm -rf "+tmp) 
+        tmp=tmp+'.flagversions'
+        news("remove: "+tmp)
+        os.system("rm -rf "+tmp)            
 
+    fitslist=glob.glob(path+'*.ms.cont')
+    for i in range(0,len(fitslist)):
+        tmp=fitslist[i]
+        news("remove: "+tmp)
+        os.system("rm -rf "+tmp)
+        tmp=tmp+'.flagversions'
+        news("remove: "+tmp)
+        os.system("rm -rf "+tmp)            
 
 def checkbeam(outname,method='maximum'):
     #
@@ -1125,10 +1179,10 @@ def genmask0(imfile):
     
 
 def mask0clean(outname,mask0):
-    #
-    #    mask a cube using a mask image 
-    #    note: used as a trimmer for masking out x-y pixels with partial coverages   
-    #
+    """
+    mask a cube using a mask image 
+    note: used as a trimmer for masking out x-y pixels with partial coverages   
+    """
     version=['mask','cm','residual','model','cmodel',
             'psf','image','sen',
             'flux.pbcoverage','flux.pbcoverage.thresh_mask',
@@ -1143,9 +1197,9 @@ def mask0clean(outname,mask0):
 
 
 def getuvrange(msfile):
-    #
-    #    inspect the uv sampling
-    #
+    """
+    inspect the uv sampling
+    """
     news("")
     news("--visstat--")
     news("")
@@ -1185,27 +1239,27 @@ def getuvrange(msfile):
 
 
 def uvspec(msfile,restfreq='1420405752.0Hz'):
-    #
-    #   shortcut for a miriad-like uvspec
-    #
+    """
+    shortcut for a miriad-like uvspec
+    """
     plotms(msfile,xaxis='velocity',yaxis='amp',avgtime='999999s',
         avgscan=True,transform=True,restfreq=restfreq,
         xdatacolumn='corrected',ydatacolumn='corrected',
         coloraxis='spw')
 
 def uvplt(msfile):
-    #
-    # shortcut for a miriad-like uvplt
-    #
+    """
+    shortcut for a miriad-like uvplt
+    """
     plotms(msfile,xaxis='time',yaxis='amp',avgchannel='99999',
         xdatacolumn='corrected',ydatacolumn='corrected',
         coloraxis='field')
 
 
 def modelconv(outname,mode=''):
-    #
-    #    calculate a convolved model
-    #
+    """
+    calculate a convolved model
+    """
     # use *.residual *.image to get cmodel
     os.system('rm -rf '+outname+'.cmodel')
     os.system('rm -rf '+outname+'.cmodel2')
@@ -1234,8 +1288,10 @@ def modelconv(outname,mode=''):
 
 def copyweight(srcfile,
                copyback=False):
-    # copyback=False copy weight to weight_spectrum
-    # copyback=True  copy mean(weight_spectrum) to weight if weight_spectrum exists
+    """
+    copyback=False copy weight to weight_spectrum
+    copyback=True  copy mean(weight_spectrum) to weight if weight_spectrum exists
+    """
     
     news("")
     news("--copyweight--")
@@ -1270,35 +1326,49 @@ def copyweight(srcfile,
     news("")
     
 def checkchflag(msfile):
-    #
-    #    check flag consistancy across channels
-    #    only useful in the case with a single spw
-    #    
-    #    note: miriad/invert slop=1,zero could include
-    #          partionally flagged records into imaging
-    #          We can run xutils.unchflag() and zero-out such data
-    #          to implement a similar treatment:
-    #          http://www.atnf.csiro.au/computing/software/miriad/userguide/node145.html
-    #  
-    tb.open(msfile)
-    flag=tb.getcol('FLAG')
-    shape=flag.shape
-    news(msfile+' '+str(shape))
-    for i in range(0,shape[0]):
-        
-        flag0=flag[[i],:,:] # this will make a copy 
-        flag0=flag0[0,:,:]  # otehrwise .view will not work
-                            # flag0.strides
-        flag0=flag0.view(','.join(shape[1]* ['i1']))
-        unique_vals,indicies=np.unique(flag0, return_inverse=True)
-        counts = np.bincount(indicies)
-        news("poln: "+str(i)+' type: '+str(len(counts)))
-        for j in range(0,len(counts)):
-            u=str(unique_vals[j])
-            u=u.translate(None, '(), ')
-            news(u+' '+str(counts[j])+'/'+str(shape[-1]))
+    """
+    check flag consistancy across channels
+    it's able to handle ms with multiple spw/pol.
+    
+    note: miriad/invert slop=1,zero could include
+          partionally flagged records into imaging
+          We can run xutils.unchflag() and zero-out such data
+          to implement a similar treatment:
+          http://www.atnf.csiro.au/computing/software/miriad/userguide/node145.html
+    """
+    news("")          
+    news("run checkchflag on "+msfile)
     news("")
+    tb.open(msfile)
+    ids=np.unique(tb.getcol("DATA_DESC_ID"))
+    
+    for id in ids:
+        
+        news("")
+        news('query: DATA_DESC_ID=='+str(id))
+        subtb=tb.query('DATA_DESC_ID=='+str(id))
+        flag=subtb.getcol('FLAG')
+        shape=flag.shape
+        news('data shape:  '+str(shape))
+        news("")
+        
+        for i in range(0,shape[0]):
+            
+            flag0=flag[[i],:,:] # this will make a copy 
+            flag0=flag0[0,:,:]  # otehrwise .view will not work
+                                # flag0.strides
+            flag0=flag0.view(','.join(shape[1]* ['i1']))
+            unique_vals,indicies=np.unique(flag0, return_inverse=True)
+            counts = np.bincount(indicies)
+            news("pol id: "+str(i)+' variety: '+str(len(counts)))
+            for j in range(0,len(counts)):
+                u=str(unique_vals[j])
+                u=u.translate(None, '(), ')
+                news(u+' '+str(counts[j])+'/'+str(shape[-1]))
+        subtb.close()
+    
     tb.close()
+    news("")
 
 def unchflag(msfile):
     #
@@ -1906,4 +1976,36 @@ def bpcopy(table,
             copytb.close()
             
         os.system("rm -rf tmp.bcal")
+        
+def rmcolumn(msfile,column=""):
+    """
+    remove columns from MS (only handle one column currently)
+    By default, the function will check the available column names without removing any column.
+    """
+    news("")
+    news(" run rmcolumns on "+msfile)
+    news("")
+    tb.open(msfile,nomodify=False)
+    news(tb.colnames())
+    if  (column!='' and (column in tb.colnames()) ):
+        tb.removecols(column)
+    news(tb.colnames())
+    tb.close()
+    news("")
+
+if  __name__=="__main__":
+    """
+    test function
+    """
+    #rmcolumn("n0772hi.src.ms.contsub",column='WEIGHT_SPECTRUM')
+    #rmcolumn("n0772hi.src.ms.cont",column='WEIGHT_SPECTRUM')
+    #rmcolumn("n0772hi.src.ms",column='WEIGHT_SPECTRUM')
+    #sumwt("n0772d99a.src.ms")
+    #sumwt("n0772d99b.src.ms") 
+    #sumwt("n0772bc13a.src.ms") 
+    #sumwt("n0772bc13b.src.ms") 
+    #sumwt("n0772b13a.src.ms")
+    #sumwt("n0772b13b.src.ms")
+    #sumwt("n0772b13c.src.ms")
+    #sumwt("n0772hi.src.ms")
     

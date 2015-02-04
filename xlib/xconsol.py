@@ -377,6 +377,13 @@ def xconsol(xp):
                        timesort=False,
                        visweightscale=wtscale,
                        copypointing=True)
+                if  xp['meanwt']==True:
+                    ##
+                    # CLEAN() in v4.3 doesn't handle WEIGHT_SPECTRUM
+                    # with variable shaped arrays
+                    ##
+                    xu.rmcolumn(xp['srcfile_comb'],column='WEIGHT_SPECTRUM')
+                    
             else:
                 virtualconcat(vis=xp['srcfile_comb'],
                        concatvis=xp['srcfile']+loop,
