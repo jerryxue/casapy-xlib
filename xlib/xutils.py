@@ -315,11 +315,13 @@ def init():
 
 def sumwt(visfile='',
           restfreq='115.2712GHz',
+          field='',
           oldstyle=False):
     """
     calculate sum(weight) each channel for a sensitivity analysis 
     oldstyle=True doesn't calculate frame velocity (therefore no restfreq is required)
     It will correctly handle multiple polarization setup now, providing a single spw in MS!
+    Also a point source densitivity estimation will be printed out (only correct if WT=1/(sigma)^2.0 and single-pointing)
     """ 
     c=3.0e5
     restfreq=qa.convertfreq(restfreq)['value']
@@ -338,8 +340,11 @@ def sumwt(visfile='',
     cwt=0
     for id in ids:
         news("")
-        news('query: DATA_DESC_ID=='+str(id))
-        subtb=tb.query('DATA_DESC_ID=='+str(id))
+        qq='DATA_DESC_ID=='+str(id)
+        if  field!='':
+            qq=qq+'&&FIELD_ID=='+str(field)
+        news('query: '+qq)
+        subtb=tb.query(qq)
         news('nrows: '+str(subtb.nrows()))
         news("")
         flg=subtb.getcol('FLAG')
@@ -363,9 +368,10 @@ def sumwt(visfile='',
     
     news("   channel:       velocity : sum(weight)")
     for ic in range(0,len(v)):
-        news(" "+'ch'+"{0:5.0f}".format(ic)+'   :   '+"{0:>10.2f}".format(v[ic])+'km/s   :   '+"{0:15.2f}".format(cwt[ic]))
+        news(" "+'ch'+"{0:5.0f}".format(ic)+'   :   '+"{0:>10.2f}".format(v[ic])+\
+             ' km/s   :   '+"{0:15.2f}".format(cwt[ic])+'   :   '+"{0:15.2f}".format(1000.0*np.sqrt(1/cwt[ic]))+' mJy')
         if  oldstyle==False:
-            print >>vsfile,str(" "+''+"{0:5.0f}".format(ic)+'   '+"{0:>10.2f}".format(v[ic])+'   '+"{0:15.2f}".format(cwt[ic]))
+            print >>vsfile,str(" "+''+"{0:5.0f}".format(ic)+'   '+"{0:>10.2f}".format(v[ic])+'   '+"{0:10.2f}".format(cwt[ic]))
         else:
             print >>vsfile,str(cwt[ic])
     # for ic in range(1,num_chan-3):
@@ -1621,69 +1627,6 @@ def scalewt(srcfile,
         tb.close()
     
     return sf
-
-def xmoments(imagename,
-               smfac=[3.0,3.0],
-               th=3.0,
-               errfile='',
-               box='',
-               chans='',
-               region=''):
-    #
-    #    a function which will replace the idl-moments
-    #    currely only "smooth-masking" is implemented
-    #
-    #    imagename: root name of clean products
-    #    
-    if  errfile=='':
-        errfile=imagename+'.flux'
-    
-    if  type(smfac)!=type([]):
-        smfac=[smfac,0]
-    
-    
-    hd=imhead(imagename+'.image',mode='list')
-    ia.open(imagename+'.image') 
-    sm2d=ia.convolve2d(outfile='__sm2d',axes=[0,1],
-                  type='gaussian',
-                  targetres=True,
-                  major=str(hd['beammajor']['value']*smfac[0])+hd['beammajor']['unit'],
-                  minor=str(hd['beamminor']['value']*smfac[0])+hd['beamminor']['unit'],
-                  pa=str(hd['beampa']['value'])+hd['beampa']['unit'],  
-                  overwrite=True)
-    sm2d.done()
-    ia.close()
-    sfile='__sm2d'
-    
-    if  smfac[1]!=0.0:
-        ia.open('__sm2d')
-        sm3d=ia.sepconvolve(outfile='__sm3d',axes=[0,1,3],
-                       types=['gaussian']*3,
-                       widths=[1,1,smfac[1]],stretch=True,overwrite=True)
-        sm3d.done()
-        ia.close()
-        sfile='__sm3d'
-    
-    exportfits(imagename=sfile,fitsimage='test.fits',velocity=True,overwrite=True)
-    stat=imstat(imagename=sfile,box=box,chans=chans,axes=[0,1],region=region)
-    sigma=np.median(stat['sigma'])
-    
-    os.system("rm -rf "+imagename+'.cm_masked')
-    os.system("rm -rf "+imagename+'.cm.moms*')
-    immath(imagename=[imagename+'.cm',sfile],
-           expr="iif(IM1>="+str(th*sigma)+",IM0,0.0)",
-           outfile=imagename+'.cm_masked')
-    os.system("rm -rf __sm3d __sm2d")
-    
-    immoments(imagename+'.cm_masked',
-              axis="spec",
-              moments=[0],
-              outfile=imagename+'.cm.moms0')
-    
-    immoments(imagename+'.cm_masked',
-              axis="spec",
-              moments=[1],
-              outfile=imagename+'.cm.moms1')
     
 def getevladata(url,user='',password='',extenv={}):
     #
@@ -2008,4 +1951,8 @@ if  __name__=="__main__":
     #sumwt("n0772b13b.src.ms")
     #sumwt("n0772b13c.src.ms")
     #sumwt("n0772hi.src.ms")
+    #listobs("n2976co.src.ms") 
+    #checkchflag("n0772hi.src.ms")
+    sumwt("n0337hi.src.ms")
+          
     

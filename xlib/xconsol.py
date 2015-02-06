@@ -382,7 +382,7 @@ def xconsol(xp):
                     # CLEAN() in v4.3 doesn't handle WEIGHT_SPECTRUM
                     # with variable shaped arrays
                     ##
-                    xu.rmcolumn(xp['srcfile_comb'],column='WEIGHT_SPECTRUM')
+                    xu.rmcolumn(xp['srcfile']+loop,column='WEIGHT_SPECTRUM')
                     
             else:
                 virtualconcat(vis=xp['srcfile_comb'],

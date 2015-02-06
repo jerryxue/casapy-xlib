@@ -219,7 +219,8 @@ def xclean(xp):
             # turn off CLEAN interpolation and dump SUM(weight) for each plane
             # 
             interpolation='nearest'
-            xu.sumwt(vis_loop[i],oldstyle=True)  
+            xu.sumwt(vis_loop[i],oldstyle=True)
+            xu.checkchflag(vis_loop[i])  
         else:
             interpolation=xp['spinterpmode']
         clean(vis=vis_loop[i],
@@ -307,9 +308,15 @@ def xclean(xp):
         xu.news("")
         
         imhead(imagename=outname_loop[i]+'.image')
+        """
         immath(imagename=[outname_loop[i]+'.image',outname_loop[i]+'.flux'],
                expr='IM0/IM1',
                outfile=outname_loop[i]+'.cm')
+        """
+        impbcor(imagename=outname_loop[i]+'.image',\
+                pbimage=outname_loop[i]+'.flux',\
+                outfile=outname_loop[i]+'.cm',\
+                cutoff=-1.0)
         
         xu.exporttasklog('imhead',outname_loop[i]+'.image.imhead.log')
         xu.exporttasklog('imstat',outname_loop[i]+'.image.imstat.log')
