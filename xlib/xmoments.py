@@ -98,7 +98,7 @@ def xmoments(   imagename,
     mask=detcore
     
     if  dilated==True:
-        print "++"
+        
         snr_array_grow=snr_array>grow
         snr_array_expand=np.pad(snr_array_grow,((1,1),(1,1),(1,1)),mode='constant')
         det=np.logical_or(snr_array_expand[1:-1,1:-1,:-2],snr_array_expand[1:-1,1:-1,2::])

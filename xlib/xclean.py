@@ -51,7 +51,7 @@ def xclean(xp):
     startTime=time.time()
     xu.news("")
     xu.news("++")
-    xu.news("------------- Begin Task: xclean "+xp['prefix']+" -------------")
+    xu.news("------------- Begin Task: xclean "+xp['prefix']+xp['ctag']+" -------------")
     xu.news("++")
     xu.news("")
     casa_log = open(casalog.logfile(),'r')
@@ -142,9 +142,9 @@ def xclean(xp):
         else:
             vis=xp['srcfile']
         if  xp['imcs']==True:
-            outname=xp['prefix']+'.coli'
+            outname=xp['prefix']+xp['ctag']+'.coli'
         else:
-            outname=xp['prefix']+'.line'
+            outname=xp['prefix']+xp['ctag']+'.line'
         
         if  xp['threshold_spec']=='0.0mJy' and xp['niter']!=0:
             vis_loop+=[vis]
@@ -172,7 +172,7 @@ def xclean(xp):
     if  xp['cleancont']==True:
         
         vis=xp['srcfile']
-        outname=xp['prefix']+'.cont'
+        outname=xp['prefix']+xp['ctag']+'.cont'
         if  xp['uvcs']==True:
             spw=xp['fitspw']
         else:
@@ -206,8 +206,8 @@ def xclean(xp):
         xu.news("--clean--")
         xu.news("")
         
-        xu.cleanup(outname_loop[i])        
-    
+        xu.cleanup(outname_loop[i],resume=xp['cresume'])
+            
         start=xp['clean_start']
         width=xp['clean_width']
         if  cleanmode_loop[i]=='mfs':
@@ -286,6 +286,7 @@ def xclean(xp):
             if  outname_loop[i][-2:]=='_d':
                 if  threshold_loop[i+1]=='0.0mJy':
                     threshold_loop[i+1]=str(sigmjy*xp['sigcutoff_spec'])+'mJy'
+                    xp['threshold_spec_last']=threshold_loop[i+1]
                 #    resmooth='common' might be better than hacking <restorbeam> on 
                 #    maching flux scales in model & residual
                 #
@@ -300,6 +301,7 @@ def xclean(xp):
             if  outname_loop[i][-2:]=='_d':
                 if  threshold_loop[i+1]=='0.0mJy':
                     threshold_loop[i+1]=str(sigmjy*xp['sigcutoff_cont'])+'mJy'
+                    xp['threshold_cont_last']=threshold_loop[i+1]
         
         xu.news("")
         xu.news("-------------------------------------------------------------------------")
@@ -316,7 +318,7 @@ def xclean(xp):
         impbcor(imagename=outname_loop[i]+'.image',\
                 pbimage=outname_loop[i]+'.flux',\
                 outfile=outname_loop[i]+'.cm',\
-                cutoff=-1.0)
+                cutoff=-1.0,overwrite=True)
         
         xu.exporttasklog('imhead',outname_loop[i]+'.image.imhead.log')
         xu.exporttasklog('imstat',outname_loop[i]+'.image.imstat.log')
@@ -334,9 +336,9 @@ def xclean(xp):
         xu.news("Continumm substraction in the cube")
         xu.news("")
     
-        outname = xp['prefix']
         os.system('rm -rf '+outname+'.cont.* ')
         os.system('rm -rf '+outname+'.line.* ')
+        outname = xp['prefix']+xp['ctag']
      
         mask0=outname+'.coli.flux'
         xu.genmask0(mask0)
@@ -433,12 +435,12 @@ def xclean(xp):
     xu.news("")
     xu.news("Export all images to FITS format")
     xu.news("")
-    xu.exportclean(xp['prefix']+'.line_d',keepcasaimage=xp['keepcasaimage'])
-    xu.exportclean(xp['prefix']+'.line',keepcasaimage=xp['keepcasaimage'])
-    xu.exportclean(xp['prefix']+'.cont_d',keepcasaimage=xp['keepcasaimage'])
-    xu.exportclean(xp['prefix']+'.cont',keepcasaimage=xp['keepcasaimage'])
-    xu.exportclean(xp['prefix']+'.coli_d',keepcasaimage=xp['keepcasaimage'])
-    xu.exportclean(xp['prefix']+'.coli',keepcasaimage=xp['keepcasaimage'])
+    xu.exportclean(xp['prefix']+xp['ctag']+'.line_d',keepcasaimage=xp['keepcasaimage'])
+    xu.exportclean(xp['prefix']+xp['ctag']+'.line',keepcasaimage=xp['keepcasaimage'])
+    xu.exportclean(xp['prefix']+xp['ctag']+'.cont_d',keepcasaimage=xp['keepcasaimage'])
+    xu.exportclean(xp['prefix']+xp['ctag']+'.cont',keepcasaimage=xp['keepcasaimage'])
+    xu.exportclean(xp['prefix']+xp['ctag']+'.coli_d',keepcasaimage=xp['keepcasaimage'])
+    xu.exportclean(xp['prefix']+xp['ctag']+'.coli',keepcasaimage=xp['keepcasaimage'])
     xu.news("")
     
     #----------------------------------------------------------------------------------------
@@ -449,20 +451,20 @@ def xclean(xp):
     xu.news("Total Imaging Time: %10.1f" %(subima2time-startTime))
     xu.news("")
     xu.news("++")
-    xu.news("------------- End Task: xclean "+xp['prefix']+" -------------")
+    xu.news("------------- End Task: xclean "+xp['prefix']+xp['ctag']+" -------------")
     xu.news("++")
     xu.news("")
     casa_log=open(casalog.logfile(),'r')
     stoplog=casa_log.readlines()
     casa_log.close()
-    xu.exportcasalog(startlog,stoplog,xp['prefix']+'.xclean.reduc.log')
+    xu.exportcasalog(startlog,stoplog,xp['prefix']+xp['ctag']+'.xclean.reduc.log')
     
     if  xp['email']!='':
         emailsender(xp['email'],\
-                    "RUN xclean End: "+xp['prefix'],\
+                    "RUN xclean End: "+xp['prefix']+xp['ctag'],\
                     "This email was generated automatically \
                     by your successful reduction run.\nThe log files are attached",\
-                    [xp['prefix']+'.xclean.reduc.log'])
+                    [xp['prefix']+xp['ctag']+'.xclean.reduc.log'])
 
 
     return xp    

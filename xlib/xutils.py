@@ -199,13 +199,15 @@ def init():
     'scalewt_minsamp':2,        # the minimal number of channels required for a reliable sigma/weight calculation 
     
     # CLEAN
+    'cresume':False,                # resume CLEAN() from the last model (prefix+ctag+'line.model')
+    'ctag':'',                      # tag name for clean products: outname=prefix+ctag
     'restorbeam':[''],              # use a specified restor beam for imaging
     'resmooth':True,                # smooth the channel-dependent beam to a common resolution
     'restorbeam_default':[''],      # not useful any more
     'restorbeam_method':'maximum',  # not useful any more
     
     
-    'minpb':0.1,                # masked out the region with pb response < minbp
+    'minpb':0.05,                # masked out the region with pb response < minbp
     'cleanspw':'',
     'phasecenter':'',           # imaging phasecenter, e.g.'J2000 12h18m49.6 14d24m59.01' or '2' (=fieldid2)
     'spinterpmode':'linear',    # spectral gridding interpolation mode in CLEAN
@@ -215,7 +217,7 @@ def init():
     
     'imsize':2**5*10,           # imaging size (numbers of pixels)
     'cell':'8.0arcsec',         # imaging pixel size.
-    'clean_mask':0.3,           # 0.3:     a clean box with pb response higher 0.2
+    'clean_mask':0.2,           # 0.3:     a clean box with pb response higher 0.2
                                 # True:    a clean box with pb response higher <minpb>
                                 # [0,0,511,511]:    a clean box specified by bl/tr
                                 # 'cleanbox.txt'    a cleanbox file
@@ -225,7 +227,9 @@ def init():
     'sigcutoff_cont':2.5,       # <sigcutoff_cont>*<sig> is the default threshold value for continuum MFS CLEAN
     'threshold_spec':'0.0mJy',  # threshold for spec cleaning, the default value is <sigcutoff_spec>*<sig>
     'threshold_cont':'0.0mJy',  # threshold for mfs cleaning, the default values is <sigcutoff_cont>*<sig>
-    
+    'threshold_spec_last':'0.0mJy',  # threshold actually used for the last run
+    'threshold_cont_last':'0.0mJy',  # threshold actually used for the last run
+        
     'imstat_box_spec':'',       # a box selected for RMS calculations, default: inner quarters
     'imstat_rg_spec':'',        # a region selected for RMS calculations
     'imstat_chan':'',           # 
@@ -316,12 +320,18 @@ def init():
 def sumwt(visfile='',
           restfreq='115.2712GHz',
           field='',
-          oldstyle=False):
+          oldstyle=False,
+          topeff=1.0):
     """
     calculate sum(weight) each channel for a sensitivity analysis 
     oldstyle=True doesn't calculate frame velocity (therefore no restfreq is required)
     It will correctly handle multiple polarization setup now, providing a single spw in MS!
-    Also a point source densitivity estimation will be printed out (only correct if WT=1/(sigma)^2.0 and single-pointing)
+    Also a point source densitivity estimation will be printed out (only correct if WT=1/(sigma)^2.0/single-pointing/uniform-weighting)
+    
+    TOP_EFF: Effective Integration Time Fraction on Each Pointing Center
+        For CARMA 19 pointing, it would be (1.0+0.5*6)/19. at the FOV center.
+        For non-mosaicing observation, it would be 1.
+    
     """ 
     c=3.0e5
     restfreq=qa.convertfreq(restfreq)['value']
@@ -361,15 +371,18 @@ def sumwt(visfile='',
         swt=np.ma.sum(swt,axis=-1)
         cwt=np.ma.sum(swt,axis=0)+cwt
 
+    tb.close()
+    
     #   make sure: freq-increasing / v-decreasing in the output table.
     if  req_freq[0]>req_freq[1]:
         cwt=cwt[::-1]
         v=v[::-1]
     
+    
     news("   channel:       velocity : sum(weight)")
     for ic in range(0,len(v)):
         news(" "+'ch'+"{0:5.0f}".format(ic)+'   :   '+"{0:>10.2f}".format(v[ic])+\
-             ' km/s   :   '+"{0:15.2f}".format(cwt[ic])+'   :   '+"{0:15.2f}".format(1000.0*np.sqrt(1/cwt[ic]))+' mJy')
+             ' km/s   :   '+"{0:15.2f}".format(cwt[ic])+'   :   '+"{0:15.2f}".format(1000.0*np.sqrt(1/cwt[ic])*np.sqrt(1.0/topeff))+' mJy')
         if  oldstyle==False:
             print >>vsfile,str(" "+''+"{0:5.0f}".format(ic)+'   '+"{0:>10.2f}".format(v[ic])+'   '+"{0:10.2f}".format(cwt[ic]))
         else:
@@ -800,23 +813,33 @@ def importmiriad(mirfile='',
     tb.close()
     
 
-def cleanup(outname,tag=''):
-    #
-    #    cleanup imaging products
-    #
+def cleanup(outname,tag='',resume=False):
+    """
+    cleanup imaging products
+    or save a copy of the last CLEAN products (useful for incremental tests)
+    if resume==True, we will keep .model
+    """
     version=['mask','cm','residual','model','cmodel',
             'psf','image','sen',
             'flux.pbcoverage','flux.pbcoverage.thresh_mask',
             'flux','flux.thresh_mask',
             'flux.mask0']
+    if  resume==True:
+        version=['mask','cm','residual','cmodel',
+                'psf','image','sen',
+                'flux.pbcoverage','flux.pbcoverage.thresh_mask',
+                'flux','flux.thresh_mask',
+                'flux.mask0']        
     for i in range(0,len(version)):
         if    os.path.exists(outname+'.'+version[i]):
-            if     tag=='':
+            if  tag=='':
                 os.system('rm -rf '+outname+'.'+version[i])
             else:
-                os.system('rm -rf '+outname+'.'+tag+'.'+version[i])
-                os.system('mv '+outname+'.'+version[i]+' '\
-                        +outname+'.'+tag+'.'+version[i])
+                os.system('rm -rf '+outname+tag+'.'+version[i])
+                os.system('cp -r '+outname+'.'+version[i]+' '+outname+tag+'.'+version[i])
+                os.system('rm -rf '+outname+tag+'.'+version[i]+'.fits')
+                os.system('cp -r '+outname+'.'+version[i]+'.fits'+' '+outname+tag+'.'+version[i]+'.fits')
+
 
 def exportclean(outname,keepcasaimage=True):
     #
@@ -1892,13 +1915,13 @@ def bpcopy(table,
 
     if  replace==False:
         
-        os.system("rm -rf "+table+"_bpcopy")
+        rmtables(table+"_bpcopy")
         os.system("cp -rf "+table+" "+table+"_bpcopy")
         table=table+"_bpcopy"
         
     for k in range(len(idr)):
 
-        os.system("rm -rf tmp.bcal")
+        rmtables("tmp.bcal")
         
         tb.open(table,nomodify=False)
         subtb=tb.query('SPECTRAL_WINDOW_ID=='+str(idr[k]))
@@ -1918,7 +1941,7 @@ def bpcopy(table,
             copytb.copyrows(table)
             copytb.close()
             
-        os.system("rm -rf tmp.bcal")
+        rmtables("tmp.bcal")
         
 def rmcolumn(msfile,column=""):
     """
