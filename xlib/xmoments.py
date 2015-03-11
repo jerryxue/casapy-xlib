@@ -128,7 +128,7 @@ def xmoments(   imagename,
         os.system("rm -rf "+rootname+'.mom'+mom+'.fits') 
         immoments(imagename,
               axis="spec",
-              mask=imagename+'.mask>0',
+              mask=rootname+'.mask>0',
               stretch=True,
               moments=[int(mom)],
               outfile=rootname+'.mom'+mom)
