@@ -53,7 +53,7 @@ def ximport(xp):
     #
     #    AUTHOR
     #       
-    #       Rui Xue, University of Illinois
+    #       Rui Xue, Purdue University
     #
     #########################################################################################
     """
@@ -201,7 +201,7 @@ def ximport(xp):
         xu.news("Use split to extract data based on Scan/Spw/Timerange/Field selecting and TimeBin setting:")
         xu.news(xp['prepfile'])
         xu.news("")
-    
+        """
         split(vis=xp['prepfile'],
               outputvis=xp['msfile']+'.select',
               scan=xp['importscan'],
@@ -214,7 +214,6 @@ def ximport(xp):
               width=xp['importchanbin'],
               correlation=xp['importcorr'],
               combine='')
-        
         """
         if  xp['importchanbin']!=1:
             chanaverage=True
@@ -236,10 +235,9 @@ def ximport(xp):
               chanbin=xp['importchanbin'],
               timeaverage=timeaverage,
               timebin=xp['importtimebin'],
-              useweights='flags',
               regridms=False,
               correlation=xp['importcorr'])
-        """
+
         os.system('rm -rf '+xp['msfile'])
         os.system('rm -rf '+xp['msfile']+'.flagversions')
         if  os.path.exists(xp['msfile']+'.select'):
@@ -253,7 +251,7 @@ def ximport(xp):
     xu.news("")
     xu.news("--listobs--")
     xu.news("")
-    xu.news("Use listobs to xu.news(a observation summary:")
+    xu.news("Use listobs to get an observation summary:")
     xu.news(xp['msfile'])
     xu.news("")
     
@@ -308,6 +306,7 @@ def ximport(xp):
     
 
     return xp    
+
 if  __name__=="__main__":
     xp=ximport(xp)    
         

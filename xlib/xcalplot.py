@@ -59,7 +59,7 @@
 #
 #   AUTHOR
 #
-#       Rui Xue, University of Illinois
+#       Rui Xue, Purdue University
 #
 #########################################################################################
 

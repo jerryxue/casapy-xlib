@@ -11,8 +11,8 @@ mirfile_list=[  '../../../../raw/co10/n4254/vis/ngc4254_D1_08jun08.co.cal',
 telescopes=['CARMA']*len(track_list)
 
 for i in range(0,len(mirfile_list)):
-        
-    execfile(xlib+'xinit.py')
+
+    xp=xu.init()
     
     xp['rawfiles']=mirfile_list[i]
     xp['prefix']=track_list[i]
@@ -27,10 +27,10 @@ for i in range(0,len(mirfile_list)):
     xp['restfreq']          ='115.2712GHz'
     xp['outframe']          ='LSRK'
 
-    execfile(xlib+'ximport.py')
-    execfile(xlib+'xconsol.py')
+    #xp=xu.ximport(xp)
+    #xp=xu.xconsol(xp)
 
-execfile(xlib+'xinit.py')
+xp=xu.init()
 
 # CONSOLIDATING 
 xp['prefix']            ='n4254co'
@@ -49,17 +49,29 @@ xp['outframe']          ='LSRK'
 
 xp['phasecenter']       ='J2000 12h18m49.56 +14d24m58.50'
 xp['mosweight']         =True
-xp['imsize']            =450
-xp['cell']              ='1arcsec'
+xp['imsize']            =2**6*10
+xp['cell']              ='0.5arcsec'
 
-xp['multiscale']        =[0,3,9]
+xp['multiscale']        =[x*5 for x in [0,1,3,9,27]]
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
-xp['minpb']             =0.10
-xp['clean_mask']        =0.10
+xp['minpb']             =0.05
+xp['clean_mask']        =0.20
+
+xp['threshold_spec']    ="34.4219335161mJy"
 
 # RUN SCRIPTS
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
-xu.sumwt(xp['prefix']+'.src.ms')
+#xp=xu.xconsol(xp)
+xp=xu.xclean(xp)
+
+#xp['threshold_spec']=   xp['threshold_spec_last']
+xp['multiscale']        =[]
+xp['ctag']              ='_st'
+xp['clean_gain']        =0.1
+xp['cyclefactor']       =1.5
+xp['negcomponent']      =0
+xp=xu.xclean(xp)
+
+
+

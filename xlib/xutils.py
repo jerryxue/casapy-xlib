@@ -52,7 +52,7 @@ def init():
     'importband':'',            # Select the band to be imported
     'importmirarray':'CARMA',   # Select the array name when importing MIRIAD files (CARMA, BIMA, SMA)
     'importmirnocal':False,     # Dont apply the gain table in MIRIAD files when importing data
-    'importtimebin':'0s',       # pre-time averaging during data importing
+    'importtimebin':'',       # pre-time averaging during data importing
     'importmirline':'',         # regridding the MIRIAD spectral windows before importing data
     
     'starttime':'',             # start time to search for data (only for importmode='vla')
@@ -381,8 +381,10 @@ def sumwt(visfile='',
     
     news("   channel:       velocity : sum(weight)")
     for ic in range(0,len(v)):
+        np.seterr(divide='ignore')
         news(" "+'ch'+"{0:5.0f}".format(ic)+'   :   '+"{0:>10.2f}".format(v[ic])+\
              ' km/s   :   '+"{0:15.2f}".format(cwt[ic])+'   :   '+"{0:15.2f}".format(1000.0*np.sqrt(1/cwt[ic])*np.sqrt(1.0/topeff))+' mJy')
+        np.seterr(divide='warn')
         if  oldstyle==False:
             print >>vsfile,str(" "+''+"{0:5.0f}".format(ic)+'   '+"{0:>10.2f}".format(v[ic])+'   '+"{0:10.2f}".format(cwt[ic]))
         else:
@@ -833,6 +835,7 @@ def cleanup(outname,tag='',resume=False):
     for i in range(0,len(version)):
         if    os.path.exists(outname+'.'+version[i]):
             if  tag=='':
+                rmtables(outname+'.'+version[i])
                 os.system('rm -rf '+outname+'.'+version[i])
             else:
                 os.system('rm -rf '+outname+tag+'.'+version[i])
@@ -1169,7 +1172,7 @@ def blsearch(logname=casalog.logfile()):
     news("----------- antfilter End: -----------")
     news("")
 
-def news(msg,origin='++++++'):
+def news(msg,origin='++xutils++'):
     #
     #    print out information to casalog
     #
@@ -1425,6 +1428,7 @@ def scalewt(srcfile,
             fitspw='',
             datacolumn='corrected',
             minsamp=2,
+            plot=False,
             modify=False):
     #
     # statwt() modifies weight/sigma for each vis record using an emperical
@@ -1537,47 +1541,49 @@ def scalewt(srcfile,
         news("Median,Min,Max (after) : "+str([np.median(b2),np.min(b2),np.max(b2)]))
         news("")
         
-        plt.close()
-        plt.ioff()
+        if  plot==True:
+            plt.close()
+            plt.ioff()
+            
+            plt.figure(figsize=(5,8))
+            plt.subplot(2,1,1)
+            plt.xlabel("1/wt$^{0.5}$ before")
+            plt.ylabel("1/wt$^{0.5}$ after")
+            H, xedges, yedges = np.histogram2d(a1, b1, bins=(40,40))
+            H = np.rot90(H)
+            H = np.flipud(H)
+            Hmasked = np.ma.masked_where(H==0,H) 
+            plt.axis([0, xedges.max(), 0, yedges.max()])
+            plt.pcolormesh(xedges,yedges,Hmasked)
+            cbar = plt.colorbar()
+            cbar.ax.set_ylabel('Counts')
+            xrange=np.array([0, xedges.max()])
+            plt.plot(xrange,xrange*(np.median(b1/a1)),label="sf="+str((1/np.median(b1/a1))**2.0))
+            plt.legend()
+            
+            plt.subplot(2,1,2)
+            plt.xlabel("wt before")
+            plt.ylabel("wt after")
+            H, xedges, yedges = np.histogram2d(a2, b2, bins=(40,40))
+            H = np.rot90(H)
+            H = np.flipud(H)
+            Hmasked = np.ma.masked_where(H==0,H) 
+            plt.axis([0, xedges.max(), 0, yedges.max()])
+            plt.pcolormesh(xedges,yedges,Hmasked)
+            cbar = plt.colorbar()
+            cbar.ax.set_ylabel('Counts')
+            xrange=np.array([0, xedges.max()])
+            plt.plot(xrange,xrange*(np.median(b2/a2)),label="sf="+str(np.median(b2/a2)))
+            plt.legend()
+            
+            #plt.show()
+            plt.savefig(srcfile+".scalewt.pdf")
+            plt.close()
+            news("")
+            news("save scatter plot for the WEIGHT change to:")
+            news(srcfile+".scalewt.pdf")
+            news("")
         
-        plt.figure(figsize=(5,8))
-        plt.subplot(2,1,1)
-        plt.xlabel("1/wt$^{0.5}$ before")
-        plt.ylabel("1/wt$^{0.5}$ after")
-        H, xedges, yedges = np.histogram2d(a1, b1, bins=(40,40))
-        H = np.rot90(H)
-        H = np.flipud(H)
-        Hmasked = np.ma.masked_where(H==0,H) 
-        plt.axis([0, xedges.max(), 0, yedges.max()])
-        plt.pcolormesh(xedges,yedges,Hmasked)
-        cbar = plt.colorbar()
-        cbar.ax.set_ylabel('Counts')
-        xrange=np.array([0, xedges.max()])
-        plt.plot(xrange,xrange*(np.median(b1/a1)),label="sf="+str((1/np.median(b1/a1))**2.0))
-        plt.legend()
-        
-        plt.subplot(2,1,2)
-        plt.xlabel("wt before")
-        plt.ylabel("wt after")
-        H, xedges, yedges = np.histogram2d(a2, b2, bins=(40,40))
-        H = np.rot90(H)
-        H = np.flipud(H)
-        Hmasked = np.ma.masked_where(H==0,H) 
-        plt.axis([0, xedges.max(), 0, yedges.max()])
-        plt.pcolormesh(xedges,yedges,Hmasked)
-        cbar = plt.colorbar()
-        cbar.ax.set_ylabel('Counts')
-        xrange=np.array([0, xedges.max()])
-        plt.plot(xrange,xrange*(np.median(b2/a2)),label="sf="+str(np.median(b2/a2)))
-        plt.legend()
-        
-        #plt.show()
-        plt.savefig(srcfile+".scalewt.pdf")
-        plt.close()
-        news("")
-        news("save scatter plot for the WEIGHT change to:")
-        news(srcfile+".scalewt.pdf")
-        news("")
         """
         print "weight scaling factor: "+str((1/np.median(b1/a1))**2.0)
         print "weight scaling factor: "+str(np.median(b2/a2))
@@ -1915,13 +1921,14 @@ def bpcopy(table,
 
     if  replace==False:
         
-        rmtables(table+"_bpcopy")
+        if  os.path.exists(table+"_bpcopy"):
+            rmtables(table+"_bpcopy")
         os.system("cp -rf "+table+" "+table+"_bpcopy")
         table=table+"_bpcopy"
         
     for k in range(len(idr)):
-
-        rmtables("tmp.bcal")
+        if  os.path.exists("tmp.bcal"):
+            rmtables("tmp.bcal")
         
         tb.open(table,nomodify=False)
         subtb=tb.query('SPECTRAL_WINDOW_ID=='+str(idr[k]))
@@ -1940,8 +1947,8 @@ def bpcopy(table,
             copytb.putcol("SPECTRAL_WINDOW_ID",spws)
             copytb.copyrows(table)
             copytb.close()
-            
-        rmtables("tmp.bcal")
+        if  os.path.exists("tmp.bcal"):    
+            rmtables("tmp.bcal")
         
 def rmcolumn(msfile,column=""):
     """

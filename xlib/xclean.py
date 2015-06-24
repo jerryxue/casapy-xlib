@@ -39,7 +39,7 @@ def xclean(xp):
     #
     #   AUTHOR
     #
-    #       Rui Xue, University of Illinois
+    #       Rui Xue, Purdue University
     #
     #########################################################################################
     """
@@ -469,5 +469,5 @@ def xclean(xp):
 
     return xp    
 if  __name__=="__main__":
-    xp=clean(xp)    
+    xp=xclean(xp)    
     
