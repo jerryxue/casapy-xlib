@@ -190,6 +190,8 @@ def xconsol(xp):
                 if  xp['chanbin']>1:
                     chanaverage=True
                     chanbin=xp['chanbin']
+                """
+                #   this was used to overwrite a feature in mstransform()
                 mstransform(vis=xp['msfile'],
                             outputvis=xp['srcfile']+'.tmp',
                             createmms=False,
@@ -220,7 +222,31 @@ def xconsol(xp):
                             datacolumn='all',
                             combinespws=xp['combinespws'])            
                 os.system("rm -rf "+xp['srcfile']+'.tmp')
-                
+                """
+                mstransform(vis=xp['msfile'],
+                            outputvis=xp['srcfile'],
+                            createmms=False,
+                            numsubms=64,
+                            separationaxis='spw',
+                            field=xp['source'],
+                            spw=xp['spw_source'],
+                            keepflags=False,
+                            usewtspectrum=True,
+                            datacolumn=datacolumn,
+                            chanaverage=chanaverage,
+                            chanbin=chanbin,
+                            regridms=True,
+                            combinespws=xp['combinespws'],
+                            mode=xp['cleanmode'],
+                            nchan=xp['clean_nchan'],
+                            start=xp['clean_start'],
+                            width=xp['clean_width'],
+                            nspw=1,
+                            interpolation=xp['spinterpmode'],
+                            outframe=xp['outframe'],
+                            restfreq=xp['restfreq'],
+                            phasecenter='',
+                            hanning=xp['hs'])
             xu.news("")
             xu.news("checking flagging consistency among channels:")
             xu.news("")
