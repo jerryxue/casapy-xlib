@@ -7,7 +7,7 @@ telescopes=list('CARMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):
     
-    execfile(xlib+'xinit.py')
+    xp=xu.init()
     
     xp['rawfiles']=mirfile_list[i]
     xp['prefix']=track_list[i]
@@ -26,10 +26,10 @@ for i in range(0,len(mirfile_list)):
 
     xp['phasecenter']       ='J2000 04h30m49.06 64d50m52.61'
 
-    execfile(xlib+'ximport.py')
-    execfile(xlib+'xconsol.py')
+    #xp=xu.ximport(xp)
+    #xp=xu.xconsol(xp)
 
-execfile(xlib+'xinit.py')
+xp=xu.init()
 
 # CONSOLIDATING 
 xp['prefix']            ='n1569co'
@@ -48,17 +48,30 @@ xp['outframe']          ='LSRK'
     
 xp['phasecenter']       ='J2000 04h30m49.06 64d50m52.61'
 xp['mosweight']         =True
-xp['imsize']            =2**5*10
-xp['cell']              ='1arcsec'
+xp['wnpixels']          =128
+xp['imsize']            =400
+xp['cell']              ='1.0arcsec'
 
-xp['multiscale']        =[0,4,12]
+xp['minpb']             =0.10
+xp['clean_mask']        ='circle[[200pix,200pix],75pix]'
+xp['multiscale']        =[int(x*(4.0/1.0)) for x in [0.,2.,4.,9.]]
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
-xp['minpb']             =0.10
-xp['clean_mask']        ='circle[[160pix,160pix],60pix]'
+
 
 # RUN SCRIPTS
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
-xu.sumwt(xp['prefix']+'.src.ms')
+
+#xu.xconsol(xp)
+
+xp['ctag']              ='_robust'
+xp['cleanweight']       ='briggs'
+xu.xclean(xp)
+
+xp['ctag']              ='_natural'
+xp['cleanweight']       ='natural'
+xu.xclean(xp)
+
+#execfile(xlib+'xconsol.py')
+#execfile(xlib+'xclean.py')
+#xu.sumwt(xp['prefix']+'.src.ms')

@@ -17,7 +17,7 @@ telescopes=list('BIMA' for i in track_list)
 
 for i in range(0,len(mirfile_list)):
     
-    execfile(xlib+'xinit.py')
+    xp=xu.init()
     
     xp['rawfiles']=mirfile_list[i]
     xp['prefix']=track_list[i]
@@ -32,13 +32,10 @@ for i in range(0,len(mirfile_list)):
     xp['restfreq']          ='115.2712GHz'
     xp['outframe']          ='LSRK'
 
-    xp['phasecenter']       ='J2000 12h40m00.0 +61d36m31.01'
+    #xp=xu.ximport(xp)
+    #xp=xu.xconsol(xp)
 
-    execfile(xlib+'ximport.py')
-    execfile(xlib+'xconsol.py')
-
-
-execfile(xlib+'xinit.py')
+xp=xu.init()
 
 # CONSOLIDATING 
 xp['prefix']            ='n4605co'
@@ -57,19 +54,28 @@ xp['outframe']          ='LSRK'
     
 xp['phasecenter']       ='J2000 12h40m00.0 +61d36m31.01'
 xp['mosweight']         =True
-xp['imsize']            =2**5*10
+xp['wnpixels']          =96
+
+xp['imsize']            =320
 xp['cell']              ='1arcsec'
 
-xp['multiscale']        =[0,4,12]
+xp['minpb']             =0.10
+xp['clean_mask']        ='circle[[160pix,160pix],100pix]'
+xp['clean_mask']        =0.15
+xp['multiscale']        =[int(x*(3.0/1.0)) for x in [0.,2.,5.]]
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
-xp['minpb']             =0.10
-xp['clean_mask']        ='circle[[160pix,160pix],100pix]'
 
+#xu.xconsol(xp)
 
-# RUN SCRIPTS
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
-xu.sumwt(xp['prefix']+'.src.ms')
+xp['ctag']              ='_robust'
+xp['cleanweight']       ='briggs'
+xu.xclean(xp)
+
+xp['ctag']              ='_natural'
+xp['cleanweight']       ='natural'
+xu.xclean(xp)
+
+#xu.sumwt(xp['prefix']+'.src.ms')
 

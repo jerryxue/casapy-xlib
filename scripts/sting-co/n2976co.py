@@ -38,7 +38,7 @@ mirfile_list= [ '../../../../raw/co10/bima/n2976/n2976/old/n2976.1.lc.usb',
 
 for i in range(0,len(mirfile_list)):
 
-    execfile(xlib+'xinit.py')
+    xp=xu.init()
     
     xp['rawfiles']=mirfile_list[i]
     xp['prefix']=track_list[i]
@@ -56,10 +56,10 @@ for i in range(0,len(mirfile_list)):
 
     xp['phasecenter']       ='J2000 09h47m15.40 67d54m59.00'
 
-    execfile(xlib+'ximport.py')
-    execfile(xlib+'xconsol.py')
+    xp=xu.ximport(xp)
+    xp=xu.xconsol(xp)
 
-execfile(xlib+'xinit.py')
+xp=xu.init()
 
 # CONSOLIDATING 
 xp['prefix']            ='n2976co'
@@ -82,14 +82,25 @@ xp['mosweight']         =True
 xp['imsize']            =450
 xp['cell']              ='1arcsec'
 
-xp['multiscale']        =[0,3,9]
+xp['minpb']             =0.10
+xp['clean_mask']        =0.15
+xp['multiscale']        =[int(x*(2.0/1.0)) for x in [0.,2.,4.,9.]]
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
-xp['minpb']             =0.10
-xp['clean_mask']        =0.10
 
-# RUN SCRIPTS
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
-xu.sumwt(xp['prefix']+'.src.ms')
+
+xu.xconsol(xp)
+
+xp['ctag']              ='_robust'
+xp['cleanweight']       ='briggs'
+xu.xclean(xp)
+
+xp['ctag']              ='_natural'
+xp['cleanweight']       ='natural'
+xu.xclean(xp)
+# 
+# # RUN SCRIPTS
+# execfile(xlib+'xconsol.py')
+# execfile(xlib+'xclean.py')
+# xu.sumwt(xp['prefix']+'.src.ms')
