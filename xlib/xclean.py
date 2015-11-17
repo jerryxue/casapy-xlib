@@ -223,6 +223,10 @@ def xclean(xp):
             xu.checkchflag(vis_loop[i])  
         else:
             interpolation=xp['spinterpmode']
+        if  xp['outertaper']==[]:
+            uvtaper=False
+        else:
+            uvtaper=True
         clean(vis=vis_loop[i],
               imagename=outname_loop[i],
               field=xp['clean_field'],
@@ -243,6 +247,7 @@ def xclean(xp):
               imsize=xp['imsize'],
               cell=xp['cell'],
               weighting=xp['cleanweight'],
+              npixels=xp['wnpixels'],
               robust =xp['wrobust'],
               imagermode=xp['imagermode'],
               phasecenter=xp['phasecenter'],
@@ -253,7 +258,7 @@ def xclean(xp):
               mosweight=xp['mosweight'],
               minpb=xp['minpb'],
               pbcor=False,
-              uvtaper=True,
+              uvtaper=uvtaper,
               innertaper=[],
               outertaper=xp['outertaper'],
               cyclefactor=xp['cyclefactor'],

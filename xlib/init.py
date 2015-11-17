@@ -23,7 +23,6 @@ print ""
 print ""
 print "+"*70
 print ""
-print ""
 
 # SPECIFIY ENVI PATHS
 
@@ -95,9 +94,8 @@ print casadef.casa_version
 print 'r'+casadef.subversion_revision
 print ''
 print '>>>> Compatible CASA Version:'
-print '4.4.0'
-print 'r>=33623' 
-print ""
+print '4.5.0'
+print 'r>=35166' 
 print ""
 print "+"*70
 print ""
