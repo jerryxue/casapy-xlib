@@ -101,7 +101,7 @@ def ximport(xp):
     #----------------------------------------------------------------------------------------
     #   Data Import: Import data from VLA UVFITS files
     #----------------------------------------------------------------------------------------
-    if     xp['importmode']=='uvfits':
+    if  xp['importmode']=='uvfits':
     
         xu.news("")
         xu.news("--importuvfits--")
@@ -118,7 +118,7 @@ def ximport(xp):
     #----------------------------------------------------------------------------------------
     #   Data Import: Import data from EVLA ASDM files
     #----------------------------------------------------------------------------------------
-    if     xp['importmode']=='evla':
+    if  xp['importmode']=='evla':
     
         xu.news("")
         xu.news("--importevla--")
@@ -164,11 +164,17 @@ def ximport(xp):
         xu.news("Write the data into the Measurement Set (MS):")
         xu.news(xp['msfile'])
         xu.news("")
+        if  xp['importmirspw']=='':
+            mirspw='all'
+        else:
+            mirspw=xp['importmirspw']
         importmiriad(mirfile=xp['rawfiles'],
                      vis=xp['msfile'],
                      tsys=True,
-                     spw=xp['importmirspw'],
-                     linecal=False)
+                     spw=mirspw,
+                     linecal=False,
+                     vel='',
+                     wide='all')
     
     #----------------------------------------------------------------------------------------
     #   Additional Data Selection
@@ -177,7 +183,7 @@ def ximport(xp):
          or xp['importspw']!=''
          or xp['importtimerange']!=''
          or xp['importfield']!=''
-         or xp['importtimebin']!='0s'
+         or xp['importtimebin']!=''
          or xp['importchanbin']!=1
          or xp['importmode']=='ms') :
         

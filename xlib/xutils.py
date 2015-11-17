@@ -207,7 +207,7 @@ def init():
     'restorbeam_method':'maximum',  # not useful any more
     
     
-    'minpb':0.05,                # masked out the region with pb response < minbp
+    'minpb':0.10,                # masked out the region with pb response < minbp
     'cleanspw':'',
     'phasecenter':'',           # imaging phasecenter, e.g.'J2000 12h18m49.6 14d24m59.01' or '2' (=fieldid2)
     'spinterpmode':'linear',    # spectral gridding interpolation mode in CLEAN
@@ -215,7 +215,7 @@ def init():
     'outframe':'BARY',          # frame of the output image
     'allowchunk':False,
     
-    'imsize':2**5*10,           # imaging size (numbers of pixels)
+    'imsize':2**5*10,           # imaging size (numbers of pixels) (2**x)*(3**y)*(5**z)*(7**r)
     'cell':'8.0arcsec',         # imaging pixel size.
     'clean_mask':0.2,           # 0.3:     a clean box with pb response higher 0.2
                                 # True:    a clean box with pb response higher <minpb>
@@ -257,6 +257,7 @@ def init():
     'outertaper':[],            # taper function for weighting
     'cleanspec':True,           # imaging spectral line?
     'wrobust':0.5,              # robust weight "R" parameter
+    'wnpixels':0,               # number of pixels to determine uv-cell
     'gridmode':'aprojection',
     
     'cleanmode':'channel',      # e.g. "channel" or "velocity"
@@ -564,6 +565,9 @@ def importmir(mirfile='',
     # using this "starting or sky frequency" in UVFITS.
     #-
     news("")    
+    news(" copy mean(weight_spectrum) to weight")
+    copyweight(vis,copyback=True)
+    news("")
     
     news("")
     news("++")
@@ -571,6 +575,17 @@ def importmir(mirfile='',
     news("++")
     news("")
 
+def carmapb(vis):
+    tb.open(vis+"/ANTENNA",nomodify=False)
+    namelist=tb.getcol("DISH_DIAMETER").tolist()
+    for kk in range(len(namelist)):
+        print namelist[kk]
+        if  abs(namelist[kk]-10.4)<0.01:
+            namelist[kk]=9.3
+        if  abs(namelist[kk]-6.1)<0.01:
+            namelist[kk]=5.8
+    tb.putcol("DISH_DIAMETER",namelist)
+    tb.close()
 
 def getuvlist(logname):
     #
@@ -813,7 +828,7 @@ def importmiriad(mirfile='',
         prolist[k]=timerange_mean
     tb.putcol("RELEASE_DATE",prolist) 
     tb.close()
-    
+
 
 def cleanup(outname,tag='',resume=False):
     """
@@ -862,43 +877,79 @@ def exportclean(outname,keepcasaimage=True):
             if  keepcasaimage==False:
                 os.system("rm -rf "+outname+'.'+version[i])
 
-def savedisk(path='./'):
-    #
-    #    export imaging products into fits files
-    #
-    fitslist=glob.glob(path+'*.fits')
-    for i in range(0,len(fitslist)):
-        tmp=fitslist[i]
-        tmp=tmp.replace(".fits","")
-        news("remove: "+tmp)
-        os.system("rm -rf "+tmp)            
-    
-    fitslist=glob.glob(path+'*.ms')
-    for i in range(0,len(fitslist)):
-        tmp=fitslist[i]
-        news("remove: "+tmp)
-        os.system("rm -rf "+tmp)
-        tmp=tmp+'.flagversions'
-        news("remove: "+tmp)
-        os.system("rm -rf "+tmp)
-        
-    fitslist=glob.glob(path+'*.ms.contsub')
-    for i in range(0,len(fitslist)):
-        tmp=fitslist[i]
-        news("remove: "+tmp)
-        os.system("rm -rf "+tmp) 
-        tmp=tmp+'.flagversions'
-        news("remove: "+tmp)
-        os.system("rm -rf "+tmp)            
+def savedisk(xp,
+             rmtrack=True,
+             rmcasaimage=True,
+             rmcombms=False,
+             rmlog=True,
+             path='./'):
 
-    fitslist=glob.glob(path+'*.ms.cont')
-    for i in range(0,len(fitslist)):
-        tmp=fitslist[i]
-        news("remove: "+tmp)
-        os.system("rm -rf "+tmp)
-        tmp=tmp+'.flagversions'
-        news("remove: "+tmp)
-        os.system("rm -rf "+tmp)            
+    #    remove track files
+    if  rmtrack==True:
+        for i in range(len(xp['prefix_comb'])):
+            ms=xp['prefix_comb'][i]+'.ms'
+            os.system('rm -rf '+ms)
+            ms=xp['prefix_comb'][i]+'.ms.flagversions'
+            os.system('rm -rf '+ms)
+            ms=xp['prefix_comb'][i]+'.src.ms'
+            os.system('rm -rf '+ms)
+    
+    if  rmcombms==True:
+        ms=xp['prefix']+'.ms'
+        os.system('rm -rf '+ms)
+        ms=xp['prefix']+'.src.ms'
+        os.system('rm -rf '+ms)
+        ms=xp['prefix']+'.ms.cont'
+        os.system('rm -rf '+ms)
+        ms=xp['prefix']+'.src.ms.contsub'
+        os.system('rm -rf '+ms)
+    
+    #    remove casa images
+    if  rmcasaimage==True:
+        cleanup(xp['prefix']+'.line')
+        cleanup(xp['prefix']+'.line_d')
+        cleanup(xp['prefix']+'.cont')
+        cleanup(xp['prefix']+'.cont_d')
+    
+    #    collect logs
+    if  rmlog==True:
+        os.system('mkdir '+path+xp['prefix']+'_log')
+        os.system('mv '+path+'*.log '+path+xp['prefix']+'_log')
+        os.system('mv '+path+'*.last '+path+xp['prefix']+'_log')
+
+#     fitslist=glob.glob(path+'*.fits')
+#     for i in range(0,len(fitslist)):
+#         tmp=fitslist[i]
+#         tmp=tmp.replace(".fits","")
+#         news("remove: "+tmp)
+#         os.system("rm -rf "+tmp)            
+#     
+#     fitslist=glob.glob(path+'*.ms')
+#     for i in range(0,len(fitslist)):
+#         tmp=fitslist[i]
+#         news("remove: "+tmp)
+#         os.system("rm -rf "+tmp)
+#         tmp=tmp+'.flagversions'
+#         news("remove: "+tmp)
+#         os.system("rm -rf "+tmp)
+#         
+#     fitslist=glob.glob(path+'*.ms.contsub')
+#     for i in range(0,len(fitslist)):
+#         tmp=fitslist[i]
+#         news("remove: "+tmp)
+#         os.system("rm -rf "+tmp) 
+#         tmp=tmp+'.flagversions'
+#         news("remove: "+tmp)
+#         os.system("rm -rf "+tmp)            
+# 
+#     fitslist=glob.glob(path+'*.ms.cont')
+#     for i in range(0,len(fitslist)):
+#         tmp=fitslist[i]
+#         news("remove: "+tmp)
+#         os.system("rm -rf "+tmp)
+#         tmp=tmp+'.flagversions'
+#         news("remove: "+tmp)
+#         os.system("rm -rf "+tmp)            
 
 def checkbeam(outname,method='maximum'):
     #
@@ -1062,7 +1113,7 @@ def checkpsf(outname):
                 str(int(psf_ny/2-3*(bmaj/psize)))+','+\
                 str(int(psf_nx/2+3*(bmaj/psize)))+','+\
                 str(int(psf_ny/2+3*(bmaj/psize))) 
-    print imfit_box
+    #print imfit_box
     imfit_log=imfit(imagename=outname+'.psf',
                     box=imfit_box,
                     logfile=outname+'.psf.imfit.log',
