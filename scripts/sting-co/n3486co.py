@@ -54,11 +54,11 @@ xp['outframe']          ='LSRK'
 xp['phasecenter']       ='J2000 11h00m23.9 +28d58m29.00'
 xp['mosweight']         =True
 xp['wnpixels']          =128
-xp['imsize']            =500
+xp['imsize']            =400
 xp['cell']              ='1.0arcsec'
 
 xp['minpb']             =0.20
-xp['clean_mask']        =0.20
+xp['clean_mask']        =1./3.
 xp['multiscale']        =[int(x*(3.5/1.0)) for x in [0.,2.,5.]]
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0

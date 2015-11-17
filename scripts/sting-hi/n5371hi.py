@@ -1,5 +1,5 @@
 #line_vrange=[2330,2770]
-execfile(xlib+'xinit.py')
+xp=xu.init()
 
 xp['prefix']        =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
 xp['rawfiles']      =['../n5371/AG559_1']
@@ -49,12 +49,12 @@ xp['usescratch']        =True
 xp['clean_mask']        ='circle[[13h55m43.9s,+40d27m46.0s],550arcsec]'
 
 # RUN SCRIPTS
-#execfile(xlib+'ximport.py')
+#xp=xu.ximport(xp)
 #xu.checkvrange(xp['prefix']+'.ms')
 #au.timeOnSource(xp['prefix']+'.ms')
-execfile(xlib+'xcal.py')
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
+xp=xu.xcal(xp)
+xp=xu.xconsol(xp)
+xp=xu.xclean(xp)
 
 
 

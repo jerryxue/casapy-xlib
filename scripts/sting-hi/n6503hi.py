@@ -1,5 +1,5 @@
 # line_vrange=[1760,2060]
-execfile(xlib+'xinit.py')
+xp=xu.init()
 
 xp['prefix']        =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
 xp['rawfiles']      =['../n6503/AD211_A880125.xp1']
@@ -46,12 +46,12 @@ xp['clean_width']   ='10.4km/s'
 xp['phasecenter']   ='J2000 17h49m26.5 +70d08m39.6'
 
 # RUN SCRIPTS
-#execfile(xlib+'ximport.py')
+#xp=xu.ximport(xp)
 #xu.checkvrange(xp['prefix']+'.ms')
 #au.timeOnSource(xp['prefix']+'.ms')
-execfile(xlib+'xcal.py')
-execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
+xp=xu.xcal(xp)
+xp=xu.xconsol(xp)
+xp=xu.xclean(xp)
 
 
 

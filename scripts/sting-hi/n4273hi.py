@@ -1,5 +1,5 @@
 #line_vrange=[2240,2560]
-execfile(xlib+'xinit.py')
+xp=xu.init()
 
 xp['prefix']        =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
 xp['rawfiles']      =['../n4273/AT259_1','../n4273/AT259_2']
@@ -44,12 +44,12 @@ xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 
 # RUN SCRIPTS
-#execfile(xlib+'ximport.py')
+#xp=xu.ximport(xp)
 #xu.checkvrange(xp['prefix']+'.ms')
 #au.timeOnSource(xp['prefix']+'.ms')
-#execfile(xlib+'xcal.py')
-#execfile(xlib+'xconsol.py')
-execfile(xlib+'xclean.py')
+#xp=xu.xcal(xp)
+#xp=xu.xconsol(xp)
+xp=xu.xclean(xp)
 
 
 

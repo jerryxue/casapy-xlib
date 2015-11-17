@@ -29,7 +29,7 @@ def n0772b13a():
 
     # IMPORT
     xp['prefix']            =inspect.stack()[0][3] 
-    xp['rawfiles']          ='../n0772/13B-363.sb24635393.eb28190296.56594.31903280092.ms'
+    xp['rawfiles']          ='/Volumes/Elements/vla/n0772/13B-363.sb24635393.eb28190296.56594.31903280092.ms'
     xp['importspw']         ='2,12'
     xp['importscan']        ='2~13'
     xp['importmode']        ='ms'
@@ -53,19 +53,19 @@ def n0772b13a():
     xp['niter']             =0
     
     # RUN SCRIPTS:
-    #xp=xu.ximport(xp)
+    xp=xu.ximport(xp)
     xp=xu.xcal(xp)
     xp=xu.xconsol(xp)
     xp=xu.xclean(xp)
     xu.checkvrange(xp['prefix']+'.src.ms')
-    au.timeOnSource(xp['prefix']+'.src.ms')
+    #au.timeOnSource(xp['prefix']+'.src.ms')
     
 def n0772b13b():
     xp=xu.init()
 
     # IMPORT
     xp['prefix']            =inspect.stack()[0][3]
-    xp['rawfiles']          ='../n0772/13B-363.sb24635393.eb28501581.56608.280407708335.ms'
+    xp['rawfiles']          ='/Volumes/Elements/vla/n0772/13B-363.sb24635393.eb28501581.56608.280407708335.ms'
     xp['importspw']         ='2,12'
     xp['importscan']        ='2~13'
     xp['importmode']        ='ms'
@@ -92,12 +92,12 @@ def n0772b13b():
     
     
     # RUN SCRIPTS:
-    #xp=xu.ximport(xp)
+    xp=xu.ximport(xp)
     xp=xu.xcal(xp)
     xp=xu.xconsol(xp)
     xp=xu.xclean(xp)
     xu.checkvrange(xp['prefix']+'.src.ms')
-    au.timeOnSource(xp['prefix']+'.src.ms')
+    #au.timeOnSource(xp['prefix']+'.src.ms')
 
 def n0772b13c():
     
@@ -105,7 +105,7 @@ def n0772b13c():
 
     # IMPORT
     xp['prefix']            =inspect.stack()[0][3]
-    xp['rawfiles']          ='../n0772/13B-363.sb24635393.eb28527426.56613.267213252315.ms'
+    xp['rawfiles']          ='/Volumes/Elements/vla/n0772/13B-363.sb24635393.eb28527426.56613.267213252315.ms'
     xp['importspw']         ='2,12'
     xp['importscan']        ='2~13'
     xp['importmode']        ='ms'
@@ -128,12 +128,12 @@ def n0772b13c():
     xp['niter']             =0
     
     # RUN SCRIPTS:
-    #xp=xu.ximport(xp)
+    xp=xu.ximport(xp)
     xp=xu.xcal(xp)
     xp=xu.xconsol(xp)
     xp=xu.xclean(xp)
     xu.checkvrange(xp['prefix']+'.src.ms')
-    au.timeOnSource(xp['prefix']+'.src.ms')
+    #au.timeOnSource(xp['prefix']+'.src.ms')
     
 def n0772bc00():
     # short track / low velocity resolution
@@ -141,7 +141,7 @@ def n0772bc00():
 
     # IMPORT
     xp['prefix']            =inspect.stack()[0][3]
-    xp['rawfiles']          ='../n0772/AT237_6'
+    xp['rawfiles']          ='/Volumes/Elements/vla/n0772/AT237_6'
     xp['importspw']         ='1'
     
     # CALIBRATION
@@ -184,12 +184,12 @@ def n0772bc00():
     xp['niter']             =0
     
     # RUN SCRIPTS:
-    #xp=xu.ximport(xp)
+    xp=xu.ximport(xp)
     xp=xu.xcal(xp)
     xp=xu.xconsol(xp)
     xp=xu.xclean(xp)
     xu.checkvrange(xp['prefix']+'.src.ms')
-    au.timeOnSource(xp['prefix']+'.src.ms')
+    #au.timeOnSource(xp['prefix']+'.src.ms')
     
     
 def n0772bc13a():
@@ -198,7 +198,7 @@ def n0772bc13a():
 
     # IMPORT
     xp['prefix']            =inspect.stack()[0][3]
-    xp['rawfiles']          ='/Volumes/Expansion-Data/evla/n0772/13B-363.sb24382374.eb25239554.56540.51835789352.ms'
+    xp['rawfiles']          ='/Volumes/Elements/vla/n0772/13B-363.sb24382374.eb25239554.56540.51835789352.ms'
     xp['importspw']         ='2,12'
     xp['importspw']         ='2'
     xp['importscan']        ='2~15'
@@ -286,12 +286,12 @@ def n0772bc13a():
     
     
     # RUN SCRIPTS:
-    #xp=xu.ximport(xp)
+    xp=xu.ximport(xp)
     xp=xu.xcal(xp)
     xp=xu.xconsol(xp)
     xp=xu.xclean(xp)
     xu.checkvrange(xp['prefix']+'.src.ms')
-    au.timeOnSource(xp['prefix']+'.src.ms')
+    #au.timeOnSource(xp['prefix']+'.src.ms')
     
 def n0772bc13b():
     
@@ -299,7 +299,7 @@ def n0772bc13b():
 
     # IMPORT
     xp['prefix']            =inspect.stack()[0][3]
-    xp['rawfiles']          ='../n0772/13B-363.sb24382374.eb25241357.56541.46377263889.ms'
+    xp['rawfiles']          ='/Volumes/Elements/vla/n0772/13B-363.sb24382374.eb25241357.56541.46377263889.ms'
     xp['importspw']         ='2,12'
     xp['importspw']         ='2'
     xp['importscan']        ='2~15'
@@ -362,12 +362,12 @@ def n0772bc13b():
     xp['niter']             =0
     
     # RUN SCRIPTS:
-    #xp=xu.ximport(xp)
+    xp=xu.ximport(xp)
     xp=xu.xcal(xp)
     xp=xu.xconsol(xp)
     xp=xu.xclean(xp)
     xu.checkvrange(xp['prefix']+'.src.ms')
-    au.timeOnSource(xp['prefix']+'.src.ms')
+    #au.timeOnSource(xp['prefix']+'.src.ms')
     
     
 def n0772d99a():
@@ -376,7 +376,7 @@ def n0772d99a():
 
     # IMPORT
     xp['prefix']            =inspect.stack()[0][3]
-    xp['rawfiles']          ='../n0772/AG564_3'
+    xp['rawfiles']          ='/Volumes/Elements/vla/n0772/AG564_3'
     xp['importspw']         ='1'
     
     # CALIBRATION
@@ -407,12 +407,12 @@ def n0772d99a():
     xp['niter']             =0
     
     # RUN SCRIPTS:
-    #xp=xu.ximport(xp)
+    xp=xu.ximport(xp)
     xp=xu.xcal(xp)
     xp=xu.xconsol(xp)
     xp=xu.xclean(xp)
     xu.checkvrange(xp['prefix']+'.src.ms')
-    au.timeOnSource(xp['prefix']+'.src.ms')
+    #au.timeOnSource(xp['prefix']+'.src.ms')
     
 def n0772d99b():
     
@@ -420,8 +420,8 @@ def n0772d99b():
 
     # IMPORT
     xp['prefix']            =inspect.stack()[0][3]
-    xp['rawfiles']          =['/Volumes/Scratch/raw/21cm/n0772/AG564_4',
-                              '/Volumes/Scratch/raw/21cm/n0772/AG564_5']
+    xp['rawfiles']          =['/Volumes/Elements/vla/n0772/AG564_4',
+                              '/Volumes/Elements/vla/n0772/AG564_5']
     xp['importspw']         ='1'
     
     # CALIBRATION
@@ -456,12 +456,12 @@ def n0772d99b():
     xp['niter']             =0
     
     # RUN SCRIPTS:
-    #xp=xu.ximport(xp)
+    xp=xu.ximport(xp)
     xp=xu.xcal(xp)
     xp=xu.xconsol(xp)
     xp=xu.xclean(xp)
     xu.checkvrange(xp['prefix']+'.src.ms')
-    au.timeOnSource(xp['prefix']+'.src.ms')
+    #au.timeOnSource(xp['prefix']+'.src.ms')
     
 
 
@@ -486,6 +486,8 @@ def n0772hi():
     xp['cleanspec']         =True
     xp['cleancont']         =True
     
+    xp['mosweight']         =True
+    xp['wnpixels']          =45*60
     xp['imsize']            =2**7*10
     xp['cell']              ='2.0arcsec'
     
@@ -493,17 +495,25 @@ def n0772hi():
     xp['clean_start']       ='2031.2km/s'
     xp['clean_width']       ='10.4km/s'
     xp['clean_nchan']       =80
-    
+
+    xp['minpb']             =0.10
+    xp['clean_mask']        ='circle[[01h59m25.7s,+18d59m14.0s],750arcsec]' 
     xp['multiscale']        =[0,4,12]
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0
-    xp['usescratch']        =True
-    xp['clean_mask']        ='circle[[01h59m25.7s,+18d59m14.0s],750arcsec]'
+    xp['usescratch']        =False
+
+    xu.xconsol(xp)
     
     # RUN SCRIPTS:
-    xp=xu.xconsol(xp)
-    xp=xu.xclean(xp)
+    xp['ctag']              ='_robust'
+    xp['cleanweight']       ='briggs'
+    xu.xclean(xp)
+    
+    xp['ctag']              ='_natural'
+    xp['cleanweight']       ='natural'
+    xu.xclean(xp)
 
 if  __name__=="__main__":
     #n0772d99a()
