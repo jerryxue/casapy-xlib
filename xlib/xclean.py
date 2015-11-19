@@ -219,7 +219,7 @@ def xclean(xp):
             # turn off CLEAN interpolation and dump SUM(weight) for each plane
             # 
             interpolation='nearest'
-            xu.sumwt(vis_loop[i],oldstyle=True)
+            xu.sumwt(vis_loop[i],oldstyle=True,restfreq=xp['restfreq'])
             xu.checkchflag(vis_loop[i])  
         else:
             interpolation=xp['spinterpmode']

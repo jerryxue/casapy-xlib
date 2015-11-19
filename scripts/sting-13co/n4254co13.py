@@ -12,14 +12,14 @@ mirfile_list=[  '../../../../raw/co10/n4254/vis/ngc4254_D1_08jun08.13co.cal',
 				'../../../../raw/co10/n4254/vis/ngc4254_E3_09jul05.13co.cal',
 				'../../../../raw/co10/n4254/vis/ngc4254_E4_09jul19.13co.cal'	]
 
-track_list=['C1','C2','C3','C4','E2','E3','E4']
-mirfile_list=[ 	'../../../../raw/co10/n4254/vis/n4254_C1_08OCT20.13co.cal',
-				'../../../../raw/co10/n4254/vis/n4254_C2_08OCT24.13co.cal',
-				'../../../../raw/co10/n4254/vis/n4254_C3_08OCT25.13co.cal',
-				'../../../../raw/co10/n4254/vis/n4254_C4_08OCT28.13co.cal',
-				'../../../../raw/co10/n4254/vis/ngc4254_E2_09jul02.13co.cal',
-				'../../../../raw/co10/n4254/vis/ngc4254_E3_09jul05.13co.cal',
-				'../../../../raw/co10/n4254/vis/ngc4254_E4_09jul19.13co.cal'	]
+# track_list=['C1','C2','C3','C4','E2','E3','E4']
+# mirfile_list=[ 	'../../../../raw/co10/n4254/vis/n4254_C1_08OCT20.13co.cal',
+# 				'../../../../raw/co10/n4254/vis/n4254_C2_08OCT24.13co.cal',
+# 				'../../../../raw/co10/n4254/vis/n4254_C3_08OCT25.13co.cal',
+# 				'../../../../raw/co10/n4254/vis/n4254_C4_08OCT28.13co.cal',
+# 				'../../../../raw/co10/n4254/vis/ngc4254_E2_09jul02.13co.cal',
+# 				'../../../../raw/co10/n4254/vis/ngc4254_E3_09jul05.13co.cal',
+# 				'../../../../raw/co10/n4254/vis/ngc4254_E4_09jul19.13co.cal'	]
 
 telescopes=list('CARMA' for i in track_list)
 
@@ -40,8 +40,8 @@ for i in range(0,len(mirfile_list)):
 	xp['restfreq']		  	='110.201353GHz'
 	xp['outframe']		  	='LSRK'
 
-	#xp=xu.ximport(xp)
-	#xp=xu.xconsol(xp)
+	xp=xu.ximport(xp)
+	xp=xu.xconsol(xp)
  	
 # ---------- IMAGE DATA 
 
@@ -64,26 +64,37 @@ xp['outframe']		  	='LSRK'
     
 xp['phasecenter']       ='J2000 12h18m49.56 +14d24m58.50'
 xp['mosweight']         =True
-xp['imsize']            =2**6*10
-xp['cell']              ='0.5arcsec'
+xp['wnpixels']          =128
+xp['imsize']            =400
+xp['cell']              ='1.0arcsec'
 
-xp['multiscale']        =[x*4 for x in [0,1,3,9,27]]
+xp['minpb']             =0.10
+xp['clean_mask']        =0.15
+xp['multiscale']        =[int(x*(2.0/1.0)) for x in [0.,2.,4.,9.]]
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
-xp['minpb']             =0.1
-xp['clean_mask']        =0.25
-xp['threshold_spec']	='19.1726874267mJy'
 
-xp['cresume']			=False
-xp['niter']=200
+xu.xconsol(xp)
 
-# RUN SCRIPTS
-#xp=xu.xconsol(xp)
-for	i in range(0,10):
-	xp=xu.xclean(xp)
-	xu.cleanup('n4254co13.line',tag='.n'+str(i))
-	xp['cresume']		=True
+xp['ctag']              ='_robust'
+xp['cleanweight']       ='briggs'
+xu.xclean(xp)
+
+xp['ctag']              ='_natural'
+xp['cleanweight']       ='natural'
+xu.xclean(xp)
+
+# xp['threshold_spec']	='19.1726874267mJy'
+# xp['cresume']			=False
+# xp['niter']=200
+# 
+# # RUN SCRIPTS
+# #xp=xu.xconsol(xp)
+# for	i in range(0,10):
+# 	xp=xu.xclean(xp)
+# 	xu.cleanup('n4254co13.line',tag='.n'+str(i))
+# 	xp['cresume']		=True
 	
 
 

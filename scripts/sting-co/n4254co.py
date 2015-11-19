@@ -27,8 +27,8 @@ for i in range(0,len(mirfile_list)):
     xp['restfreq']          ='115.2712GHz'
     xp['outframe']          ='LSRK'
 
-    xp=xu.ximport(xp)
-    xp=xu.xconsol(xp)
+    #xp=xu.ximport(xp)
+    #xp=xu.xconsol(xp)
 
 xp=xu.init()
  
@@ -60,14 +60,19 @@ xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 
-xu.xconsol(xp)
+#xu.xconsol(xp)
 
 xp['ctag']              ='_robust'
 xp['cleanweight']       ='briggs'
-xu.xclean(xp)
+#xu.xclean(xp)
 
 xp['ctag']              ='_natural'
 xp['cleanweight']       ='natural'
+#xu.xclean(xp)
+
+xp['ctag']              ='_regular'
+xp['cleanweight']       ='natural'
+xp['multiscale']        =[]
 xu.xclean(xp)
 
 #xu.savedisk(xp)
