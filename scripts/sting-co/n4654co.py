@@ -27,8 +27,8 @@ for i in range(0,len(mirfile_list)):
 
     xp['phasecenter']       ='J2000 12h43m56.6 +13d07m36.0'
 
-    xp=xu.ximport(xp)
-    xp=xu.xconsol(xp)
+    #xp=xu.ximport(xp)
+    #xp=xu.xconsol(xp)
 
 xp=xu.init()
 
@@ -60,15 +60,32 @@ xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 
-xu.xconsol(xp)
+# xu.xconsol(xp)
+# 
+# xp['ctag']              ='_robust'
+# xp['cleanweight']       ='briggs'
+# xu.xclean(xp)
+# 
+# xp['ctag']              ='_natural'
+# xp['cleanweight']       ='natural'
+# xu.xclean(xp)
 
-xp['ctag']              ='_robust'
+
+xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
+
+xp['ctag']              ='_ro'
 xp['cleanweight']       ='briggs'
 xu.xclean(xp)
 
-xp['ctag']              ='_natural'
+xp['ctag']              ='_na'
 xp['cleanweight']       ='natural'
 xu.xclean(xp)
+
+xp['ctag']              ='_st'
+xp['cleanweight']       ='natural'
+xp['multiscale']        =[]
+xu.xclean(xp)
+
 # 
 # # RUN SCRIPTS
 # execfile(xlib+'xconsol.py')

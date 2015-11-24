@@ -1,0 +1,7 @@
+system.resources.memfrac: 90
+system.resources.memory: 15000
+system.resources.cores:   8
+userinfo.name:  Rui Xue
+userinfo.email: rx.astro@gmail.com
+userinfo.org:   PU
+logger.file:    ./aips++.log
