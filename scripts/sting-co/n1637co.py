@@ -30,8 +30,8 @@ for i in range(0,len(mirfile_list)):
 
     xp['phasecenter']       ='J2000 04h41m28.20 -02d51m29.00'
 
-    xp=xu.ximport(xp)
-    xp=xu.xconsol(xp)
+    #xp=xu.ximport(xp)
+    #xp=xu.xconsol(xp)
 
 
 execfile(xlib+'xinit.py')
@@ -67,16 +67,31 @@ xp['negcomponent']      =0
 
 # RUN SCRIPTS
 
-xu.xconsol(xp)
-
-xp['ctag']              ='_robust'
-xp['cleanweight']       ='briggs'
-xu.xclean(xp)
-
-xp['ctag']              ='_natural'
-xp['cleanweight']       ='natural'
-xu.xclean(xp)
+# xu.xconsol(xp)
+# 
+# xp['ctag']              ='_robust'
+# xp['cleanweight']       ='briggs'
+# xu.xclean(xp)
+# 
+# xp['ctag']              ='_natural'
+# xp['cleanweight']       ='natural'
+# xu.xclean(xp)
 # 
 # execfile(xlib+'xconsol.py')
 # execfile(xlib+'xclean.py')
 # xu.sumwt(xp['prefix']+'.src.ms')
+
+xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
+
+xp['ctag']              ='_ro'
+xp['cleanweight']       ='briggs'
+xu.xclean(xp)
+
+xp['ctag']              ='_na'
+xp['cleanweight']       ='natural'
+xu.xclean(xp)
+
+xp['ctag']              ='_st'
+xp['cleanweight']       ='natural'
+xp['multiscale']        =[]
+xu.xclean(xp)

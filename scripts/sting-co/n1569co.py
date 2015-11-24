@@ -64,14 +64,30 @@ xp['negcomponent']      =0
 
 #xu.xconsol(xp)
 
-xp['ctag']              ='_robust'
-xp['cleanweight']       ='briggs'
-xu.xclean(xp)
-
-xp['ctag']              ='_natural'
-xp['cleanweight']       ='natural'
-xu.xclean(xp)
+# xp['ctag']              ='_robust'
+# xp['cleanweight']       ='briggs'
+# xu.xclean(xp)
+# 
+# xp['ctag']              ='_natural'
+# xp['cleanweight']       ='natural'
+# xu.xclean(xp)
 
 #execfile(xlib+'xconsol.py')
 #execfile(xlib+'xclean.py')
 #xu.sumwt(xp['prefix']+'.src.ms')
+
+
+xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
+
+xp['ctag']              ='_ro'
+xp['cleanweight']       ='briggs'
+xu.xclean(xp)
+
+xp['ctag']              ='_na'
+xp['cleanweight']       ='natural'
+xu.xclean(xp)
+
+xp['ctag']              ='_st'
+xp['cleanweight']       ='natural'
+xp['multiscale']        =[]
+xu.xclean(xp)

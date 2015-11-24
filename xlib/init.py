@@ -50,7 +50,7 @@ stinghi=xlibp_path+'/scripts/sting-hi/'     # shortcut for sting-hi script path
 stingco=xlibp_path+'/scripts/sting-co/'     # shortcut for sting-co script path
 sting13co=xlibp_path+'/scripts/sting-13co/' # shortcut for sting-13co scripth path
 examples=xlibp_path+'/scripts/examples/'    # shortcut for examples script path
-testing=xlibp_path+'/scripts/testing/'      # shortcut for testing script path
+tests=xlibp_path+'/scripts/tests/'      # shortcut for testing script path
 
 # ADD PATH & LOAD MODULES 
 pathlist=list(set([mir_path,gs_path,wget_path,carmafiller_path]))

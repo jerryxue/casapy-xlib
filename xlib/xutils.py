@@ -575,17 +575,53 @@ def importmir(mirfile='',
     news("++")
     news("")
 
-def carmapb(vis):
+def carmapb(vis,effdish=True):
+    ###
+    # change dish size to hack primary beam size
+    # change telescope name to hack primary beam shape (Gaussian rather than Airy)
+    ###
+    # The clean task and underlying tools can handle cases where there are multiple dish 
+    # sizes, and thus voltage patterns and primary beams, in the array. This is etected by 
+    # using the dish sizes stored in the ANTENNA sub-table of the MS. Depending on how the 
+    # data was written and imported into CASA, the user may have to manually edit this table 
+    # to insert the correct dish sizes (e.g. using browsetable or the tb table tool).
+    ###
     tb.open(vis+"/ANTENNA",nomodify=False)
-    namelist=tb.getcol("DISH_DIAMETER").tolist()
-    for kk in range(len(namelist)):
-        print namelist[kk]
-        if  abs(namelist[kk]-10.4)<0.01:
-            namelist[kk]=9.3
-        if  abs(namelist[kk]-6.1)<0.01:
-            namelist[kk]=5.8
-    tb.putcol("DISH_DIAMETER",namelist)
+    if  effdish==True:
+        namelist=tb.getcol("DISH_DIAMETER").tolist()
+        for kk in range(len(namelist)):
+            if  abs(namelist[kk]-10.4)<2.0:
+                namelist[kk]=8.56#9.3
+            if  abs(namelist[kk]-6.1)<2.0:
+                namelist[kk]=5.32#5.8#5.49
+        tb.putcol("DISH_DIAMETER",namelist)
+    else:
+        namelist=tb.getcol("DISH_DIAMETER").tolist()
+        for kk in range(len(namelist)):
+            if  abs(namelist[kk]-10.4)<2.0:
+                namelist[kk]=10.4#9.3
+            if  abs(namelist[kk]-6.1)<2.0:
+                namelist[kk]=6.1#5.8#5.49
+        tb.putcol("DISH_DIAMETER",namelist)
+    
+    #     namelist=tb.getcol("DISH_DIAMETER").tolist()
+    #     typelist=tb.getcol("TYPE").tolist()
+    #     for kk in range(len(namelist)):
+    #         if  abs(namelist[kk]-10.4)<2.0:
+    #             typelist[kk]='OVRO'
+    #         if  abs(namelist[kk]-6.1)<2.0:
+    #             typelist[kk]='BIMA'
+    #     tb.putcol("TYPE",typelist)    
+    
     tb.close()
+    listobs(vis)
+    
+    #     tb.open(vis+"/OBSERVATION",nomodify=False)
+    #     namelist=tb.getcol("TELESCOPE_NAME").tolist()
+    #     for k in range(len(namelist)):
+    #         namelist[k]='CARMA'
+    #     tb.putcol("TELESCOPE_NAME",namelist)
+    #     tb.close()
 
 def getuvlist(logname):
     #
