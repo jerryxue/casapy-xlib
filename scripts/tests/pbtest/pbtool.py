@@ -1,3 +1,4 @@
+"""
 vp.reset()
 vp.setpbgauss(telescope='CARMA',
     halfwidth='1.20arcmin', maxrad='5arcmin', reffreq='100GHz',dopb=True)
@@ -13,7 +14,14 @@ vp.summarizevps()
 print "+"*70
 os.system('rm -rf carma_miriad.pb')
 vp.saveastable('carma_miriad.pb')
+"""
 
+vp.reset()
+vp.setpbimage(telescope='CARMA',
+    compleximage='carma_0_BIMA_0_0_180_360_0_45_90_80_100_120_GHz_gauss_VP.im',
+    antnames=['CA1'])
+os.system('rm -rf carma_miriad.pb')          
+vp.saveastable('carma_miriad.pb')
 
 # vp.setpbairy(telescope='CARMA', dopb=T, dishdiam='6.0m',
 #              blockagediam='0.6m', maxrad='2arcmin',

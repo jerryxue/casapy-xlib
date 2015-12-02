@@ -1960,8 +1960,8 @@ def xplotcal(tbfile,iterant=False,
 
 
 def checkvrange(srcfile='',
-                outframe='',
-                restfreq=''):
+                outframe='LSRK',
+                restfreq=115271200000):
     #
     #    check the velocity coverage of a spectral line observation
     #
@@ -1977,6 +1977,8 @@ def checkvrange(srcfile='',
         width='20.8km/s'
         nchan=26
         field=2
+    CO: 115271200000 (Hz)
+    13CO: 110201353000 (Hz)
     with limited functions (no frame conversion)
     """
     c=3e5

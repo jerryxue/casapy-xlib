@@ -76,7 +76,7 @@ xp['negcomponent']      =0
 # xp['cleanweight']       ='natural'
 # xu.xclean(xp)
 
-#xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
+xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
 
 xp['ctag']              ='_ro'
 xp['cleanweight']       ='briggs'

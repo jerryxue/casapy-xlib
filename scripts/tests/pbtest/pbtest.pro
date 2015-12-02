@@ -77,3 +77,14 @@ set_plot,'x'
 
 
 END
+
+PRO PBTEST_FFT
+
+hd=mk_hd([0,0],[401,401],1)
+psf=psf_gaussian(npixel=401,fwhm=20,ndim=2)
+psf=psf/max(psf)
+f_psf=fft(psf,/center)
+writefits,'f_psf_real.fits',real_part(f_psf)
+writefits,'f_psf_image.fits',IMAGINARY(f_psf)
+
+END
