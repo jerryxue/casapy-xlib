@@ -45,6 +45,9 @@ for i in range(0,len(mirfile_list)):
  	
 # ---------- IMAGE DATA 
 
+#   vrange tracks 
+track_list=['C1','C2','C3','C4','E2','E3','E4']
+
 xp=xu.init()
 
 # CONSOLIDATING 
@@ -75,7 +78,7 @@ xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 
-# xu.xconsol(xp)
+xu.xconsol(xp)
 # 
 # xp['ctag']              ='_robust'
 # xp['cleanweight']       ='briggs'

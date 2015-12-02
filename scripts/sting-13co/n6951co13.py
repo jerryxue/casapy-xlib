@@ -32,6 +32,8 @@ for i in range(0,len(mirfile_list)):
 # 	xp=xu.xconsol(xp)
 
 xp=xu.init()
+
+track_list=['E1']
  
 # CONSOLIDATING 
 xp['prefix']            ='n6951co13'
@@ -61,7 +63,7 @@ xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 
-# xu.xconsol(xp)
+xu.xconsol(xp)
 # 
 # xp['ctag']              ='_robust'
 # xp['cleanweight']       ='briggs'
