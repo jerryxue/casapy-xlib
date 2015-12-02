@@ -50,7 +50,7 @@ xp['outframe']          ='LSRK'
     
 xp['phasecenter']       ='J2000 12h34m27.1 +02d11m16.00'
 xp['mosweight']         =True
-xp['wnpixels']          =128
+xp['wnpixels']          =0
 xp['imsize']            =400
 xp['cell']              ='1.0arcsec'
 

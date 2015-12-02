@@ -53,7 +53,7 @@ xp['outframe']          ='LSRK'
 
 xp['phasecenter']       ='J2000 01h59m19.58 +19d00m27.10'
 xp['mosweight']         =True
-xp['wnpixels']          =128
+xp['wnpixels']          =0
 xp['imsize']            =400
 xp['cell']              ='1.0arcsec'
 
@@ -76,17 +76,32 @@ xp['negcomponent']      =0
 # xp['cleanweight']       ='natural'
 # xu.xclean(xp)
 
-xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
+#xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
 
 xp['ctag']              ='_ro'
 xp['cleanweight']       ='briggs'
-xu.xclean(xp)
+#xu.xclean(xp)
+xu.mossen(vis=xp['prefix']+'.src.ms',
+          log=xp['prefix']+xp['ctag']+'.line.sens.log',
+          nchan=xp['clean_nchan'],ftmachine='mosaic',
+          mosweight=True,imsize=xp['imsize'],
+          weight=xp['cleanweight'])
 
 xp['ctag']              ='_na'
 xp['cleanweight']       ='natural'
-xu.xclean(xp)
+#xu.xclean(xp)
+xu.mossen(vis=xp['prefix']+'.src.ms',
+          log=xp['prefix']+xp['ctag']+'.line.sens.log',
+          nchan=xp['clean_nchan'],ftmachine='mosaic',
+          mosweight=True,imsize=xp['imsize'],
+          weight=xp['cleanweight'])
 
 xp['ctag']              ='_st'
 xp['cleanweight']       ='natural'
 xp['multiscale']        =[]
-xu.xclean(xp)
+#xu.xclean(xp)
+xu.mossen(vis=xp['prefix']+'.src.ms',
+          log=xp['prefix']+xp['ctag']+'.line.sens.log',
+          nchan=xp['clean_nchan'],ftmachine='mosaic',
+          mosweight=True,imsize=xp['imsize'],
+          weight=xp['cleanweight'])

@@ -52,39 +52,53 @@ xp['outframe']          ='LSRK'
     
 xp['phasecenter']       ='J2000 20h37m14.1 +66d06m20.0'
 xp['mosweight']         =True
-xp['wnpixels']          =128
-xp['imsize']            =400
+xp['wnpixels']          =0
+xp['imsize']            =600
 xp['cell']              ='1.0arcsec'
 
 xp['minpb']             =0.10
-xp['clean_mask']        =0.15
-xp['multiscale']        =[int(x*(4.0/1.0)) for x in [0.,2.,4.,9.]]
+xp['clean_mask']        =0.25
+#xp['clean_mask']        ='circle[[300pix,300pix],120pix]'
+xp['multiscale']        =[int(x*(4.0/1.0)) for x in [0.,2.,4.]]
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 
 # xu.xconsol(xp)
+
+# xu.carmapb(xp['prefix']+'.src.ms',effdish=False)
 # 
 # xp['ctag']              ='_robust'
 # xp['cleanweight']       ='briggs'
 # xu.xclean(xp)
-# 
+#  
 # xp['ctag']              ='_natural'
 # xp['cleanweight']       ='natural'
+# xu.xclean(xp)
+# 
+# xp['ctag']              ='_regular'
+# xp['cleanweight']       ='natural'
+# xp['multiscale']        =[]
 # xu.xclean(xp)
 
 xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
 
+# because loose mosaic patterns, we can't push to larger scales.
+xp['multiscale']        =[int(x*(4.0/1.0)) for x in [0.,2.,4.]]
+
 xp['ctag']              ='_ro'
 xp['cleanweight']       ='briggs'
+xp['threshold_spec']    ='70mJy'
 xu.xclean(xp)
 
 xp['ctag']              ='_na'
 xp['cleanweight']       ='natural'
+xp['threshold_spec']    ='70mJy'
 xu.xclean(xp)
 
 xp['ctag']              ='_st'
 xp['cleanweight']       ='natural'
+xp['threshold_spec']    ='70mJy'
 xp['multiscale']        =[]
 xu.xclean(xp)
 

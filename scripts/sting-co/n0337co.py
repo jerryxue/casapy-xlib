@@ -14,7 +14,7 @@ repo='../../../../raw/co10/n0337/vis/'
 telescopes=['CARMA']*len(track_list)
 
 for i in range(0,len(mirfile_list)):
-    
+  
     xp=xu.init()
     
     xp['rawfiles']=repo+mirfile_list[i]
@@ -29,7 +29,7 @@ for i in range(0,len(mirfile_list)):
     xp['clean_width']       ='10km/s'
     xp['restfreq']          ='115.2712GHz'
     xp['outframe']          ='LSRK'
-
+    
     #xp=xu.ximport(xp)
     #xp=xu.xconsol(xp)
 
@@ -52,13 +52,13 @@ xp['outframe']          ='LSRK'
     
 xp['phasecenter']       ='J2000 0h59m50.1 -07d34m41.00'
 xp['mosweight']         =True
-xp['wnpixels']          =128
+xp['wnpixels']          =0
 xp['imsize']            =320
 xp['cell']              ='1.0arcsec'
 
 xp['minpb']             =0.10
-xp['clean_mask']        ='circle[[160pix,160pix],75pix]'
-xp['multiscale']        =[int(x*(2.25/1.0)) for x in [0.,2.,4.,9.]]
+xp['clean_mask']        ='circle[[160pix,160pix],60pix]'
+xp['multiscale']        =[int(x*(2.25/1.0)) for x in [0.,2.,4.]]
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
@@ -75,15 +75,15 @@ xp['negcomponent']      =0
 # xu.xclean(xp)
 
 xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
-
+# 
 xp['ctag']              ='_ro'
 xp['cleanweight']       ='briggs'
 xu.xclean(xp)
-
+ 
 xp['ctag']              ='_na'
 xp['cleanweight']       ='natural'
 xu.xclean(xp)
-
+ 
 xp['ctag']              ='_st'
 xp['cleanweight']       ='natural'
 xp['multiscale']        =[]

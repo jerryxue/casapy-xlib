@@ -282,7 +282,9 @@ def xclean(xp):
             ds_stat=imstat(imagename=outname_loop[i]+'.image',
                            box=xp['imstat_box_spec'],
                            chans=xp['imstat_chan'],
+                           mask=xp['imstat_mask_spec'],
                            axes=[0,1],
+                           algorithm=xp['imstat_algorithm'],
                            region=xp['imstat_rg_spec'])
             if  xp['imstat_sigcalc']=='min':
                 sigmjy=np.nanmin(ds_stat['sigma'])*1000.
@@ -301,6 +303,8 @@ def xclean(xp):
         else:
             dc_stat=imstat(imagename=outname_loop[i]+'.image',
                            box=xp['imstat_box_cont'],
+                           mask=xp['imstat_mask_cont'],
+                           algorithm=xp['imstat_algorithm'],
                            region=xp['imstat_rg_cont'])
             sigmjy=dc_stat['sigma'][0]*1000.
             if  outname_loop[i][-2:]=='_d':
@@ -405,7 +409,9 @@ def xclean(xp):
         ds_stat=imstat(imagename=outname+'.line.image',
                        box=xp['imstat_box_spec'],
                        chans=xp['imstat_chan'],
+                       mask=xp['imstat_mask_spec'],
                        axes=[0,1],
+                       algorithm=xp['imstat_algorithm'],
                        region=xp['imstat_rg_spec'])
         sigmjy=np.median(ds_stat['sigma'])*1000.
         xu.news("")
@@ -422,6 +428,8 @@ def xclean(xp):
         
         dc_stat=imstat(imagename=outname+'.cont.image',
                        box=xp['imstat_box_cont'],
+                       mask=xp['imstat_mask_cont'],
+                       algorithm=xp['imstat_algorithm'],
                        region=xp['imstat_rg_cont'])
         sigmjy=dc_stat['sigma'][0]*1000.
         xu.news("")

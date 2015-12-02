@@ -40,8 +40,8 @@ for i in range(0,len(mirfile_list)):
 	xp['restfreq']		  	='110.201353GHz'
 	xp['outframe']		  	='LSRK'
 
-	xp=xu.ximport(xp)
-	xp=xu.xconsol(xp)
+# 	xp=xu.ximport(xp)
+# 	xp=xu.xconsol(xp)
  	
 # ---------- IMAGE DATA 
 
@@ -64,25 +64,40 @@ xp['outframe']		  	='LSRK'
     
 xp['phasecenter']       ='J2000 12h18m49.56 +14d24m58.50'
 xp['mosweight']         =True
-xp['wnpixels']          =128
+xp['wnpixels']          =0
 xp['imsize']            =400
 xp['cell']              ='1.0arcsec'
 
 xp['minpb']             =0.10
-xp['clean_mask']        =0.15
-xp['multiscale']        =[int(x*(2.0/1.0)) for x in [0.,2.,4.,9.]]
+xp['clean_mask']        =0.20
+xp['multiscale']        =[int(x*(2.0/1.0)) for x in [0.,2.,4.]]
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 
-xu.xconsol(xp)
+# xu.xconsol(xp)
+# 
+# xp['ctag']              ='_robust'
+# xp['cleanweight']       ='briggs'
+# xu.xclean(xp)
+# 
+# xp['ctag']              ='_natural'
+# xp['cleanweight']       ='natural'
+# xu.xclean(xp)
 
-xp['ctag']              ='_robust'
+xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
+
+xp['ctag']              ='_ro'
 xp['cleanweight']       ='briggs'
 xu.xclean(xp)
 
-xp['ctag']              ='_natural'
+xp['ctag']              ='_na'
 xp['cleanweight']       ='natural'
+xu.xclean(xp)
+
+xp['ctag']              ='_st'
+xp['cleanweight']       ='natural'
+xp['multiscale']        =[]
 xu.xclean(xp)
 
 # xp['threshold_spec']	='19.1726874267mJy'

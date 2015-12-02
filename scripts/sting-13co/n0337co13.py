@@ -53,7 +53,7 @@ xp['outframe']          ='LSRK'
     
 xp['phasecenter']       ='J2000 0h59m50.1 -07d34m41.00'
 xp['mosweight']         =True
-xp['wnpixels']          =128
+xp['wnpixels']          =0
 xp['imsize']            =320
 xp['cell']              ='1.0arcsec'
 
@@ -66,10 +66,25 @@ xp['negcomponent']      =0
 
 #xu.xconsol(xp)
 
-xp['ctag']              ='_robust'
+# xp['ctag']              ='_robust'
+# xp['cleanweight']       ='briggs'
+# xu.xclean(xp)
+# 
+# xp['ctag']              ='_natural'
+# xp['cleanweight']       ='natural'
+# xu.xclean(xp)
+
+xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
+
+xp['ctag']              ='_ro'
 xp['cleanweight']       ='briggs'
 xu.xclean(xp)
 
-xp['ctag']              ='_natural'
+xp['ctag']              ='_na'
 xp['cleanweight']       ='natural'
+xu.xclean(xp)
+
+xp['ctag']              ='_st'
+xp['cleanweight']       ='natural'
+xp['multiscale']        =[]
 xu.xclean(xp)

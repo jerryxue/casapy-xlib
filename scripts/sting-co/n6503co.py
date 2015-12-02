@@ -55,15 +55,15 @@ xp['outframe']          ='LSRK'
     
 xp['phasecenter']       ='J2000 17h49m26.5 +70d08m39.6'
 xp['mosweight']         =True
-xp['wnpixels']          =128
-xp['imsize']            =320
-xp['cell']              ='1.0arcsec'
+xp['wnpixels']          =0
+xp['imsize']            =640
+xp['cell']              ='0.5arcsec'
 
 xp['minpb']             =0.10
 xp['clean_mask']        =0.15
-xp['outertaper']        =['2arcsec']
+#xp['outertaper']        =['2arcsec']
 
-xp['multiscale']        =[int(x*(2.5/1.0)) for x in [0.,2.,4.]]
+xp['multiscale']        =[int(x*(2.0/0.5)) for x in [0.,2.,4.]]
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
@@ -80,9 +80,9 @@ xp['negcomponent']      =0
 
 xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
 
-xp['ctag']              ='_ro'
-xp['cleanweight']       ='briggs'
-xu.xclean(xp)
+# xp['ctag']              ='_ro'
+# xp['cleanweight']       ='briggs'
+# xu.xclean(xp)
 
 xp['ctag']              ='_na'
 xp['cleanweight']       ='natural'
