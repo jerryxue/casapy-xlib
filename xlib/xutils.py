@@ -24,7 +24,9 @@ def init():
     ################################################################################
     #    DEFAULT PIPELINE SETTING
     ################################################################################
-    
+    #    from now on:
+    #        the pipeline should not modify the setup parameters
+    #        any pipeline status information should be passed to keys "last_*"
     xp={
     'rawfiles':None,            # Name(s) of the data file(s) to be imported
     'msfile':'',
@@ -237,6 +239,9 @@ def init():
     'imstat_rg_cont':'',        # a region selected for RMS calculations
     'imstat_sigcalc':'min',     # choose 'min' or 'median' sigma for noise estimate
                                 # over-clean may be better than under-clean
+    'imstat_mask_spec':'',      # imstat_mask e.g. 'n6951co.line.flux>0.25'
+    'imstat_mask_cont':'',      # imstat_mask e.g. 'n6951co.line.flux>0.25'
+    'imstat_algorithm':'classic',   # imstat_algorithm
     'imagermode':None,          # imagermode for clean, options include: 'csclean', 'mosaic' 
                                 # 'mosaic' must be be used if your science target is in 
                                 # multiple fields or it's heterogeneous-array observation.
@@ -333,6 +338,8 @@ def sumwt(visfile='',
         For CARMA 19 pointing, it would be (1.0+0.5*6)/19. at the FOV center.
         For non-mosaicing observation, it would be 1.
     
+    Note: imager.sensitivity has a similar function.
+    
     """ 
     c=3.0e5
     restfreq=qa.convertfreq(restfreq)['value']
@@ -384,7 +391,7 @@ def sumwt(visfile='',
     for ic in range(0,len(v)):
         np.seterr(divide='ignore')
         news(" "+'ch'+"{0:5.0f}".format(ic)+'   :   '+"{0:>10.2f}".format(v[ic])+\
-             ' km/s   :   '+"{0:15.2f}".format(cwt[ic])+'   :   '+"{0:15.2f}".format(1000.0*np.sqrt(1/cwt[ic])*np.sqrt(1.0/topeff))+' mJy')
+             ' km/s   :   '+"{0:15.2f}".format(cwt[ic])+'   :   '+"{0:15.2f}".format(1000.0*np.sqrt(1/cwt[ic])*np.sqrt(1.0/topeff)/np.sqrt(2.0))+' mJy')
         np.seterr(divide='warn')
         if  oldstyle==False:
             print >>vsfile,str(" "+''+"{0:5.0f}".format(ic)+'   '+"{0:>10.2f}".format(v[ic])+'   '+"{0:10.2f}".format(cwt[ic]))
@@ -397,6 +404,31 @@ def sumwt(visfile='',
     #     print >>vsfile,str(vs['WEIGHT_SPECTRUM']['sum'])
     
     vsfile.close()
+
+def mossen(vis='',
+           log='',
+           nchan=1,
+           robust=0.5,
+           ftmachine='mosaic',
+           mosweight=False,
+           imsize=256,
+           cell='1arcsec',
+           weight='natural'):
+    vsfile=open(log,'w')
+
+    im.open(vis)
+    im.defineimage(mode='channel',cellx=cell,celly=cell,nx=imsize,ny=imsize)
+    im.setvp(dovp=True)
+    im.setoptions(ftmachine=ftmachine,padding=1.2)   
+    for i in range(0,nchan):
+        im.selectvis(spw='0:'+str(i))
+        im.weight(type=weight,robust=robust,mosaic=mosweight) 
+        sens=im.apparentsens()
+        print >>vsfile,str(sens[1]),str(sens[2])
+    im.close()
+    
+    vsfile.close()
+
 
 def importmir(mirfile='',
               vis='',
@@ -1077,6 +1109,8 @@ def resmoothpsf(outname):
             pa=str(hdcim['beampa']['value'])+hdcim['beampa']['unit'],
             outfile=outname+'.cpsf',
             overwrite=True)
+    exportfits(imagename=outname+'.cpsf',fitsimage=outname+'.cpsf.fits',
+               velocity=True,optical=False,overwrite=True)
     os.system('rm -rf cpsf.tmp')
     
     # im2=ia.convolve2d(  outfile=outname+'.cpsf',
