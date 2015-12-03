@@ -948,7 +948,8 @@ def cleanup(outname,tag='',resume=False):
                 os.system('cp -r '+outname+'.'+version[i]+'.fits'+' '+outname+tag+'.'+version[i]+'.fits')
 
 
-def exportclean(outname,keepcasaimage=True):
+def exportclean(outname,keepcasaimage=True,
+                dropdeg=False,optical=False,dropstokes=False):
     #
     #    export imaging products into fits files
     #
@@ -961,8 +962,8 @@ def exportclean(outname,keepcasaimage=True):
         if  os.path.exists(outname+'.'+version[i]):
             exportfits(outname+'.'+version[i],
                        outname+'.'+version[i]+'.fits',
-                       dropdeg=xp['dropdeg'],optical=xp['optical'],
-                       dropstokes=xp['dropstokes'],
+                       dropdeg=dropdeg,optical=optical,
+                       dropstokes=dropstokes,
                        stokeslast=True,
                        overwrite=True,velocity=True)
             if  keepcasaimage==False:
@@ -1133,8 +1134,6 @@ def resmoothpsf(outname):
             outfile=outname+'.cpsf',
             overwrite=True)
     exportfits(imagename=outname+'.cpsf',fitsimage=outname+'.cpsf.fits',
-               dropdeg=xp['dropdeg'],optical=xp['optical'],
-               dropstokes=xp['dropstokes'],
                stokeslast=True,
                velocity=True,overwrite=True)
     os.system('rm -rf cpsf.tmp')

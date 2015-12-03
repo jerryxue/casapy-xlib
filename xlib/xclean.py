@@ -448,12 +448,18 @@ def xclean(xp):
     xu.news("")
     xu.news("Export all images to FITS format")
     xu.news("")
-    xu.exportclean(xp['prefix']+xp['ctag']+'.line_d',keepcasaimage=xp['keepcasaimage'])
-    xu.exportclean(xp['prefix']+xp['ctag']+'.line',keepcasaimage=xp['keepcasaimage'])
-    xu.exportclean(xp['prefix']+xp['ctag']+'.cont_d',keepcasaimage=xp['keepcasaimage'])
-    xu.exportclean(xp['prefix']+xp['ctag']+'.cont',keepcasaimage=xp['keepcasaimage'])
-    xu.exportclean(xp['prefix']+xp['ctag']+'.coli_d',keepcasaimage=xp['keepcasaimage'])
-    xu.exportclean(xp['prefix']+xp['ctag']+'.coli',keepcasaimage=xp['keepcasaimage'])
+    xu.exportclean(xp['prefix']+xp['ctag']+'.line_d',keepcasaimage=xp['keepcasaimage'],
+                   dropdeg=xp['dropdeg'],optical=xp['optical'],dropstokes=xp['dropstokes'])
+    xu.exportclean(xp['prefix']+xp['ctag']+'.line',keepcasaimage=xp['keepcasaimage'],
+                   dropdeg=xp['dropdeg'],optical=xp['optical'],dropstokes=xp['dropstokes'])
+    xu.exportclean(xp['prefix']+xp['ctag']+'.cont_d',keepcasaimage=xp['keepcasaimage'],
+                   dropdeg=xp['dropdeg'],optical=xp['optical'],dropstokes=xp['dropstokes'])
+    xu.exportclean(xp['prefix']+xp['ctag']+'.cont',keepcasaimage=xp['keepcasaimage'],
+                   dropdeg=xp['dropdeg'],optical=xp['optical'],dropstokes=xp['dropstokes'])
+    xu.exportclean(xp['prefix']+xp['ctag']+'.coli_d',keepcasaimage=xp['keepcasaimage'],
+                   dropdeg=xp['dropdeg'],optical=xp['optical'],dropstokes=xp['dropstokes'])
+    xu.exportclean(xp['prefix']+xp['ctag']+'.coli',keepcasaimage=xp['keepcasaimage'],
+                   dropdeg=xp['dropdeg'],optical=xp['optical'],dropstokes=xp['dropstokes'])
     xu.news("")
     
     #----------------------------------------------------------------------------------------
