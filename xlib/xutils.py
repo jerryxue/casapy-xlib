@@ -10,6 +10,7 @@ import socket
 import numpy as np
 import subprocess
 import smtplib
+import fnmatch
 import scipy.constants as sci_const
 import matplotlib.pyplot as plt
 
@@ -319,6 +320,10 @@ def init():
     'password':'',              # notification email password
     'version':'',               # script versaion, not implemented
     'log_listobs_msfile':'',    # not implemented
+    
+    'dropdeg':False,
+    'optical':False,
+    'dropstokes':False
     }
     return xp
 
@@ -421,7 +426,7 @@ def mossen(vis='',
     im.setvp(dovp=True)
     im.setoptions(ftmachine=ftmachine,padding=1.2)   
     for i in range(0,nchan):
-        im.selectvis(spw='0:'+str(i))
+        im.selectvis(spw='*:'+str(i))
         im.weight(type=weight,robust=robust,mosaic=mosweight) 
         sens=im.apparentsens()
         print >>vsfile,str(sens[1]),str(sens[2])
@@ -541,10 +546,10 @@ def importmir(mirfile='',
     news("")
     news("Changing Antenna Names")
     prefix_ant=''
-    if telescope=='CARMA' or telescope=='carma' :
+    if  telescope=='CARMA' or telescope=='carma' :
         prefix_ant='CA'
         obsname='CARMA'
-    if telescope=='BIMA' or telescope=='bima' :
+    if  telescope=='BIMA' or telescope=='bima' :
         prefix_ant='BA'
         obsname='BIMA'
     if  telescope=='SMA' or telescope=='sma' :
@@ -618,23 +623,39 @@ def carmapb(vis,effdish=True):
     # data was written and imported into CASA, the user may have to manually edit this table 
     # to insert the correct dish sizes (e.g. using browsetable or the tb table tool).
     ###
+    
+    ###
+    #    Verified:
+    #    if telescope='BIMA'/'HATCREEK' then default PB is a built-in Gaussian model.
+    #    the model doesn't change with dish_size values in the table. The profile is confirmed to
+    #    be the same as the BIMA model in MIRAID. 
+    #    if telescope='CARMA' then default PB is a airy model calculation based on dish-size
+    #    the model does change with dish_size values in the table. 
+    #    I have created a VPtable for implementing MIRAID models but it 
+    #    has to be set manually at the toolkit level. 
+    ###
+      
     tb.open(vis+"/ANTENNA",nomodify=False)
     if  effdish==True:
-        namelist=tb.getcol("DISH_DIAMETER").tolist()
-        for kk in range(len(namelist)):
-            if  abs(namelist[kk]-10.4)<2.0:
-                namelist[kk]=8.56#9.3
-            if  abs(namelist[kk]-6.1)<2.0:
-                namelist[kk]=5.32#5.8#5.49
-        tb.putcol("DISH_DIAMETER",namelist)
+        dslist=tb.getcol("DISH_DIAMETER").tolist()
+        namelist=tb.getcol("NAME").tolist()
+        for kk in range(len(dslist)):
+            if  fnmatch.fnmatch(namelist[kk],'CA*'):
+                if  abs(dslist[kk]-10.4)<2.0:
+                    dslist[kk]=8.78
+                if  abs(dslist[kk]-6.1)<2.0:
+                    dslist[kk]=5.48
+        tb.putcol("DISH_DIAMETER",dslist)
     else:
-        namelist=tb.getcol("DISH_DIAMETER").tolist()
-        for kk in range(len(namelist)):
-            if  abs(namelist[kk]-10.4)<2.0:
-                namelist[kk]=10.4#9.3
-            if  abs(namelist[kk]-6.1)<2.0:
-                namelist[kk]=6.1#5.8#5.49
-        tb.putcol("DISH_DIAMETER",namelist)
+        dslist=tb.getcol("DISH_DIAMETER").tolist()
+        namelist=tb.getcol("NAME").tolist()
+        for kk in range(len(dslist)):
+            if  fnmatch.fnmatch(namelist[kk],'CA*'):
+                if  abs(dslist[kk]-10.4)<2.0:
+                    dslist[kk]=10.4
+                if  abs(dslist[kk]-6.1)<2.0:
+                    dslist[kk]=6.1
+        tb.putcol("DISH_DIAMETER",dslist)
     
     #     namelist=tb.getcol("DISH_DIAMETER").tolist()
     #     typelist=tb.getcol("TYPE").tolist()
@@ -939,9 +960,11 @@ def exportclean(outname,keepcasaimage=True):
     for i in range(0,len(version)):
         if  os.path.exists(outname+'.'+version[i]):
             exportfits(outname+'.'+version[i],
-                       outname+'.'+version[i]+'.fits', 
-                       velocity=True,
-                       overwrite=True)
+                       outname+'.'+version[i]+'.fits',
+                       dropdeg=xp['dropdeg'],optical=xp['optical'],
+                       dropstokes=xp['dropstokes'],
+                       stokeslast=True,
+                       overwrite=True,velocity=True)
             if  keepcasaimage==False:
                 os.system("rm -rf "+outname+'.'+version[i])
 
@@ -1110,7 +1133,10 @@ def resmoothpsf(outname):
             outfile=outname+'.cpsf',
             overwrite=True)
     exportfits(imagename=outname+'.cpsf',fitsimage=outname+'.cpsf.fits',
-               velocity=True,optical=False,overwrite=True)
+               dropdeg=xp['dropdeg'],optical=xp['optical'],
+               dropstokes=xp['dropstokes'],
+               stokeslast=True,
+               velocity=True,overwrite=True)
     os.system('rm -rf cpsf.tmp')
     
     # im2=ia.convolve2d(  outfile=outname+'.cpsf',
