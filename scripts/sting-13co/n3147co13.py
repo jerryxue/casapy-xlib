@@ -98,9 +98,5 @@ xp['ctag']              ='_st'
 xp['cleanweight']       ='natural'
 xp['multiscale']        =[]
 xu.xclean(xp)
-xu.mossen(vis=xp['prefix']+'.src.ms',
-          log=xp['prefix']+xp['ctag']+'.line.sens.log',
-          nchan=xp['clean_nchan'],ftmachine='mosaic',
-          mosweight=True,imsize=xp['imsize'],
-          weight=xp['cleanweight'])
+os.system('cp -rf '+xp['prefix']+'_na.line.sens.log '+xp['prefix']+'_st.line.sens.log')
 

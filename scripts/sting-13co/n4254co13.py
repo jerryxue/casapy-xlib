@@ -78,7 +78,7 @@ xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 
-xu.xconsol(xp)
+#xu.xconsol(xp)
 # 
 # xp['ctag']              ='_robust'
 # xp['cleanweight']       ='briggs'
@@ -88,20 +88,31 @@ xu.xconsol(xp)
 # xp['cleanweight']       ='natural'
 # xu.xclean(xp)
 
-xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
+#xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
 
 xp['ctag']              ='_ro'
 xp['cleanweight']       ='briggs'
-xu.xclean(xp)
+#xu.xclean(xp)
+xu.mossen(vis=xp['prefix']+'.src.ms',
+          log=xp['prefix']+xp['ctag']+'.line.sens.log',
+          nchan=xp['clean_nchan'],ftmachine='mosaic',
+          mosweight=True,imsize=xp['imsize'],
+          weight=xp['cleanweight'])
 
 xp['ctag']              ='_na'
 xp['cleanweight']       ='natural'
-xu.xclean(xp)
+#xu.xclean(xp)
+xu.mossen(vis=xp['prefix']+'.src.ms',
+          log=xp['prefix']+xp['ctag']+'.line.sens.log',
+          nchan=xp['clean_nchan'],ftmachine='mosaic',
+          mosweight=True,imsize=xp['imsize'],
+          weight=xp['cleanweight'])
 
 xp['ctag']              ='_st'
 xp['cleanweight']       ='natural'
 xp['multiscale']        =[]
-xu.xclean(xp)
+#xu.xclean(xp)
+os.system('cp -rf '+xp['prefix']+'_na.line.sens.log '+xp['prefix']+'_st.line.sens.log')
 
 # xp['threshold_spec']	='19.1726874267mJy'
 # xp['cresume']			=False

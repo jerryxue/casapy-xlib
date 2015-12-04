@@ -26,7 +26,8 @@ for i in range(0,len(mirfile_list)):
     xp['clean_width']       ='10km/s'
     xp['restfreq']          ='115.2712GHz'
     xp['outframe']          ='LSRK'
-
+    xp['meanwt']            =False
+    
     #xp=xu.ximport(xp)
     #xp=xu.xconsol(xp)
 
@@ -60,7 +61,9 @@ xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 
-# xu.xconsol(xp)
+xp['meanwt']            =False
+
+#xu.xconsol(xp)
 # 
 # xp['ctag']              ='_robust'
 # xp['cleanweight']       ='briggs'
@@ -94,11 +97,7 @@ xp['ctag']              ='_st'
 xp['cleanweight']       ='natural'
 xp['multiscale']        =[]
 #xu.xclean(xp)
-xu.mossen(vis=xp['prefix']+'.src.ms',
-          log=xp['prefix']+xp['ctag']+'.line.sens.log',
-          nchan=xp['clean_nchan'],ftmachine='mosaic',
-          mosweight=True,imsize=xp['imsize'],
-          weight=xp['cleanweight'])
+os.system('cp -rf '+xp['prefix']+'_na.line.sens.log '+xp['prefix']+'_st.line.sens.log')
 
 
 # RUN SCRIPTS

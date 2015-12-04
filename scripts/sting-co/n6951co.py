@@ -81,7 +81,7 @@ xp['negcomponent']      =0
 # xp['multiscale']        =[]
 # xu.xclean(xp)
 
-xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
+#xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
 
 # because loose mosaic patterns, we can't push to larger scales.
 xp['multiscale']        =[int(x*(4.0/1.0)) for x in [0.,2.,4.]]
@@ -89,18 +89,29 @@ xp['multiscale']        =[int(x*(4.0/1.0)) for x in [0.,2.,4.]]
 xp['ctag']              ='_ro'
 xp['cleanweight']       ='briggs'
 xp['threshold_spec']    ='70mJy'
-xu.xclean(xp)
+#xu.xclean(xp)
+xu.mossen(vis=xp['prefix']+'.src.ms',
+          log=xp['prefix']+xp['ctag']+'.line.sens.log',
+          nchan=xp['clean_nchan'],ftmachine='mosaic',
+          mosweight=True,imsize=xp['imsize'],
+          weight=xp['cleanweight'])
 
 xp['ctag']              ='_na'
 xp['cleanweight']       ='natural'
 xp['threshold_spec']    ='70mJy'
-xu.xclean(xp)
+#xu.xclean(xp)
+xu.mossen(vis=xp['prefix']+'.src.ms',
+          log=xp['prefix']+xp['ctag']+'.line.sens.log',
+          nchan=xp['clean_nchan'],ftmachine='mosaic',
+          mosweight=True,imsize=xp['imsize'],
+          weight=xp['cleanweight'])
 
 xp['ctag']              ='_st'
 xp['cleanweight']       ='natural'
 xp['threshold_spec']    ='70mJy'
 xp['multiscale']        =[]
-xu.xclean(xp)
+#xu.xclean(xp)
+os.system('cp -rf '+xp['prefix']+'_na.line.sens.log '+xp['prefix']+'_st.line.sens.log')
 
 # RUN SCRIPTS
 # execfile(xlib+'xconsol.py')

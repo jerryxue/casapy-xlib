@@ -11,6 +11,11 @@ mirfile_list=[	'../../../../raw/co10/n6951/vis/ngc6951_C1_08apr15.13co.cal',
 				'../../../../raw/co10/n6951/vis/ngc6951_E1_09jul20.13co.cal']
 telescopes=list('CARMA' for i in track_list)
 
+
+track_list=['n6951co13']
+mirfile_list=['../../../../raw/co10/n6951/vis/ngc6951_E1_09jul20.13co.cal']
+telescopes=list('CARMA' for i in track_list)
+
 for i in range(0,len(mirfile_list)):
 
 	xp=xu.init()
@@ -28,12 +33,10 @@ for i in range(0,len(mirfile_list)):
 	xp['restfreq']		  ='110.201353GHz'
 	xp['outframe']		  ='LSRK'
 
-# 	xp=xu.ximport(xp)
-# 	xp=xu.xconsol(xp)
+  	#xp=xu.ximport(xp)
+ 	#xp=xu.xconsol(xp)
 
 xp=xu.init()
-
-track_list=['E1']
  
 # CONSOLIDATING 
 xp['prefix']            ='n6951co13'
@@ -63,7 +66,7 @@ xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
 
-xu.xconsol(xp)
+#xu.xconsol(xp)
 # 
 # xp['ctag']              ='_robust'
 # xp['cleanweight']       ='briggs'
@@ -73,17 +76,28 @@ xu.xconsol(xp)
 # xp['cleanweight']       ='natural'
 # xu.xclean(xp)
 
-xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
+#xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
 
 xp['ctag']              ='_ro'
 xp['cleanweight']       ='briggs'
-xu.xclean(xp)
+#xu.xclean(xp)
+xu.mossen(vis=xp['prefix']+'.src.ms',
+          log=xp['prefix']+xp['ctag']+'.line.sens.log',
+          nchan=xp['clean_nchan'],ftmachine='mosaic',
+          mosweight=True,imsize=xp['imsize'],
+          weight=xp['cleanweight'])
 
 xp['ctag']              ='_na'
 xp['cleanweight']       ='natural'
-xu.xclean(xp)
+#xu.xclean(xp)
+xu.mossen(vis=xp['prefix']+'.src.ms',
+          log=xp['prefix']+xp['ctag']+'.line.sens.log',
+          nchan=xp['clean_nchan'],ftmachine='mosaic',
+          mosweight=True,imsize=xp['imsize'],
+          weight=xp['cleanweight'])
 
 xp['ctag']              ='_st'
 xp['cleanweight']       ='natural'
 xp['multiscale']        =[]
-xu.xclean(xp)
+#xu.xclean(xp)
+os.system('cp -rf '+xp['prefix']+'_na.line.sens.log '+xp['prefix']+'_st.line.sens.log')

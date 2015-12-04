@@ -75,20 +75,31 @@ xp['negcomponent']      =0
 #xp['multiscale']        =[]
 #xu.xclean(xp)
 
-xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
+#xu.carmapb(xp['prefix']+'.src.ms',effdish=True)
 
 xp['ctag']              ='_ro'
 xp['cleanweight']       ='briggs'
-xu.xclean(xp)
+#xu.xclean(xp)
+xu.mossen(vis=xp['prefix']+'.src.ms',
+          log=xp['prefix']+xp['ctag']+'.line.sens.log',
+          nchan=xp['clean_nchan'],ftmachine='mosaic',
+          mosweight=True,imsize=xp['imsize'],
+          weight=xp['cleanweight'])
 
 xp['ctag']              ='_na'
 xp['cleanweight']       ='natural'
-xu.xclean(xp)
+#xu.xclean(xp)
+xu.mossen(vis=xp['prefix']+'.src.ms',
+          log=xp['prefix']+xp['ctag']+'.line.sens.log',
+          nchan=xp['clean_nchan'],ftmachine='mosaic',
+          mosweight=True,imsize=xp['imsize'],
+          weight=xp['cleanweight'])
 
 xp['ctag']              ='_st'
 xp['cleanweight']       ='natural'
 xp['multiscale']        =[]
-xu.xclean(xp)
+#xu.xclean(xp)
+os.system('cp -rf '+xp['prefix']+'_na.line.sens.log '+xp['prefix']+'_st.line.sens.log')
 
 #xu.savedisk(xp)
 # RUN SCRIPTS
