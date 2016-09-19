@@ -46,11 +46,7 @@ carmafiller_libpath='/usr/local/miriad-carma/opt/casa/lib'
 # USER VARIABLES
 
 xlib=xlib_path+'/'                          # shortcut for xlib script path
-stinghi=xlibp_path+'/scripts/sting-hi/'     # shortcut for sting-hi script path
-stingco=xlibp_path+'/scripts/sting-co/'     # shortcut for sting-co script path
-sting13co=xlibp_path+'/scripts/sting-13co/' # shortcut for sting-13co scripth path
-examples=xlibp_path+'/scripts/examples/'    # shortcut for examples script path
-tests=xlibp_path+'/scripts/tests/'      # shortcut for testing script path
+
 
 # ADD PATH & LOAD MODULES 
 pathlist=list(set([mir_path,gs_path,wget_path,carmafiller_path]))
@@ -63,6 +59,7 @@ extenv={"PATH":os.pathsep.join(pathlist),
 
 sys.path.insert(1,xlib_path)
 sys.path.insert(1,'/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages')
+
 import xutils as xu                 # xlib modules
 from ximport import ximport 
 from xclean import xclean
@@ -94,12 +91,20 @@ print casadef.casa_version
 print 'r'+casadef.subversion_revision
 print ''
 print '>>>> Compatible CASA Version:'
-print '4.5.0'
-print 'r>=35166' 
+print '4.6.0'
+print 'r>=36590' 
 print ""
 print "+"*70
 print ""
 print ""
 
-#   !create-symlinks
-#   !update-data
+########################################################################
+#    PERSONAL SETTINGS.......
+########################################################################
+import glob
+for name in glob.glob(xlibp_path+'/scripts/*/*config.py'):
+    print 'run config: '+name
+    execfile(name)
+
+
+
