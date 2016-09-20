@@ -9,6 +9,6 @@ st={    'hi_raw':       '/Volumes/Scratch/raw/21cm/',
         '13co_proc':    '/Volumes/Scratch/proc/13co/'
     }
 
-stinghi=xlibp_path+'/scripts/sting/hi/'
-stingco=xlibp_path+'/scripts/sting/co/'
-sting13co=xlibp_path+'/scripts/sting/13co/'
+stinghi=os.path.dirname(xlib_path)+'/scripts/sting/hi/'
+stingco=os.path.dirname(xlib_path)+'/scripts/sting/co/'
+sting13co=os.path.dirname(xlib_path)+'/scripts/sting/13co/'

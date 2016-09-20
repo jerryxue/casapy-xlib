@@ -1,110 +1,106 @@
-###########################################################
+########################################################################
 # CASAPY INITIALIZATION FILE 
 #
 # To load the pipeline scripts automatically, please:
-#   1) ln -s yourpath/xlib/init.py ~/.casa/init.py
-#   2) alias casapy='casapy --log2term' or 
-#            casapy='casapy --log2term --nologger'
-###########################################################
+#   1)    Setup the initialization file 
+#
+#         ln -s <yourpath>/xlib/init.py ~/.casa/init.py
+#           or
+#         in ~/.casa/init.py, add: execfile('<yourpath>/xlib/init.py') 
+#
+#   2)    CREATE ALIAS (for saving script logs)
+#
+#         casa='casa --log2term'
+#           or
+#         casa='casa --log2term --nologger''
+########################################################################
 
 import socket
-import sys
-import time
-import os
-import string
-from sets import Set
-import math
-import copy
-import numpy as np
 from glob import glob as filesearch
 import inspect
 
 print ""
 print ""
-print "+"*70
+print "+"*80
 print ""
 
-# SPECIFIY ENVI PATHS
+#   XLIB PATH
+xlib_path=os.path.dirname(os.path.realpath(inspect.stack()[0][1]))
 
-#     PYTHON PATH
-xlib_path=os.path.dirname(os.path.realpath(inspect.stack()[0][1]))  # pipeline script location
-xlibp_path=os.path.dirname(xlib_path)
-borrow_path=xlibp_path+'/borrow'                                    # borrowed modules location
-#     SHELL PATH
+#   MIRIAD PATH
 if  'MIRBIN' in os.environ.keys():
-    mir_path=os.environ['MIRBIN']                                   # MIRIAD task location
+    mir_path=os.environ['MIRBIN']
 else:
-    mir_path='/unknown'
-gs_path='/opt/local/bin'                                            # GhostScript location
-wget_path='/opt/local/bin'                                          # Wget location
-carmafiller_path='/usr/local/miriad-carma/opt/casa/bin'
-carmafiller_libpath='/usr/local/miriad-carma/opt/casa/lib'
-
-# PIPELINE VARIABLES
-
-
-# USER VARIABLES
-
-xlib=xlib_path+'/'                          # shortcut for xlib script path
-
-
-# ADD PATH & LOAD MODULES 
-pathlist=list(set([mir_path,gs_path,wget_path,carmafiller_path]))
-libpathlist=[carmafiller_libpath]
-#use subprocess+env rather than modifying os.environ
-#os.environ["PATH"] += os.pathsep + os.pathsep.join(pathlist) 
-extenv={"PATH":os.pathsep.join(pathlist),
-        "DYLD_LIBRARY_PATH":os.pathsep.join(libpathlist),
-        "HOME":"~/"}
+    mir_path='not located'
 
 sys.path.insert(1,xlib_path)
-sys.path.insert(1,'/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages')
-
 import xutils as xu                 # xlib modules
 from ximport import ximport 
 from xclean import xclean
 from xcal import xcal
 from xconsol import xconsol
-
 xu.ximport=ximport
 xu.xclean=xclean
 xu.xcal=xcal
 xu.xconsol=xconsol
- 
-#import xexp as xe                   # exlib-exp modules
 
-sys.path.insert(1,borrow_path+os.sep+'analysis_scripts')
-import analysisUtils as au          # borrowed modules
-
-print '>>>> MachineName:'
+print '>>>> Machine Name   :'
 machinename=socket.gethostname()
 print machinename
 print ''
-print '>>>> PipelinePath:'
+print '>>>> Pipeline Path  :'
 print xlib_path
 print ''
-print '>>>> MiriadPath:'
+print '>>>> MIRAID Path    :'
 print mir_path
 print ''
-print '>>>> current CASA Version:'
-print casadef.casa_version
-print 'r'+casadef.subversion_revision
+print '>>>> Current CASA Version:'
+print '  '+casadef.casa_version, '(r'+casadef.subversion_revision+')'
 print ''
 print '>>>> Compatible CASA Version:'
-print '4.6.0'
-print 'r>=36590' 
+print '>=4.6.0 (r36590)'
 print ""
-print "+"*70
-print ""
+print "+"*80
 print ""
 
 ########################################################################
-#    PERSONAL SETTINGS.......
+#    SOME PERSONAL SETTINGS.......
 ########################################################################
-import glob
-for name in glob.glob(xlibp_path+'/scripts/*/*config.py'):
-    print 'run config: '+name
+
+
+#   path of some non-essential programs (gs/wget...)
+#   ADD PATH & LOAD MODULES 
+#   use subprocess+env rather than modifying os.environ
+#   os.environ["PATH"] += os.pathsep + os.pathsep.join(pathlist) 
+bin_paths=['/opt/local/bin','/usr/local/miriad-carma/opt/casa/bin']
+lib_paths=['/usr/local/miriad-carma/opt/casa/lib']
+extenv={"PATH":os.pathsep.join(list(set(bin_paths))),
+        "DYLD_LIBRARY_PATH":os.pathsep.join(list(set(lib_paths))),
+        "HOME":"~/"}
+
+#   if some project-related scripts exist, load thenm
+for name in filesearch(os.path.dirname(xlib_path)+'/scripts/*/*config.py'):
+    print 'run: '+name
     execfile(name)
 
+#   if macports modules exist, add them
+mp_path='/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages'
+if  os.path.exists(mp_path):
+    sys.path.insert(1,mp_path)
+
+#   if experimental modules exist, import them
+exp_path=xlib_path+'/xexp.py'
+if  os.path.exists(exp_path):
+    import xexp as xe
+
+#   if the au module exist, add it
+au_path=os.path.dirname(xlib_path)+'/borrow/analysis_scripts'
+if  os.path.exists(au_path):
+    sys.path.insert(1,au_path)
+    import analysisUtils as au
+
+print ""
+print "+"*80
+print ""
 
 

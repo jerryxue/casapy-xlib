@@ -189,7 +189,7 @@ def b13c():
     xp=xu.init()
     
     # IMPORT
-    xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0] 
+    xp['prefix']            ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
     xp['rawfiles']          =st['hi_raw']+'13B-363.sb24635609.eb28595273.56653.44875773148.ms'
     xp['importspw']         ='2,12'
     xp['importscan']        ='2~15'
@@ -393,12 +393,12 @@ def comb():
     
 if  __name__=="__main__":
 
-    d87()
-    c04()
-    d09()
-    b09a()
-    b09b()
-    b13a()
-    b13b()
+    #d87()
+    #c04()
+    #d09()
+    #b09a()
+    #b09b()
+    #b13a()
+    #b13b()
     b13c()
     comb()

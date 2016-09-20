@@ -8,7 +8,7 @@ def config(xp):
     xp['fitorder']          =1
     
     # IMAGING
-    xp['cleanspec']         =False
+    xp['cleanspec']         =True
     xp['cleancont']         =True
     
     xp['imsize']            =2**6*10

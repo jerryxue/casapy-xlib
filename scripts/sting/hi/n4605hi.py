@@ -153,7 +153,7 @@ def comb():
     xp=xu.init()
     
     # CONSOLIDATING
-    xp['prefix']            ='../comb/n4605'
+    xp['prefix']            ='../comb/n4605hi'
     xp['prefix_comb']       =['../b00/b00',
                               '../c00/c00',
                               '../d00/d00']
@@ -172,6 +172,6 @@ if  __name__=="__main__":
     
     #b00()
     #c00()
-    d00()
+    #d00()
     comb()      
 
