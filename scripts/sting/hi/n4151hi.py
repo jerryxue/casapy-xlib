@@ -345,9 +345,9 @@ def comb():
     xp=xu.xclean(xp)
 
 if  __name__=="__main__":
-    a2()
-    a3()
-    b93()
-    c1()
-    c2()
+    #a2()
+    #a3()
+    #b93()
+    #c1()
+    #c2()
     comb()

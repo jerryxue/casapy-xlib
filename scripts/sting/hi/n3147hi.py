@@ -395,7 +395,7 @@ def comb():
 
     # CONSOLIDATING
     xp['prefix']            ='../comb/n3147hi'
-    xp['prefix_comb']       =['../a03/a03',
+    xp['prefix_comb']       =[#'../a03/a03',
                               '../bc04/bc04',
                               '../c90/c90',
                               '../d03b/d03b',
@@ -426,13 +426,13 @@ def comb():
 
 
 if  __name__=="__main__":
-    a03()
-    bc04()
-    c90()
-    d03b()
-    d89()
-    d03a()
-    b13a()
-    b13b()
-    b13c()
+    #a03()
+    #bc04()
+    #c90()
+    #d03b()
+    #d89()
+    #d03a()
+    #b13a()
+    #b13b()
+    #b13c()
     comb()

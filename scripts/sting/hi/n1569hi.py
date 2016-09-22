@@ -26,7 +26,7 @@ def b00():
 
     # IMPORT
     xp['prefix']            ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
-    xp['rawfiles']          =st['hi_raw']+'AW605_12'
+    xp['rawfiles']          =st['hi_raw']+'AW605_F031110.xp1'
 
     # CALIBRATION
     xp['source']            ='NGC1569'
@@ -68,18 +68,18 @@ def c00():
     xp=xu.init()
 
     # IMPORT
-    xp['prefix']        ='tmp1'
-    xp['rawfiles']      =st['hi_raw']+'AW325_6'
-    xp['importfield']   ='0,1,2'
-    #xp=xu.ximport(xp)
-    #xp['prefix']        ='tmp2'
-    #xp['rawfiles']      =st['hi_raw']+'AW325_7'
-    #xp['importfield']   ='0,2'
-    #xp=xu.ximport(xp)
     xp['prefix']        ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
-    #os.system("rm -rf "+xp['prefix']+'.ms')
-    #concat(vis=['tmp1.ms','tmp2.ms'],concatvis=xp['prefix']+'.ms',freqtol='50kHz')
-    os.system("rm -rf tmp?.ms")
+    xp['rawfiles']      =[st['hi_raw']+'AW325_C930629.xp1',st['hi_raw']+'AW325_C930629.xp2']
+    xp['importfield']   ='0,1,2'
+#     #xp=xu.ximport(xp)
+#     #xp['prefix']        ='tmp2'
+#     #xp['rawfiles']      =st['hi_raw']+'AW325_7'
+#     #xp['importfield']   ='0,2'
+#     #xp=xu.ximport(xp)
+#     
+#     #os.system("rm -rf "+xp['prefix']+'.ms')
+#     #concat(vis=['tmp1.ms','tmp2.ms'],concatvis=xp['prefix']+'.ms',freqtol='50kHz')
+#     os.system("rm -rf tmp?.ms")
 
     # TRACK INFORMATION
     xp['source']             = 'NGC1569'
@@ -143,8 +143,8 @@ def d00():
 
     # IMPORT 
     xp['prefix']        ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
-    xp['rawfiles']      =[st['hi_raw']+'AW325_4',
-                          st['hi_raw']+'AW325_5']
+    xp['rawfiles']      =[st['hi_raw']+'AW325_A920906.xp1',
+                          st['hi_raw']+'AW325_A920906.xp2']
 
     # TRACK INFORMATION
     xp['source']            = 'NGC1569'
@@ -193,9 +193,6 @@ def d00():
 
 def comb():
     # -170->5
-    #execfile(stinghi+'n1569b.py')
-    #execfile(stinghi+'n1569c.py')
-    #execfile(stinghi+'n1569d.py')
 
     xp=xu.init()
 
@@ -228,8 +225,8 @@ def comb():
 
 if  __name__=="__main__":
     
-    #b00()
-    #c00()
-    #d00()
+    b00()
+    c00()
+    d00()
     comb()
    

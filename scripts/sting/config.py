@@ -12,3 +12,13 @@ st={    'hi_raw':       '/Volumes/Scratch/raw/21cm/',
 stinghi=os.path.dirname(xlib_path)+'/scripts/sting/hi/'
 stingco=os.path.dirname(xlib_path)+'/scripts/sting/co/'
 sting13co=os.path.dirname(xlib_path)+'/scripts/sting/13co/'
+
+###################################################################
+#   Directory Structure:
+#   proc/line/->
+#               galaxy->
+#                     ->track:  calibration+snapshot+diagnosis
+#                     ->comb:   final combined imaging
+#                     ->logs:   .log .last folder
+###################################################################
+
