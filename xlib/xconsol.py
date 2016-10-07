@@ -136,13 +136,7 @@ def xconsol(xp):
                         restfreq=xp['restfreq'],
                         phasecenter=xp['phasecenter'],
                         hanning=xp['hs'])
-            """
-            split(vis=xp['msfile'],
-                  outputvis=xp['srcfile'],
-                  spw=xp['spw_source'],
-                  datacolumn='corrected',
-                  keepflags=False)
-            """
+
         else:
             """
             tb.open(xp['msfile'],nomodify=False)
@@ -226,8 +220,8 @@ def xconsol(xp):
                 mstransform(vis=xp['msfile'],
                             outputvis=xp['srcfile'],
                             createmms=False,
-                            numsubms=64,
-                            separationaxis='spw',
+                            numsubms='auto',
+                            separationaxis='auto', #spw
                             field=xp['source'],
                             spw=xp['spw_source'],
                             keepflags=False,
@@ -246,6 +240,9 @@ def xconsol(xp):
                             outframe=xp['outframe'],
                             restfreq=xp['restfreq'],
                             phasecenter='',
+                            #douvcontsub=True,
+                            #fitorder=0,
+                            #fitspw='',
                             hanning=xp['hs'])
             xu.news("")
             xu.news("checking flagging consistency among channels:")
@@ -325,7 +322,7 @@ def xconsol(xp):
             
             os.system('rm -rf '+xp['srcfile']+".cont")
             os.system('rm -rf '+xp['srcfile']+".contsub")
-            """
+
             uvcontsub(vis=xp['srcfile'],
                       field='',
                       fitspw=xp['fitspw'],
@@ -333,17 +330,9 @@ def xconsol(xp):
                       spw='',
                       combine=xp['uvcs_combine'],
                       want_cont=False,
+                      excludechans=False,
                       solint='int')
-            replace uvcontsub with uvcontsub3 to improve performance
-            """
-            uvcontsub3(vis=xp['srcfile'],
-                      field='',
-                      fitspw=xp['fitspw'],
-                      fitorder=xp['fitorder'],
-                      spw='',
-                      combine=xp['uvcs_combine'])
-    
-    
+            
     if  len(xp['prefix_comb'])!=1 or xp['prefix']!=xp['prefix_comb'][0]:
     
         xp['srcfile_comb']=['']*len(xp['prefix_comb'])
