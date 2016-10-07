@@ -217,14 +217,16 @@ def init():
     'restfreq':'1420405752.0Hz',# rest frequency for imaging (default: 1420.405752MHz)
     'outframe':'BARY',          # frame of the output image
     'allowchunk':False,
+    'interactive':False,
     
     'imsize':2**5*10,           # imaging size (numbers of pixels) (2**x)*(3**y)*(5**z)*(7**r)
     'cell':'8.0arcsec',         # imaging pixel size.
+                                # ~3-5 pixels across beam, compared with smaller axis
     'clean_mask':0.2,           # 0.3:     a clean box with pb response higher 0.2
                                 # True:    a clean box with pb response higher <minpb>
                                 # [0,0,511,511]:    a clean box specified by bl/tr
                                 # 'cleanbox.txt'    a cleanbox file
-    'clean_mask_cont':0.2,      # clean mask for continuue                               
+    'clean_mask_cont':0.2,      # clean mask for continuum                              
     'niter':10000,              # clean iteration threshold
     'sigcutoff_spec':2.5,       # <sigcutoff_spec>*<sig> is the default threshold value for spectral-cube CLEAN
     'sigcutoff_cont':2.5,       # <sigcutoff_cont>*<sig> is the default threshold value for continuum MFS CLEAN
@@ -346,7 +348,7 @@ def sumwt(visfile='',
     Note: imager.sensitivity has a similar function.
     
     """ 
-    c=3.0e5
+    c=qa.constants('c')['value']/1000.0
     restfreq=qa.convertfreq(restfreq)['value']
     
     vsfile=open(visfile+'.sumwt.log','w')
@@ -361,6 +363,7 @@ def sumwt(visfile='',
     tb.open(visfile+'',nomodify=False)
     ids=np.unique(tb.getcol("DATA_DESC_ID"))
     cwt=0
+    
     for id in ids:
         news("")
         qq='DATA_DESC_ID=='+str(id)
@@ -411,29 +414,47 @@ def sumwt(visfile='',
     vsfile.close()
 
 def mossen(vis='',
+           nchan=-1,
+           start=0,
+           step=0,
+           spw='',
+           field='',
            log='',
-           nchan=1,
            robust=0.5,
            ftmachine='mosaic',
            mosweight=False,
-           imsize=256,
-           cell='1arcsec',
+           imsize=256,          # not used
+           cell='1arcsec',      # not used
            weight='natural'):
+    #
+    #   use imager.apparentsens() to estimate the sensitivity from weight
+    #       note: as to v4.7, im.apparentsens() only read the WEIGHT column.
+    #             it will assume the weight column represents the 1-channel noise for each vis record
+    #             then derive the continuum or channel noise (depending on what is "selectvis")
+    #   
+    if  log=='':
+        log=vis+'.mossen.log'
     vsfile=open(log,'w')
-
+    
+    
     im.open(vis)
-    im.defineimage(mode='channel',cellx=cell,celly=cell,nx=imsize,ny=imsize)
+ 
+#     for i in range(0,nchan):
+#         im.selectvis(spw='*:'+str(i))
+#         im.weight(type=weight,robust=robust,mosaic=mosweight) 
+#         sens=im.apparentsens()
+    im.selectvis(spw=spw,nchan=nchan,start=start,step=step,field=field)
+    im.defineimage()
     im.setvp(dovp=True)
-    im.setoptions(ftmachine=ftmachine,padding=1.2)   
-    for i in range(0,nchan):
-        im.selectvis(spw='*:'+str(i))
-        im.weight(type=weight,robust=robust,mosaic=mosweight) 
-        sens=im.apparentsens()
-        print >>vsfile,str(sens[1]),str(sens[2])
+    im.setoptions(ftmachine=ftmachine,padding=1.2)  
+    im.weight(type=weight,robust=robust,mosaic=mosweight) 
+    sens=im.apparentsens()
+        #print >>vsfile,str(sens[1]),str(sens[2])
     im.close()
     
     vsfile.close()
 
+    return sens[1]
 
 def importmir(mirfile='',
               vis='',
@@ -964,7 +985,7 @@ def exportclean(outname,keepcasaimage=True,
                        outname+'.'+version[i]+'.fits',
                        dropdeg=dropdeg,optical=optical,
                        dropstokes=dropstokes,
-                       stokeslast=True,
+                       stokeslast=True,history=False,
                        overwrite=True,velocity=True)
             if  keepcasaimage==False:
                 os.system("rm -rf "+outname+'.'+version[i])
@@ -2131,6 +2152,11 @@ if  __name__=="__main__":
     #sumwt("n0772hi.src.ms")
     #listobs("n2976co.src.ms") 
     #checkchflag("n0772hi.src.ms")
-    sumwt("n0337hi.src.ms")
+    #sumwt("n0337hi.src.ms")
+    #xu.sumwt("../d03/d03.src.ms")
+    mossen(vis="../d03/d03.src.ms",spw="*:0~6;88~105")
+    #mossen(vis='n1156hi.src.ms',log='n1156hi.line.sens.log',
+    #       mosweight=True,imsize=2**7*10,
+    #       ftmachine='mosaic',weight='robust')
           
     
