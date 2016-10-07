@@ -82,12 +82,14 @@ def xclean(xp):
         if  xp['imcs']==True:
             xp['imstat_box_spec']=outerquarter
     if  xp['imstat_box_cont']=='':
-        xp['imstat_box_cont']=outerquarter
+        xp['imstat_box_cont']=''
     
     
     xp['srcfile']=xp['prefix']+'.src.ms'
+    
+    #   ALWAYS USE imagermode='mosaic' for now
     if  xp['imagermode']==None:
-        xp['imagermode']='csclean'
+        xp['imagermode']='mosaic'
         
         prepvis=xp['srcfile']
         if  xp['uvcs']==True:
@@ -268,6 +270,7 @@ def xclean(xp):
               chaniter=xp['iterchan'],
               allowchunk=xp['allowchunk'],
               usescratch=xp['usescratch'],
+              interactive=xp['interactive'],
               selectdata=True)
         xu.modelconv(outname_loop[i])
     
@@ -286,10 +289,12 @@ def xclean(xp):
                            axes=[0,1],
                            algorithm=xp['imstat_algorithm'],
                            region=xp['imstat_rg_spec'])
+            ds_stat_sigma=ds_stat['sigma']
+            ds_stat_sigma=np.extract(ds_stat_sigma!=0,ds_stat_sigma)
             if  xp['imstat_sigcalc']=='min':
-                sigmjy=np.nanmin(ds_stat['sigma'])*1000.
+                sigmjy=np.nanmin(ds_stat_sigma)*1000.
             else:
-                sigmjy=np.median(ds_stat['sigma'])*1000.
+                sigmjy=np.median(ds_stat_sigma)*1000.
             if  outname_loop[i][-2:]=='_d':
                 if  threshold_loop[i+1]=='0.0mJy':
                     threshold_loop[i+1]=str(sigmjy*xp['sigcutoff_spec'])+'mJy'
@@ -307,6 +312,11 @@ def xclean(xp):
                            algorithm=xp['imstat_algorithm'],
                            region=xp['imstat_rg_cont'])
             sigmjy=dc_stat['sigma'][0]*1000.
+            sigmjy=xu.mossen(vis=vis_loop[i],spw=cleanspw_loop[i],field=xp['clean_field'],
+                      robust=xp['wrobust'],
+                      weight=xp['cleanweight'],
+                      mosweight=xp['mosweight'])
+            sigmjy=sigmjy*1000.
             if  outname_loop[i][-2:]=='_d':
                 if  threshold_loop[i+1]=='0.0mJy':
                     threshold_loop[i+1]=str(sigmjy*xp['sigcutoff_cont'])+'mJy'
@@ -353,11 +363,15 @@ def xclean(xp):
         xu.genmask0(mask0)
         xu.mask0clean(outname+'.coli',mask0+'.mask0')
         
+        os.system('rm -rf '+outname+'.line.cm')
+        os.system('rm -rf '+outname+'.cont.cm.cube')
         imcontsub(imagename=outname+'.coli.cm',
                   linefile=outname+'.line.cm',
                   contfile=outname+'.cont.cm.cube',
+                  region='',box='',
                   fitorder=xp['fitorder'],
                   chans=xp['fitchans'])
+        
         xu.news("")
         
         immoments(imagename=outname+'.coli.cm',
