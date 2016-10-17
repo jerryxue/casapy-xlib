@@ -229,6 +229,7 @@ def xclean(xp):
             uvtaper=False
         else:
             uvtaper=True
+        
         clean(vis=vis_loop[i],
               imagename=outname_loop[i],
               field=xp['clean_field'],
@@ -272,8 +273,16 @@ def xclean(xp):
               usescratch=xp['usescratch'],
               interactive=xp['interactive'],
               selectdata=True)
-        xu.modelconv(outname_loop[i])
+        
+        #   CALCULATE CONVOLVED MODEL
+        if  xp['mask0']==True:
+            #   DERIVE MASK0 FROM FLUX
+            xu.genmask0(outname_loop[i]+'.flux')    
+            #   MASK DATA PRODUCTS USING MASK0 
+            xu.mask0clean(outname_loop[i],outname_loop[i]+'.flux.mask0')
     
+        xu.modelconv(outname_loop[i])
+        
         xu.news("")
         xu.news("")   
         xu.news("--imstat--")
@@ -355,16 +364,19 @@ def xclean(xp):
         xu.news("Continumm substraction in the cube")
         xu.news("")
     
-        os.system('rm -rf '+outname+'.cont.* ')
-        os.system('rm -rf '+outname+'.line.* ')
+
+        xu.rmctable(outname+'.cont.*')
+        xu.rmctable(outname+'.line.*')
+        
         outname = xp['prefix']+xp['ctag']
      
         mask0=outname+'.coli.flux'
         xu.genmask0(mask0)
         xu.mask0clean(outname+'.coli',mask0+'.mask0')
         
-        os.system('rm -rf '+outname+'.line.cm')
-        os.system('rm -rf '+outname+'.cont.cm.cube')
+ 
+        xu.rmctable(outname+'.line.cm')
+        xu.rmctable(outname+'.cont.cm.cube')
         imcontsub(imagename=outname+'.coli.cm',
                   linefile=outname+'.line.cm',
                   contfile=outname+'.cont.cm.cube',
@@ -374,23 +386,27 @@ def xclean(xp):
         
         xu.news("")
         
+        xu.rmctable(outname+'.cont.cm')
         immoments(imagename=outname+'.coli.cm',
                   outfile=outname+'.cont.cm',
                   chans=xp['fitchans'],
                   moments=-1)
         
-        os.system('rm -rf '+outname+'.line.flux ')
+        xu.rmctable(outname+'.line.flux')
         os.system('cp -rf '+outname+'.coli.flux '+outname+'.line.flux')
+        xu.rmctable(outname+'.line.image')
         immath(imagename=[outname+'.line.cm',outname+'.line.flux'],
                expr='IM0*IM1',
                outfile=outname+'.line.image')
         
-        os.system('rm -rf '+outname+'.cont.flux ')        
+
+        xu.rmctable(outname+'.cont.flux')
+        xu.rmctable(outname+'.cont.image.cube')        
         immath(imagename=[outname+'.cont.cm.cube',outname+'.coli.flux'],
                expr='IM0*IM1',
                outfile=outname+'.cont.image.cube')
         
-        os.system('rm -rf flux.tmp?')
+        xu.rmctable('flux.tmp?')
         immath(imagename=[outname+'.line.flux'],
                expr='1/(IM0^2)',
                outfile='flux.tmp0')
@@ -406,8 +422,9 @@ def xclean(xp):
         immath(imagename=['flux.tmp2'],
                outfile=outname+'.cont.flux',
                expr='IM0/'+str(pbmax))
-        os.system('rm -rf flux.tmp?')   
+        xu.rmctable('flux.tmp?')   
         
+        xu.rmctable(outname+'.cont.image')
         immath(imagename=[outname+'.cont.cm',outname+'.cont.flux'],expr='IM0*IM1',\
                outfile=outname+'.cont.image')
     

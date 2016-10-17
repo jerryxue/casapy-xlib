@@ -55,10 +55,10 @@ print '>>>> MIRAID Path    :'
 print mir_path
 print ''
 print '>>>> Current CASA Version:'
-print '  '+casadef.casa_version, '(r'+casadef.subversion_revision+')'
+print '  '+casadef.casa_version #'(r'+casadef.subversion_revision+')'
 print ''
 print '>>>> Compatible CASA Version:'
-print '>=4.6.0 (r36590)'
+print '>=4.7.0-REL (r38335)'
 print ""
 print "+"*80
 print ""
