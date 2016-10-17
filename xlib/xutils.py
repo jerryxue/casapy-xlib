@@ -151,7 +151,7 @@ def init():
                                 #   one corr and ignore another corr. You want to void two corr-setup in one spw
                                 #   -> avoid regridding dual-pol and single-pol tracks into the same channel setup.
                                 #
-    'spwrgd_method':'cvel',     
+    'spwrgd_method':'mstransform',     
                                 # choose the regridding task: CVEL (default) or MSTRANSFORM 
                                 # mstransform() is much faster with less I/O (mx3 faster in a test case) 
                                 # However, some tests indicated that it might overflag channels 
@@ -209,12 +209,12 @@ def init():
     'restorbeam_default':[''],      # not useful any more
     'restorbeam_method':'maximum',  # not useful any more
     
-    
-    'minpb':0.10,                # masked out the region with pb response < minbp
+    'mask0':True,               # mask any regions with partial channel coverage 
+    'minpb':0.10,               # masked out the region with pb response < minbp
     'cleanspw':'',
     'phasecenter':'',           # imaging phasecenter, e.g.'J2000 12h18m49.6 14d24m59.01' or '2' (=fieldid2)
     'spinterpmode':'linear',    # spectral gridding interpolation mode in CLEAN
-    'restfreq':'1420405752.0Hz',# rest frequency for imaging (default: 1420.405752MHz)
+    'restfreq':'1420405751.786Hz',# rest frequency for imaging (default: 1420.405752MHz)
     'outframe':'BARY',          # frame of the output image
     'allowchunk':False,
     'interactive':False,
@@ -332,6 +332,7 @@ def init():
 
 def sumwt(visfile='',
           restfreq='115.2712GHz',
+          line='',
           field='',
           oldstyle=False,
           topeff=1.0):
@@ -344,10 +345,16 @@ def sumwt(visfile='',
     TOP_EFF: Effective Integration Time Fraction on Each Pointing Center
         For CARMA 19 pointing, it would be (1.0+0.5*6)/19. at the FOV center.
         For non-mosaicing observation, it would be 1.
+    HI 21cm restfreq='1420405751.786Hz'
     
     Note: imager.sensitivity has a similar function.
-    
+    /field/ must be field_id
     """ 
+    
+    if  line=='hi':
+        restfreq='1420405751.786Hz'
+    if  line=='12co':
+        restfreq='115.2712GHz'   
     c=qa.constants('c')['value']/1000.0
     restfreq=qa.convertfreq(restfreq)['value']
     
@@ -557,13 +564,13 @@ def importmir(mirfile='',
     news(vis)
     news("")
     
-    os.system('rm -rf '+vis)
+    rmctable(vis)
     concat(vis=win_combine,concatvis=vis,respectname=False,\
            freqtol='',dirtol='',timesort=True)
     
     for tmp in win_combine:
-        os.system('rm -rf '+tmp+'*')
-    
+        rmctable(tmp+'*')
+        
     news("")
     news("Changing Antenna Names")
     prefix_ant=''
@@ -866,7 +873,7 @@ def importmiriad(mirfile='',
     news(' ',origin='miriad')
     news('##########################################',origin='miriad')
     news('##### Begin Task: CARMAFILLER        #####',origin='miriad')
-    os.system("rm -rf "+vis)
+    rmctable(vis)
     cmd='carmafiller tsys=True vis='+vis+'.mir'+' ms='+vis
     p=subprocess.Popen(cmd,shell=True,env=extenv,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     output = p.stdout.read()
@@ -960,10 +967,9 @@ def cleanup(outname,tag='',resume=False):
     for i in range(0,len(version)):
         if    os.path.exists(outname+'.'+version[i]):
             if  tag=='':
-                rmtables(outname+'.'+version[i])
-                os.system('rm -rf '+outname+'.'+version[i])
+                rmctable(outname+'.'+version[i])
             else:
-                os.system('rm -rf '+outname+tag+'.'+version[i])
+                rmctable(outname+tag+'.'+version[i])
                 os.system('cp -r '+outname+'.'+version[i]+' '+outname+tag+'.'+version[i])
                 os.system('rm -rf '+outname+tag+'.'+version[i]+'.fits')
                 os.system('cp -r '+outname+'.'+version[i]+'.fits'+' '+outname+tag+'.'+version[i]+'.fits')
@@ -988,7 +994,7 @@ def exportclean(outname,keepcasaimage=True,
                        stokeslast=True,history=False,
                        overwrite=True,velocity=True)
             if  keepcasaimage==False:
-                os.system("rm -rf "+outname+'.'+version[i])
+                rmctable(outname+'.'+version[i])
 
 def savedisk(xp,
              rmtrack=True,
@@ -1001,21 +1007,21 @@ def savedisk(xp,
     if  rmtrack==True:
         for i in range(len(xp['prefix_comb'])):
             ms=xp['prefix_comb'][i]+'.ms'
-            os.system('rm -rf '+ms)
+            rmctable(ms)
             ms=xp['prefix_comb'][i]+'.ms.flagversions'
-            os.system('rm -rf '+ms)
+            rmctable(ms)
             ms=xp['prefix_comb'][i]+'.src.ms'
-            os.system('rm -rf '+ms)
+            rmctable(ms)
     
     if  rmcombms==True:
         ms=xp['prefix']+'.ms'
-        os.system('rm -rf '+ms)
+        rmctable(ms)
         ms=xp['prefix']+'.src.ms'
-        os.system('rm -rf '+ms)
+        rmctable(ms)
         ms=xp['prefix']+'.ms.cont'
-        os.system('rm -rf '+ms)
+        rmctable(ms)
         ms=xp['prefix']+'.src.ms.contsub'
-        os.system('rm -rf '+ms)
+        rmctable(ms)
     
     #    remove casa images
     if  rmcasaimage==True:
@@ -1132,7 +1138,7 @@ def resmoothpsf(outname):
     #
     #    calculate the "ultimate" psf when resmooth=True
     #
-    os.system('rm -rf cpsf.tmp')
+    rmctable('cpsf.tmp')
     os.system('cp -r '+outname+'.psf cpsf.tmp')
     
     imhead(imagename='cpsf.tmp',mode='add',hdkey='bunit',hdvalue='Jy/beam')
@@ -1157,7 +1163,7 @@ def resmoothpsf(outname):
     exportfits(imagename=outname+'.cpsf',fitsimage=outname+'.cpsf.fits',
                stokeslast=True,
                velocity=True,overwrite=True)
-    os.system('rm -rf cpsf.tmp')
+    rmctable('cpsf.tmp')
     
     # im2=ia.convolve2d(  outfile=outname+'.cpsf',
     #                     axes=[0,1],
@@ -1348,16 +1354,21 @@ def news(msg,origin='++xutils++'):
     casalog.post(msg)
     
     
-def genmask0(imfile):    
+def genmask0(imfile,verbose=False):    
     #
     #     produce a mask image with unmask values=1
-    #
-    os.system('rm -rf '+imfile+'.mask0')
-    os.system('rm -rf tmp0')
-    os.system('rm -rf tmp1')
-    os.system('rm -rf tmp2')
-    os.system('rm -rf tmp3')
+
+        
+    rmctable(imfile+'.mask0')
+    rmctable('tmp0')
+    rmctable('tmp1')
+    rmctable('tmp2')
+    rmctable('tmp3')
+
     
+    if  verbose==False:
+        casalog.filter('ERROR')
+            
     os.system('cp -rf '+imfile+' tmp0')
     immath(imagename=['tmp0','tmp0'],\
         expr='IM0/IM1',\
@@ -1371,10 +1382,13 @@ def genmask0(imfile):
     immath(imagename='tmp3',expr='IM0',outfile=imfile+'.mask0',
         mask='"tmp3">=1.0')
     
-    os.system('rm -rf tmp0')
-    os.system('rm -rf tmp1')
-    os.system('rm -rf tmp2')
-    os.system('rm -rf tmp3')
+    if  verbose==False:
+        casalog.filter('INFO')
+    
+    rmctable('tmp0')
+    rmctable('tmp1')
+    rmctable('tmp2')
+    rmctable('tmp3')
     
 
 def mask0clean(outname,mask0):
@@ -1386,12 +1400,15 @@ def mask0clean(outname,mask0):
             'psf','image','sen',
             'flux.pbcoverage','flux.pbcoverage.thresh_mask',
             'flux','flux.thresh_mask']
+    
+    version=['cm','residual','cmodel','image','flux']
+    
     for i in range(0,len(version)):
         if  os.path.exists(outname+'.'+version[i]):
-            os.system('rm -rf '+outname+'.'+version[i]+'.tmp')
+            rmctable(outname+'.'+version[i]+'.tmp')
             immath(imagename=[outname+'.'+version[i],mask0],
-                   expr='IM0*IM1',outfile=outname+'.'+version[i]+'.tmp')
-            os.system('rm -rf '+outname+'.'+version[i])
+                   expr='IM0*IM1',outfile=outname+'.'+version[i]+'.tmp',imagemd=outname+'.'+version[i])
+            rmctable(outname+'.'+version[i])
             os.system('mv '+outname+'.'+version[i]+'.tmp '+outname+'.'+version[i])
 
 
@@ -1431,7 +1448,7 @@ def getuvrange(msfile):
     news("")
     news("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     news("predicted beamwidth (uniform weighted)  : "+str(theta_fwhm)+' arcsec')
-    news("predicted largest senstive angular scale: "+str(theta_las)+' arcsec')
+    news("predicted largest sensitive angular scale: "+str(theta_las)+' arcsec')
     news("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     news("")
     news("")
@@ -1460,13 +1477,12 @@ def modelconv(outname,mode=''):
     calculate a convolved model
     """
     # use *.residual *.image to get cmodel
-    os.system('rm -rf '+outname+'.cmodel')
-    os.system('rm -rf '+outname+'.cmodel2')
-    
+    rmctable(outname+'.cmodel')
+    rmctable(outname+'.cmodel2')
     # mode=''
     if  mode=="":    
         immath(imagename=[outname+'.image',outname+'.residual'],
-        expr='IM0-IM1',outfile=outname+'.cmodel')
+               expr='IM0-IM1',outfile=outname+'.cmodel',imagemd=outname+'.image')
     
     # mode='conv'
     if  mode=="test":
@@ -1483,7 +1499,25 @@ def modelconv(outname,mode=''):
                 outfile=outname+'.cmodel2')
         immath(imagename=[outname+'.cmodel2',outname+'.image'],\
         expr='IM0+IM1-IM1',outfile=outname+'.cmodel')
-        os.system('rm -rf '+outname+'.cmodel2')    
+        rmctable(outname+'.cmodel2')    
+
+def rmctable( tables,
+              rmfile=False,
+              verbose=False):
+    """
+    quietly remove casa tables
+    by default, non-table files/dir (like.flagversions) are not removed
+    """
+    if  verbose==False:
+        casalog.filter('ERROR')
+    
+    rmtables(tables)
+    
+    if  rmfile==True:  
+        os.system("rm -rf "+tables)
+
+    if  verbose==False:
+        casalog.filter('INFO')    
 
 def copyweight(srcfile,
                copyback=False):
@@ -2007,6 +2041,7 @@ def xplotcal(tbfile,iterant=False,
 
 def checkvrange(srcfile='',
                 outframe='LSRK',
+                line='',
                 restfreq=115271200000):
     #
     #    check the velocity coverage of a spectral line observation
@@ -2027,7 +2062,12 @@ def checkvrange(srcfile='',
     13CO: 110201353000 (Hz)
     with limited functions (no frame conversion)
     """
-    c=3e5
+    if  line=='hi':
+        restfreq=me.spectralline('HI')['m0']['value']
+    if  line=='12co':
+        restfreq=me.spectralline('CO_1_0')['m0']['value']
+        
+    c=qa.constants('c')['value']/1000.0
     if  restfreq=='':
         restfreq=me.spectralline('HI')['m0']['value']
     news("")
@@ -2154,7 +2194,7 @@ if  __name__=="__main__":
     #checkchflag("n0772hi.src.ms")
     #sumwt("n0337hi.src.ms")
     #xu.sumwt("../d03/d03.src.ms")
-    mossen(vis="../d03/d03.src.ms",spw="*:0~6;88~105")
+    #mossen(vis="../d03/d03.src.ms",spw="*:0~6;88~105")
     #mossen(vis='n1156hi.src.ms',log='n1156hi.line.sens.log',
     #       mosweight=True,imsize=2**7*10,
     #       ftmachine='mosaic',weight='robust')
