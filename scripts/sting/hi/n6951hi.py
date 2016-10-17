@@ -1,27 +1,3 @@
-def config(xp):
-
-    xp['spwrgd']            ='spw'
-    xp['uvcs']              =True
-    xp['fitspw']            ='*:2~4;23~25'
-    xp['fitorder']          =1
-    xp['scalewt']           =True
-    xp['scalewt_minsamp']   =6
-    
-    # IMAGING
-    xp['cleanspec']         =True
-    xp['cleancont']         =True
-    
-    xp['imsize']            =2**5*10
-    xp['cell']              ='4.0arcsec'
-    
-    xp['cleanmode']     = 'velocity'
-    xp['clean_start']   ='1130km/s'
-    xp['clean_nchan']   =29
-    xp['clean_width']   ='20.8km/s'
-    xp['phasecenter']   ='J2000 20h37m14.1 +66d06m20.0'
-    
-    return xp
-    
 
 
 def b06():
@@ -234,6 +210,30 @@ def d03():
     xp=xu.xclean(xp)
     
     
+def config(xp):
+
+    xp['spwrgd']            ='spw'
+    xp['uvcs']              =True
+    xp['fitspw']            ='*:2~4;23~25'
+    xp['fitorder']          =1
+    xp['scalewt']           =True
+    xp['scalewt_minsamp']   =6
+    
+    # IMAGING
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+    
+    xp['imsize']            =2**5*10
+    xp['cell']              ='4.0arcsec'
+    
+    xp['cleanmode']     = 'velocity'
+    xp['clean_start']   ='1130km/s'
+    xp['clean_nchan']   =29
+    xp['clean_width']   ='20.8km/s'
+    xp['phasecenter']   ='J2000 20h37m14.1 +66d06m20.0'
+    
+    return xp
+    
 
     
 def comb():
@@ -246,31 +246,48 @@ def comb():
     xp=xu.init()
     
     # CONSOLIDATING
-    xp['prefix']            ='../comb/'+os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-    xp['prefix_comb']       =['../d03/d03',
-                              '../c04/c04',
-                              '../b06/b06',
-                              '../c02/c02']
+    xp['prefix']            ='../n6951/comb/'+os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
+    xp['prefix_comb']       =['../n6951/d03/d03',
+                              '../n6951/c04/c04',
+                              '../n6951/b06/b06',
+                              '../n6951/c02/c02']
     
     xp=config(xp)
-    xp['imsize']            =2**6*10
-    xp['cell']              ='4.0arcsec'
+    
+    xp['mosweight']         =True
+    xp['scalewt']           =True
+    
+    xp['imsize']            =2**8*5
+    xp['cell']              ='3.0arcsec'
+    
     xp['clean_start']       ='1171.6km/s'
     xp['clean_nchan']       =24
     
-    xp['multiscale']        =[0,4,12]
+    xp['clean_mask']        =0.1
+    xp['clean_mask_cont']   =0.01
+    xp['minpb']             =0.01
+
+    xp['multiscale']        =[int(x*(8./3.)) for x in [0.,1.,5.]]
+    
+    xp['threshold_spec']    ='0.26mJy'
+    
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0
     xp['usescratch']        =True
     
+    xp['fitspw']            ='*:2~4;23~25'
+    
     # RUN SCRIPTS:
-    xp=xu.xconsol(xp)
+    #xp=xu.xconsol(xp)
+
+    xp['ctag']              ='_ro'
+    xp['cleanweight']       ='briggs'    
     xp=xu.xclean(xp)
 
 if  __name__=="__main__":
-    d03()
-    c04()
-    b06()
-    c02()
+    #d03()
+    #c04()
+    #b06()
+    #c02()
     comb()      

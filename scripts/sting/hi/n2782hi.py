@@ -1,3 +1,4 @@
+
 def config(xp):
     xp['spwrgd']            ='spw'
     xp['uvcs']            =True
@@ -66,7 +67,7 @@ def c00():
     
     xp['fluxcal']         ='1328+307'
     xp['fluxcal_uvrange']    =''
-    xp['phasecal']     = '0859+470'
+    xp['phasecal']     = '0859+470' 
     xp['phasecal_uvrange']='<15klambda'
     
     xp['spw_source']     = '0'
@@ -167,29 +168,46 @@ def comb():
     xp=xu.init()
     
     # CONSOLIDATING
-    xp['prefix']            ='../comb/n2782hi'
-    xp['prefix_comb']       =['../ab/ab',
-                              '../c00/c00',
-                              '../d00/d00']
+    xp['prefix']            ='../n2782/comb/n2782hi'
+    xp['prefix_comb']       =['../n2782/ab/ab',
+                              '../n2782/c00/c00',
+                              '../n2782/d00/d00']
     xp=config(xp)
-     
-    xp['imsize']            =2**6*10
-    xp['cell']              ='4.0arcsec'
+
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+    
+    xp['mosweight']         =True
+    xp['scalewt']           =True
+
+    xp['imsize']            =2**6*10*3
+    xp['cell']              ='2.0arcsec'
+    
     xp['clean_start']       ='2252km/s'
     xp['clean_nchan']       =int((2824-2252.)/10.4)
     
-    xp['multiscale']        =[0,4,12]
+    xp['clean_mask']        =0.1
+    xp['clean_mask_cont']   =0.01
+    xp['minpb']             =0.01
+
+    xp['multiscale']        =[int(x*(7/2.0)) for x in [0.,1.,3.]]
+    
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0
     xp['usescratch']        =True
+
+    xp['fitspw']        ='0:0~7;47~57'
     
     # RUN SCRIPTS:
-    xp=xu.xconsol(xp)
+    #xp=xu.xconsol(xp)
+    
+    xp['ctag']              ='_ro'
+    xp['cleanweight']       ='briggs'
     xp=xu.xclean(xp)
 
 if  __name__=="__main__":
-    ab()
-    c00()
-    d00()
+    #ab()
+    #c00()
+    #d00()
     comb()

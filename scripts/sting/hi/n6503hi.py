@@ -1,7 +1,10 @@
 # line_vrange=[1760,2060]
+
+#   AD0211  88  B
+
 xp=xu.init()
 
-xp['prefix']        ='../comb/n6503hi'
+xp['prefix']        ='../n6503/comb/n6503hi'
 xp['rawfiles']      =st['hi_raw']+'AD211_A880125.xp1'
 xp['starttime']     =''
 xp['stoptime']      =''
@@ -30,10 +33,18 @@ xp['fitorder']      =1
 xp['cleanspec']         =True
 xp['cleancont']         =True
 
-xp['imsize']        =2**6*10
-xp['cell']          ='4.0arcsec'
+xp['mosweight']         =True
+xp['scalewt']           =True
+    
+xp['imsize']            =2**8*5
+xp['cell']              ='3.0arcsec'
 
-xp['multiscale']        =[0,4,12]
+xp['clean_mask']        =0.1
+xp['clean_mask_cont']   =0.01
+xp['minpb']             =0.01
+
+xp['multiscale']        =[int(x*(7.0/3.0)) for x in [0.,1.,3.]]
+
 xp['clean_gain']        =0.3
 xp['cyclefactor']       =5.0
 xp['negcomponent']      =0
@@ -47,11 +58,14 @@ xp['clean_width']   ='10.4km/s'
 xp['phasecenter']   ='J2000 17h49m26.5 +70d08m39.6'
 
 # RUN SCRIPTS
-xp=xu.ximport(xp)
-xu.checkvrange(xp['prefix']+'.ms')
+#xp=xu.ximport(xp)
+#xu.checkvrange(xp['prefix']+'.ms')
 #au.timeOnSource(xp['prefix']+'.ms')
-xp=xu.xcal(xp)
-xp=xu.xconsol(xp)
+#xp=xu.xcal(xp)
+#xp=xu.xconsol(xp)
+
+xp['ctag']              ='_ro'
+xp['cleanweight']       ='briggs'
 xp=xu.xclean(xp)
 
 

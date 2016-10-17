@@ -345,39 +345,56 @@ def comb():
     xp=xu.init()
     
     # CONSOLIDATING
-    xp['prefix']            ='../comb/n3486hi'
-    xp['prefix_comb']       =['../d91/d91',
-                              '../b13a/b13a',
-                              '../b13b/b13b',
-                              '../c13a/c13a',
-                              '../c13b/c13b',
-                              '../c13c/c13c',
-                              '../c13d/c13d',
-                              '../c13e/c13e']
+    xp['prefix']            ='../n3486/comb/n3486hi'
+    xp['prefix_comb']       =['../n3486/d91/d91',
+                              '../n3486/b13a/b13a',
+                              '../n3486/b13b/b13b',
+                              '../n3486/c13a/c13a',
+                              '../n3486/c13b/c13b',
+                              '../n3486/c13c/c13c',
+                              '../n3486/c13d/c13d',
+                              '../n3486/c13e/c13e']
     
     # CONSOLIDATING
     xp=config(xp)
-    xp['imsize']            =2**7*10
-    xp['cell']              ='2.0arcsec'
     
-    xp['multiscale']        =[0,4,12]
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+    
+    xp['mosweight']         =True
+    xp['scalewt']           =True
+
+    xp['imsize']            =2**5*10*3
+    xp['cell']              ='4.0arcsec'
+    
+    xp['clean_mask']        =0.1
+    xp['clean_mask_cont']   =0.01
+    xp['minpb']             =0.01
+    
+    xp['multiscale']        =[int(x*(9.0/4.0)) for x in [0.,1.,3.]]
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0
     xp['usescratch']        =True
     
+    
+    xp['fitspw']            ='*:0~3;44~46'
+    
     # RUN SCRIPTS:
-    xp=xu.xconsol(xp)
+    #xp=xu.xconsol(xp)
+    
+    xp['ctag']              ='_ro'
+    xp['cleanweight']       ='briggs'
     xp=xu.xclean(xp)
 
 if  __name__=="__main__":
     #d91()
     #b13a()
     #b13b()
-    c13a()
-    c13b()
-    c13c()
-    c13d()
-    c13e()
+    #c13a()
+    #c13b()
+    #c13c()
+    #c13d()
+    #c13e()
     comb()
   

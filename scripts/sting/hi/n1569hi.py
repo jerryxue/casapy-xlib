@@ -1,3 +1,4 @@
+
 def config(xp):
     # CONSOLIDATING
     xp['spwrgd']            =''
@@ -188,7 +189,7 @@ def d00():
 
 
 
-
+#
 
 
 def comb():
@@ -197,36 +198,48 @@ def comb():
     xp=xu.init()
 
     # CONSOLIDATING
-    xp['prefix']            ='../comb/'+os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-    xp['prefix_comb']       =['../b00/b00',
-                              '../c00/c00',
-                              '../d00/d00']
+    xp['prefix']            ='../n1569/comb/'+os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
+    xp['prefix_comb']       =['../n1569/b00/b00',
+                              '../n1569/c00/c00',
+                              '../n1569/d00/d00']
 
     xp=config(xp)
     
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+    
+    xp['mosweight']         =True
     xp['scalewt']           =True
-    xp['imsize']            =2**6*10
+    
+    xp['imsize']            =2**6*10*3
     xp['cell']              ='2.0arcsec'
+    
+    xp['clean_mask']        =0.1
+    xp['minpb']             =0.01
+    xp['clean_mask_cont']   =0.01
+    
     xp['clean_start']       ='-231km/s'
     xp['clean_width']       ='2.6km/s'
     xp['clean_nchan']       =113
 
-    xp['multiscale']        =[0,4,12]
+    xp['multiscale']        =[int(x*(13/2.0)) for x in [0.,1.,3.]]
+    
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0
-    xp['usescratch']        =True
-
-
+    
+    xp['usescratch']        =False
+    xp['fitspw']            ='*:3~13;110~120'
+    
     # RUN SCRIPTS:
-    xp=xu.xconsol(xp)
+    #xp=xu.xconsol(xp)
     xp=xu.xclean(xp)
 
 
 if  __name__=="__main__":
     
-    b00()
-    c00()
-    d00()
+    #b00()
+    #c00()
+    #d00()
     comb()
    

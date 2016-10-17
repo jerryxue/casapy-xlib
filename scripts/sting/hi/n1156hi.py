@@ -184,10 +184,10 @@ def comb():
     xp=xu.init()
 
     # CONSOLIDATING
-    xp['prefix']            ='../comb/n1156hi'
-    xp['prefix_comb']       =['../b93/b93',
-                              '../c93/c93',
-                              '../d93/d93']
+    xp['prefix']            ='../n1156/comb/n1156hi'
+    xp['prefix_comb']       =['../n1156/b93/b93',
+                              '../n1156/c93/c93',
+                              '../n1156/d93/d93']
 
     xp=config(xp)
     
@@ -195,34 +195,51 @@ def comb():
     xp['cleancont']         =True
     
     xp['mosweight']         =True
-    xp['imsize']            =2**7*10
+    xp['scalewt']           =True
+    
+    xp['imsize']            =2**6*10*3
     xp['cell']              ='2.0arcsec'
+
+    xp['clean_mask']        =0.1
+    xp['clean_mask_cont']   =0.01
+    xp['minpb']             =0.01
 
     xp['clean_start']       ='301.95km/s'
     xp['clean_width']       ='3.9km/s'
     xp['clean_nchan']       =37
 
-    xp['multiscale']        =[0,4,12]
+    xp['multiscale']        =[int(x*(9.0/2.0)) for x in [0.,1.,3.]]
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =-1
+
     xp['clean_mask']        ='circle[[02h59m42.2s,+25d14m14.0s],375arcsec]'
-
-
-    # RUN SCRIPTS:
-    xp=xu.xconsol(xp)
+    xp['fitspw']            ='*:4~7;120~122'
 
     # RUN SCRIPTS:
-    xp['ctag']              ='_robust'
+    #xp=xu.xconsol(xp)
+
+    # RUN SCRIPTS:
+    xp['ctag']              ='_ro'
     xp['cleanweight']       ='briggs'
     xu.xclean(xp)
+#     xu.mossen(vis=xp['prefix']+'.src.ms',
+#       log=xp['prefix']+xp['ctag']+'.line.sens.log',
+#       nchan=xp['clean_nchan'],ftmachine='mosaic',
+#       mosweight=True,imsize=xp['imsize'],
+#       weight=xp['cleanweight'])
     
-    xp['ctag']              ='_natural'
-    xp['cleanweight']       ='natural'
-    xu.xclean(xp)
+    #xp['ctag']              ='_natural'
+    #xp['cleanweight']       ='natural'
+    #xu.xclean(xp)
+#     xu.mossen(vis=xp['prefix']+'.src.ms',
+#       log=xp['prefix']+xp['ctag']+'.line.sens.log',
+#       nchan=xp['clean_nchan'],ftmachine='mosaic',
+#       mosweight=True,imsize=xp['imsize'],
+#       weight=xp['cleanweight'])
 
 if  __name__=="__main__":
     #b93()
-    d93()
-    c93()
+    #d93()
+    #c93()
     comb()      

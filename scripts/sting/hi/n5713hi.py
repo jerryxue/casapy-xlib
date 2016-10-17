@@ -1,4 +1,7 @@
-
+#   12A-270 12  C
+#   AP0225  92  C
+#   AG0559  99  D
+   
 def config(xp):
 
     # CONSOLIDATING
@@ -194,37 +197,52 @@ def comb():
     xp=xu.init()
     
     # CONSOLIDATING
-    xp['prefix']            ='../comb/'+os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-    xp['prefix_comb']       =['../c12a/c12a',
-                              '../c12b/c12b',
-                              '../c92/c92',
-                              '../d99/d99']
+    xp['prefix']            ='../n5713/comb/'+os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
+    xp['prefix_comb']       =['../n5713/c12a/c12a',
+                              '../n5713/c12b/c12b',
+                              '../n5713/c92/c92',
+                              '../n5713/d99/d99']
     
     xp=config(xp)
+    
+    xp['imcs']              =True
+    xp['fitchans']          ='4~5,21~23'
+    xp['fitorder']          =1
+    
+    xp['mosweight']         =True
     xp['scalewt']           =True
+    
     xp['clean_start']       ='1653.2km/s'
     xp['clean_width']       ='20.8km/s'
     xp['clean_nchan']       =20
     xp['fitchans']          ='0~2,17~19'
     xp['fitorder']          =1
     
-    xp['imsize']            =2**6*10
-    xp['cell']              ='4.0arcsec'
+    xp['imsize']            =2**8*5/5*6
+    xp['cell']              ='3.0arcsec'
     
-    xp['multiscale']        =[0,4,12]
+    xp['clean_mask']        =0.01
+    xp['clean_mask_cont']   =0.005
+    xp['minpb']             =0.005
+    
+    xp['multiscale']        =[int(x*(15.0/3.0)) for x in [0.,1.,3.]]
+    
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0
     xp['usescratch']        =True
     
     # RUN SCRIPTS:
-    xp=xu.xconsol(xp)
+    #xp=xu.xconsol(xp)
+    
+    xp['ctag']              ='_ro'
+    xp['cleanweight']       ='briggs'    
     xp=xu.xclean(xp)
     
 if  __name__=="__main__":
     
-    c12a()
-    c12b()
+    #c12a()
+    #c12b()
     #c92()
     #d99()
     comb()      

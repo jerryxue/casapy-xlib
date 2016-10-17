@@ -23,30 +23,6 @@
 #tar -xvf 13B-363.sb24635393.eb28501581.56608.280407708335.ms.tar
 #tar -xvf 13B-363.sb24635393.eb28527426.56613.267213252315.ms.tar
 
-def config(xp):
-    # CONSOLIDATING
-    xp['spwrgd']            ='spw'
-    xp['scalewt']           =True
-    xp['scalewt_minsamp']   =12
-    xp['uvcs']              =True
-    xp['fitspw']            ='*:4~9;75~80'
-    xp['scalewt_minsamp']   =12
-    xp['fitorder']          =1
-
-
-    # IMAGING
-    xp['cleanspec']         =True
-    xp['cleancont']         =True
-
-    xp['imsize']            =256
-    xp['cell']              ='12.0arcsec'
-
-    xp['cleanmode']         ='velocity'
-    xp['clean_start']       ='2000km/s'
-    xp['clean_width']       ='10.4km/s'
-    xp['clean_nchan']       =84
-    xp['phasecenter']       ='J2000 01h59m19.58 +19d00m27.10'
-    return xp
 
 def b13a():
 
@@ -76,6 +52,7 @@ def b13a():
     xp=config(xp)
 #    xp['spwrgd_method']     ='mstransform'
     xp['niter']             =0
+    xp['fitspw']            ='0:4~9;75~80'
 
     # RUN SCRIPTS:
     xp=xu.ximport(xp)
@@ -487,6 +464,82 @@ def d99b():
     #au.timeOnSource(xp['prefix']+'.src.ms')
 
 
+def d12():
+    #   KS
+    #
+    xp=xu.init()
+
+    # IMPORT
+    xp['prefix']            =inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
+    xp['rawfiles']          =st['hi_raw']+'AE175_sb1124713_1.55310.66684534722.ms'
+    #xp['importspw']         ='8'
+    xp['importmode']        ='ms'
+    xp['importscan']        ='2,4~34'
+    #xp['importchanbin']     =8
+
+
+    # CALIBRATION
+    xp['source']            ='NGC 0772 - CIG80'
+    xp['spw_source']        ='0'
+
+    xp['fluxcal']           ='J0542+4951'
+    #xp['uvrange_fluxcal']   ='<40klambda'
+    xp['phasecal']          = 'J0204+1514'
+    xp['uvrange_phasecal']  ='<100klambda'
+    xp['ref_ant']           ='15'
+    xp['syscal']            =''
+
+
+    #xp['flagselect']        =["antenna='9'","antenna='14'","antenna='17'"]
+    xp['flagspw']           ='0:0~15;240~255'
+    xp['flagselect']        =["spw='0:30~150'"]
+    #xp['flagspw']           ='0:0~150;200~255'
+    #xp['flagtsys_range']    =[5.0,200.0]
+
+    xp=config(xp)
+    xp['uvcs']              =False
+    xp['niter']             =0
+    xp['fitspw']            ='0:5~7;73~74'
+    xp['imsize']            =2**8
+    xp['cell']              ='15.0arcsec'
+    xp['minpb']             =0.01
+    xp['clean_mask']        =0.10
+    xp['clean_mask_cont']   =0.01
+
+    # RUN SCRIPTS:
+    #xp=xu.ximport(xp)
+    #xp=xu.xcal(xp)
+    #xp=xu.xconsol(xp)
+    xp=xu.xclean(xp)
+    #xu.checkvrange(xp['prefix']+'.src.ms')
+    #au.timeOnSource(xp['prefix']+'.src.ms')
+
+
+def config(xp):
+    # CONSOLIDATING
+    xp['spwrgd']            ='spw'
+    xp['scalewt']           =True
+    xp['scalewt_minsamp']   =12
+    xp['uvcs']              =True
+    xp['fitspw']            ='*:4~9;75~80'
+    xp['scalewt_minsamp']   =12
+    xp['fitorder']          =1
+
+
+    # IMAGING
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+
+    xp['imsize']            =256
+    xp['cell']              ='12.0arcsec'
+
+    xp['cleanmode']         ='velocity'
+    xp['clean_start']       ='2000km/s'
+    xp['clean_width']       ='10.4km/s'
+    xp['clean_nchan']       =84
+    xp['phasecenter']       ='J2000 01h59m19.58 +19d00m27.10'
+    
+    return xp
 
 def comb():
     #2172->2716
@@ -494,24 +547,26 @@ def comb():
     xp=xu.init()
 
     # CONSOLIDATING
-    xp['prefix']            ='../comb/'+os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-    xp['prefix_comb']       =['../d99a/d99a',
-                              '../d99b/d99b',
-                              '../bc13a/bc13a',
-                              '../bc13b/bc13b',
-                              '../b13a/b13a',
-                              '../b13b/b13b',
-                              '../b13c/b13c']
+    xp['prefix']            ='../n0772/comb/'+os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
+    xp['prefix_comb']       =['../n0772/d99a/d99a',
+                              '../n0772/d99b/d99b',
+                              '../n0772/bc13a/bc13a',
+                              '../n0772/bc13b/bc13b',
+                              '../n0772/b13a/b13a',
+                              '../n0772/b13b/b13b',
+                              '../n0772/b13c/b13c']
 
     xp=config(xp)
 
     # IMAGING
     xp['cleanspec']         =True
     xp['cleancont']         =True
-
+    
     xp['mosweight']         =True
+    xp['scalewt']           =True
+    
     xp['wnpixels']          =45*60
-    xp['imsize']            =2**7*10
+    xp['imsize']            =2**6*10*3
     xp['cell']              ='2.0arcsec'
 
     xp['cleanmode']         ='velocity'
@@ -519,24 +574,46 @@ def comb():
     xp['clean_width']       ='10.4km/s'
     xp['clean_nchan']       =80
 
-    xp['minpb']             =0.10
-    xp['clean_mask']        ='circle[[01h59m25.7s,+18d59m14.0s],750arcsec]'
-    xp['multiscale']        =[0,4,12]
+    xp['minpb']             =0.01
+    xp['clean_mask']        =0.10
+    xp['clean_mask_cont']   =0.01
+    
+    xp['multiscale']        =[int(x*(6.0/2.0)) for x in [0.,1.,3.]]
+    
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
+    
     xp['negcomponent']      =0
     xp['usescratch']        =False
+    xp['fitspw']            ='*:4~9;75~80'
+    
+    #xu.xconsol(xp)
 
-    xu.xconsol(xp)
-
-    # RUN SCRIPTS:
-    xp['ctag']              ='_robust'
+    xp['ctag']              ='_ro'
     xp['cleanweight']       ='briggs'
     xu.xclean(xp)
+    
+    # RUN SCRIPTS:
+    #     xp['ctag']              ='_ro'
+    #     xp['cleanweight']       ='briggs'
+    #     #xu.xclean(xp)
+    #     xu.mossen(vis=xp['prefix']+'.src.ms',
+    #       log=xp['prefix']+xp['ctag']+'.line.sens.log',
+    #       nchan=xp['clean_nchan'],ftmachine='mosaic',
+    #       mosweight=True,imsize=xp['imsize'],
+    #       weight=xp['cleanweight'])
+    # 
+    #     xp['ctag']              ='_na'
+    #     xp['cleanweight']       ='natural'
+    #     #xu.xclean(xp)
+    #     xu.mossen(vis=xp['prefix']+'.src.ms',
+    #       log=xp['prefix']+xp['ctag']+'.line.sens.log',
+    #       nchan=xp['clean_nchan'],ftmachine='mosaic',
+    #       mosweight=True,imsize=xp['imsize'],
+    #       weight=xp['cleanweight'])
 
-    xp['ctag']              ='_natural'
-    xp['cleanweight']       ='natural'
-    xu.xclean(xp)
+
+
 
 if  __name__=="__main__":
     #d99a()
@@ -546,45 +623,6 @@ if  __name__=="__main__":
     #b13a()
     #b13b()
     #b13c()
-    comb()
+    d12()
+    #comb()
 
-# # CONSOLIDATING
-# xp['prefix']            =os.path.splitext(os.path.basename(os.path.realpath(inspect.stack()[0][1])))[0]
-# xp['prefix_comb']       =['n0772d99a',
-#                           'n0772d99b',
-# #                          'n0772bc00',
-#                           'n0772bc13a',
-#                           'n0772bc13b',
-#                           'n0772b13a',
-#                           'n0772b13b',
-#                           'n0772b13c']
-# xp['scalewt']           =True
-# xp['spwrgd']            ='spw'
-# xp['uvcs']              =True
-# xp['fitspw']            ='0:2~5;37~40,1:4~9;75~80'
-#
-# # IMAGING
-# xp['cleanspec']         =True
-# xp['cleancont']         =True
-#
-# xp['imsize']            =2**7*10
-# xp['cell']              ='2.0arcsec'
-#
-# xp['imsize']            =2**5*10
-# xp['cell']              ='4.0arcsec'
-#
-# xp['cleanmode']         ='velocity'
-# xp['clean_start']       ='2036.4km/s'
-# xp['clean_width']       ='20.8km/s'
-# xp['clean_nchan']       =39
-# xp['phasecenter']       ='J2000 01h59m19.58 +19d00m27.10'
-#
-# xp['multiscale']        =[0,4,12]
-# xp['clean_gain']        =0.3
-# xp['cyclefactor']       =5.0
-# xp['negcomponent']      =0
-# xp['usescratch']        =True
-#
-# # RUN SCRIPTS:
-# xp=xu.xconsol(xp)
-# xp=xu.xclean(xp)

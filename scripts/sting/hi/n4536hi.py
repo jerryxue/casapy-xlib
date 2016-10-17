@@ -1,3 +1,9 @@
+#   AL0731  09  B
+#   13B-363 13  B
+#   AN0119  04  C
+#   AL0735  09  D
+#   AY0018  87  D   
+
 def config(xp):
 
     # CONSOLIDATING
@@ -360,35 +366,50 @@ def d87():
 
 def comb():
 
-
     xp=xu.init()
     
     # CONSOLIDATING
-    xp['prefix']            ='../comb/n4536hi'
-    xp['prefix_comb']       =['../d87/d87',
-                              '../c04/c04',
-                              '../d09/d09',
-                              '../b09a/b09a',
-                              '../b09b/b09b',
-                              '../b13a/b13a',
-                              '../b13b/b13b',
-                              '../b13c/b13c']
+    xp['prefix']            ='../n4536/comb/n4536hi'
+    xp['prefix_comb']       =['../n4536/d87/d87',
+                              '../n4536/c04/c04',
+                              '../n4536/d09/d09',
+                              '../n4536/b09a/b09a',
+                              '../n4536/b09b/b09b',
+                              '../n4536/b13a/b13a',
+                              '../n4536/b13b/b13b',
+                              '../n4536/b13c/b13c']
     
     xp=config(xp)
     
-    xp['imsize']            =2**7*10
-    xp['cell']              ='2arcsec'
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+    
+    xp['mosweight']         =True
+    xp['scalewt']           =True
+    
+    xp['imsize']            =2**8*5
+    xp['cell']              ='3arcsec'
+    
+    xp['clean_mask']        =0.1
+    xp['clean_mask_cont']   =0.01
+    xp['minpb']             =0.01
+
     xp['clean_start']       ='1581.2km/s'
     xp['clean_width']       ='20.8km/s'
     xp['clean_nchan']       =24
     
-    xp['multiscale']        =[0,3,9]
+    xp['multiscale']        =[int(x*(10.0/3.0)) for x in [0.,1.,5.]]
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0
     
+    xp['fitspw']            ='*:6~10;30~33'
+    
     # RUN SCRIPTS:
-    xp=xu.xconsol(xp)
+    #xp=xu.xconsol(xp)
+    
+    xp['ctag']              ='_ro'
+    xp['cleanweight']       ='briggs'
     xp=xu.xclean(xp)
     
 if  __name__=="__main__":
@@ -400,5 +421,5 @@ if  __name__=="__main__":
     #b09b()
     #b13a()
     #b13b()
-    b13c()
+    #b13c()
     comb()

@@ -7,7 +7,6 @@
 # execfile(stinghi+'n2976c08b.py')
 # execfile(stinghi+'n2976d03.py')
 
-
 def config(xp):
     
     # CONSOLIDATING
@@ -387,33 +386,51 @@ def d03():
     
     
 def comb():
+    
     xp=xu.init()
     
-    xp['prefix_comb']=['../b02/b02',
-                        '../c02a/c02a',
-                        '../c02b/c02b',
-                        '../c03/c03',
-                        '../d03/d03',
-                        '../c08a/c08a',
-                        '../c08b/c08b']
-    xp['prefix']        ='../comb/n2976hi'
+    xp['prefix_comb']=['../n2976/b02/b02',
+                        '../n2976/c02a/c02a',
+                        '../n2976/c02b/c02b',
+                        '../n2976/c03/c03',
+                        '../n2976/d03/d03',
+                        '../n2976/c08a/c08a',
+                        '../n2976/c08b/c08b']
+    xp['prefix']        ='../n2976/comb/n2976hi'
     
     xp=config(xp)
     
-    xp['imsize']            =2**7*10
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+    
+    xp['mosweight']         =True
+    xp['scalewt']           =True
+    
+    xp['imsize']            =2**6*10*3
     xp['cell']              ='2.0arcsec'
+    
+    xp['clean_mask']        =0.1
+    xp['clean_mask_cont']   =0.01
+    xp['minpb']             =0.01
+
     xp['clean_start']       ='-134.4km/s'
     xp['clean_width']       ='5.2km/s'
     xp['clean_nchan']       =int((170.+150.)/5.2)-4
     
-    xp['multiscale']        =[0,4,12]
+    xp['multiscale']        =[int(x*(7.0/2.0)) for x in [0.,1.,3.]]
+    
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0
     xp['usescratch']        =True
     
+    xp['fitspw']            ='*:0~11;53~60'
+    
     # RUN SCRIPTS:
-    xp=xu.xconsol(xp)
+    #xp=xu.xconsol(xp)
+    
+    xp['ctag']              ='_ro'
+    xp['cleanweight']       ='briggs'
     xp=xu.xclean(xp)
     
 if  __name__=="__main__":
@@ -423,6 +440,6 @@ if  __name__=="__main__":
     #d03()
     #c08a()
     #c08b()
-    b02()
+    #b02()
     comb()
 

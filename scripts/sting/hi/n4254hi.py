@@ -1,3 +1,4 @@
+
 def config(xp):
 
     # CONSOLIDATING
@@ -292,34 +293,56 @@ def comb():
     xp=xu.init()
 
     # CONSOLIDATING
-    xp['prefix']            ='../comb/n4254hi'
-    xp['prefix_comb']       =['../c00/c00','../d00/d00',
-                              '../b1/b1','../b2/b2',
-                              '../b3/b3','../b13a/b13a','../b13b/b13b']
+    xp['prefix']            ='../n4254/comb/n4254hi'
+    xp['prefix_comb']       =['../n4254/c00/c00','../n4254/d00/d00',
+                              '../n4254/b1/b1','../n4254/b2/b2',
+                              '../n4254/b3/b3','../n4254/b13a/b13a','../n4254/b13b/b13b']
 
     xp=config(xp)
-    xp['imsize']            =2**6*10
-    xp['cell']              ='2.0arcsec'
+    
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+
+    xp['mosweight']         =True
+    xp['scalewt']           =True
+
+    xp['imsize']            =2**8*5
+    xp['cell']              ='3.0arcsec'
+    
+    xp['clean_mask']        =0.1
+    xp['clean_mask_cont']   =0.01
+    xp['minpb']             =0.01
+
     xp['clean_start']       ='2214.8km/s'
     xp['clean_width']       ='10.4km/s'
     xp['clean_nchan']       =36
 
-    xp['multiscale']        =[0,3,9]
+    xp['multiscale']        =[int(x*(9/3.0)) for x in [0.,1.,5.]]
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0
-    xp['mosweight']         =True
 
+    xp['fitspw']            ='*:0~11;48~61'
+    
     # RUN SCRIPTS:
-    xp=xu.xconsol(xp)
+    #xp=xu.xconsol(xp)
+    
+    xp['ctag']              ='_ro'
+    xp['cleanweight']       ='briggs'    
     xp=xu.xclean(xp)
     
+#     xu.mossen(vis=xp['prefix']+'.src.ms',
+#           log=xp['prefix']+xp['ctag']+'.line.sens.log',
+#           nchan=xp['clean_nchan'],ftmachine='mosaic',
+#           mosweight=True,imsize=xp['imsize'],
+#           weight=xp['cleanweight'])
+    
 if  __name__=="__main__":
-    c00()
-    d00()
-    b1()
-    b2()
-    b3()
-    b13a()
-    b13b()
+    #c00()
+    #d00()
+    #b1()
+    #b2()
+    #b3()
+    #b13a()
+    #b13b()
     comb()        

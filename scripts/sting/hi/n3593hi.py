@@ -124,22 +124,42 @@ def comb():
     xp=xu.init()
     
     # CONSOLIDATING
-    xp['prefix']            ='../comb/n3593hi'
-    xp['prefix_comb']       =['../c96/c96',
-                              '../d96/d96']
+    xp['prefix']            ='../n3593/comb/n3593hi'
+    xp['prefix_comb']       =['../n3593/c96/c96',
+                              '../n3593/d96/d96']
+    
     xp=config(xp)
     
-    xp['multiscale']        =[0,4,12]
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+    
+    xp['mosweight']         =True
+    xp['scalewt']           =True
+    
+    xp['imsize']            =2**5*10*3
+    xp['cell']              ='4arcsec'
+    
+    xp['clean_mask']        =0.1
+    xp['clean_mask_cont']   =0.01
+    xp['minpb']             =0.01
+    
+    xp['multiscale']        =[int(x*(14.0/4.0)) for x in [0.,1.,3.]]
+    
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0
     xp['usescratch']        =True
     
+    xp['fitspw']            ='0:5~18,1:45~56'
+    
     # RUN SCRIPTS:
-    xp=xu.xconsol(xp)
+    #xp=xu.xconsol(xp)
+    
+    xp['ctag']              ='_ro'
+    xp['cleanweight']       ='briggs'
     xp=xu.xclean(xp)
     
 if  __name__=="__main__":
-    c96()
-    d96()
+    #c96()
+    #d96()
     comb() 

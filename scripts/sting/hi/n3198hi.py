@@ -369,44 +369,58 @@ def comb():
     #[470,830]
     xp=xu.init()
     
-    xp['prefix']            ='../comb/n3198hi'
-    xp['prefix_comb']       =[  '../d04/d04',
-                                '../d03b/d03b',
-                                '../d03a/d03a',
-                                '../c03/c03',
-                                '../c02c/c02c',
-                                '../c02b/c02b',
-                                '../c02a/c02a',
-                                '../b05/b05']
+    xp['prefix']            ='../n3198/comb/n3198hi'
+    xp['prefix_comb']       =[  '../n3198/d04/d04',
+                                '../n3198/d03b/d03b',
+                                '../n3198/d03a/d03a',
+                                '../n3198/c03/c03',
+                                '../n3198/c02c/c02c',
+                                '../n3198/c02b/c02b',
+                                '../n3198/c02a/c02a',
+                                '../n3198/b05/b05']
     
     xp=config(xp)
+    
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+    
+    xp['mosweight']         =True
+    xp['scalewt']           =True
     
     xp['fitchans']           ='0~13,85~100'
     xp['clean_start']        ='406.8km/s'
     xp['clean_width']        ='5.2km/s'
     xp['clean_nchan']        =101
-    xp['imsize']            =2**7*10
+    
+    xp['imsize']            =2**6*10*3
     xp['cell']              ='2.0arcsec'
     
-    xp['multiscale']        =[0,4,12]
+    xp['clean_mask']        =0.1
+    xp['clean_mask_cont']   =0.01
+    xp['minpb']             =0.01
+    
+    xp['multiscale']        =[int(x*(7.0/2.0)) for x in [0.,1.,3.]]
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0
     xp['usescratch']        =True
     
     # RUN SCRIPTS:
-    xp=xu.xconsol(xp)
+    #xp=xu.xconsol(xp)
+    
+    xp['ctag']              ='_ro'
+    xp['cleanweight']       ='briggs'
     xp=xu.xclean(xp)
 
 if  __name__=="__main__":
     
-    d04()
-    d03b()
-    d03a()
-    c03()
-    c02c()
-    c02b()
-    c02a()
-    b05()
+    #d04()
+    #d03b()
+    #d03a()
+    #c03()
+    #c02c()
+    #c02b()
+    #c02a()
+    #b05()
     comb()
 

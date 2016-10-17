@@ -1,3 +1,4 @@
+
 def config(xp):
     
     # CONSOLIDATING
@@ -194,7 +195,7 @@ def bc04():
     xp['phasecal_uvrange']  ='<20klambda'
     xp['spw_source']        ='0,1'
     
-    xp['flagspw']           ='0:0;62,1:0,60~62'
+    xp['flagspw']           ='0:0;62,1:0;60~62'
     xp['flagselect']        =["antenna='VA04' timerange='2004/02/22/09:41:40~09:53:30.6'",
                               "antenna='VA06' timerange='2004/02/22/09:41:40~09:53:30.6'",
                               "antenna='VA08' timerange='2004/02/22/11:28:00~11:35:25.0'",
@@ -389,39 +390,59 @@ def d89():
     xp=xu.xclean(xp)
 
 
+# locked
+# 4B-396.sb29895068.eb30086390.57017.618360092594 (program code)
+#Sandstrom, Karin    VLA/14A-468    The Dust-HI-Star Formation Connection Across the Local Universe    42    Regular
+#Sandstrom, Karin    VLA/14B-396    The Dust-HI-Star Formation Connection Across the Local Universe    56    Regular
+#  
 def comb():
     
     xp=xu.init()
 
     # CONSOLIDATING
-    xp['prefix']            ='../comb/n3147hi'
+    xp['prefix']            ='../n3147/comb/n3147hi'
     xp['prefix_comb']       =[#'../a03/a03',
-                              '../bc04/bc04',
-                              '../c90/c90',
-                              '../d03b/d03b',
-                              '../d89/d89',
-                              '../d03a/d03a',
-                              '../b13a/b13a',
-                              '../b13b/b13b',
-                              '../b13c/b13c']
+                              '../n3147/bc04/bc04',
+                              '../n3147/c90/c90',
+                              '../n3147/d03b/d03b',
+                              '../n3147/d89/d89',
+                              '../n3147/d03a/d03a',
+                              '../n3147/b13a/b13a',
+                              '../n3147/b13b/b13b',
+                              '../n3147/b13c/b13c']
     
     xp=config(xp)
     
-    xp['imsize']            =2**7*10
-    xp['cell']              ='2.0arcsec'
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+    
+    xp['mosweight']         =True
+    xp['scalewt']           =True
+    
+    xp['imsize']            =2**5*10*3
+    xp['cell']              ='4.0arcsec'
+    
+    xp['clean_mask']        =0.1
+    xp['clean_mask_cont']   =0.01
+    xp['minpb']             =0.01
     
     xp['cleanmode']         ='velocity'
     xp['clean_start']       ='2532.8km/s'
     xp['clean_width']       ='20.8km/s'
     xp['clean_nchan']       =int((3052.8-2532.8)/20.8)+1
     
-    xp['multiscale']        =[0,3,9]
+    xp['multiscale']        =[int(x*(13.0/4.0)) for x in [0.,1.,3.]]
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0
     
+    xp['fitspw']            ='*:0~16;40~56'
+    
     # RUN SCRIPTS:
-    xp=xu.xconsol(xp)
+    #xp=xu.xconsol(xp)
+    
+    xp['ctag']              ='_ro'
+    xp['cleanweight']       ='briggs'
     xp=xu.xclean(xp)
 
 
