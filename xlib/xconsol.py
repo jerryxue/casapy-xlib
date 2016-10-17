@@ -89,8 +89,7 @@ def xconsol(xp):
         
         xp['msfile']=xp['prefix']+'.ms' 
         xp['srcfile']=xp['prefix']+'.src.ms'
-        os.system('rm -rf '+xp['srcfile'])
-    
+        xu.rmctable(xp['srcfile'])
         
         xu.news("")
         xu.news("--mstransform--")
@@ -148,7 +147,7 @@ def xconsol(xp):
             """
             
             if  xp['spwrgd_method']=='cvel':
-                os.system("rm -rf "+xp['srcfile']+'.tmp')
+                xu.rmctable(xp['srcfile']+'.tmp')
                 msfile=xp['msfile']
                 if  datacolumn=='corrected':
                     postfix='.tmp'
@@ -174,10 +173,11 @@ def xconsol(xp):
                      veltype='radio',
                      phasecenter='',
                      hanning=xp['hs'])
-                os.system("rm -rf "+xp['srcfile']+'.tmp')
-            
+                xu.rmctable(xp['srcfile']+'.tmp')
+                
             if  xp['spwrgd_method']=='mstransform':
-                os.system("rm -rf "+xp['srcfile']+'.tmp')
+                xu.rmctable(xp['srcfile']+'.tmp')
+                
                 if  xp['chanbin']<=1:
                     chanaverage=False
                     chanbin=1
@@ -320,9 +320,9 @@ def xconsol(xp):
             xu.news(" "+xp['srcfile']+".contsub")
             xu.news(" ")
             
-            os.system('rm -rf '+xp['srcfile']+".cont")
-            os.system('rm -rf '+xp['srcfile']+".contsub")
 
+            xu.rmctable(xp['srcfile']+'.cont')
+            xu.rmctable(xp['srcfile']+'.contsub')
             uvcontsub(vis=xp['srcfile'],
                       field='',
                       fitspw=xp['fitspw'],
@@ -361,7 +361,8 @@ def xconsol(xp):
             #    tb.close()
             #    mincw=np.min(mincw)
             
-            os.system('rm -rf '+xp['srcfile']+loop)
+
+            xu.rmctable(xp['srcfile']+loop)
             
             #freqtol=str(mincw/1.e6/4.)+'MHz'
             if  xp['freqtol']!='':

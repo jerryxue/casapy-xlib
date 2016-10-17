@@ -75,11 +75,11 @@ def ximport(xp):
 
     xp['msfile'] = xp['prefix']+'.ms'
     dir=os.path.dirname(xp['msfile'])
-    if  not os.path.exists(dir):
+    
+    if  not os.path.exists(dir) and dir!='' :
         os.makedirs(dir)
 
-    os.system('rm -rf '+xp['msfile']+'*')
-
+    xu.rmctable(xp['msfile']+'*',rmfile=True,verbose=False)
 
     #----------------------------------------------------------------------------------------
     #   Data Import: Import data from VLA archive files
@@ -249,10 +249,10 @@ def ximport(xp):
               correlation=xp['importcorr'])
         
         if  os.path.exists(xp['msfile']+'.select'):
-            os.system('rm -rf '+xp['msfile'])
+            xu.rmctable(xp['msfile'])
             os.system('mv '+xp['msfile']+'.select '+xp['msfile'])
         if  os.path.exists(xp['msfile']+'.select.flagversions'):
-            os.system('rm -rf '+xp['msfile']+'.flagversions')
+            xu.rmctable(xp['msfile']+'.flagversions')
             os.system('mv '+xp['msfile']+'.select.flagversions '+xp['msfile']+'.flagversions')
 
     #----------------------------------------------------------------------------------------
