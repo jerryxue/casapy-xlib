@@ -253,7 +253,11 @@ def init():
     'ftmachine':'ft',           # For CARMA, you must always use ftmachine='mosaic', because it is a heterogeneous array.
                                 # by default, it will automatically choose the best option after inspecting the data
     'multiscale':[],            # using multi-scale clean is not the default setting
-                                # multi_scale=[0,1,3,10,30] is recommened, and units is pixel
+                                # multi_scale=[0,2,5]*beam/psize is recommened, and units is pixel
+                                #+++ if cmodel show larger structures than the expected true emission, the specified scales are properbally
+                                #+++ too large and the clean may not converge at the requested thresholds.
+                                #+++ Another indication of this ponetial clean problem is large-scale PSF pattern in the cleaned 
+                                #+++ image even threshold/niter are reasonable.
     'cyclefactor':1.5,
     'clean_gain':0.1,           # gain factor for clean, 
                                 # for multiscale clean, clean_gain can be higher (e.g. 0.7)
@@ -310,6 +314,8 @@ def init():
     'psfmode':'clark',          # psfmode in CLEAN()
     'fitpsf':False,             # out-of-date, not verified
     'negcomponent':-1,          # allowed number of negative component for CLEAN components at the largest scale
+    'smallscalebias':0.6,       # the smallscalebias attempts to balance the weight given to larger scales, which usually have 
+                                # more flux density, versus the smaller scales, which often are brighter.
     'cleancont':False,          # imaging continuum using MFS
     'usescratch':False,         # create model column when CLEAN()
     
@@ -2039,7 +2045,7 @@ def xplotcal(tbfile,iterant=False,
         news("not supported .scal table")
 
 
-def checkvrange(srcfile='',
+def checkvrange0(vis='',
                 outframe='LSRK',
                 line='',
                 restfreq=115271200000):
@@ -2062,16 +2068,17 @@ def checkvrange(srcfile='',
     13CO: 110201353000 (Hz)
     with limited functions (no frame conversion)
     """
+    casalog.filter('ERROR')
     if  line=='hi':
         restfreq=me.spectralline('HI')['m0']['value']
     if  line=='12co':
         restfreq=me.spectralline('CO_1_0')['m0']['value']
-        
     c=qa.constants('c')['value']/1000.0
-    if  restfreq=='':
+    if  restfreq=='':    
         restfreq=me.spectralline('HI')['m0']['value']
+    casalog.filter('INFO')
     news("")
-    tb.open(srcfile+'/SPECTRAL_WINDOW')
+    tb.open(vis+'/SPECTRAL_WINDOW')
     news("available range (Hz) in orginal frame:")
     chan_freq=tb.getcol('CHAN_FREQ')
     header_para=tb.colnames()
@@ -2088,7 +2095,7 @@ def checkvrange(srcfile='',
     v=c*(restfreq-np.array([np.max(chan_freq),np.min(chan_freq)]))/restfreq
     news(v)
     
-    ms.open(srcfile)
+    ms.open(vis)
     for spwid in spwids:
         req_freq=chan_freq[:,spwid]
         v=c*(restfreq-req_freq)/restfreq
@@ -2099,6 +2106,53 @@ def checkvrange(srcfile='',
     
     news("0 REST 1 LSRK2 LSRD 3 BARY 4 GEO 5 TOPO 6 GALACTO 7 LGROUP")
     news("")
+    
+def checkvrange(vis='',
+                outframe='LSRK',
+                line='',restfreq=115271200000,
+                spw='',field=''):
+    """
+    use imager.advisechansel() to find the data velocity coverage in a specific frame
+    """
+    
+    casalog.filter('ERROR')
+    if  line=='hi':
+        restfreq=me.spectralline('HI')['m0']['value']
+    if  line=='12co':
+        restfreq=me.spectralline('CO_1_0')['m0']['value']
+    casalog.filter('INFO')
+    c=qa.constants('c')['value']/1000.0
+    #im.open(vis=vis)
+    selinfo=im.advisechansel(msname=vis,getfreqrange=True,spwselection=spw,freqframe=outframe)
+    freq1=selinfo['freqstart']
+    freq2=selinfo['freqend']
+    v1=c*(restfreq-freq1)/restfreq
+    v2=c*(restfreq-freq2)/restfreq
+    #print tmp
+    print v1,v2
+    #im.close()
+
+def checkchsel(vis='',
+               outframe='LSRK',
+               vgrid=[1.,10.,1.],
+               line='',restfreq=115271200000):
+    
+    casalog.filter('ERROR')
+    if  line=='hi':
+        restfreq=me.spectralline('HI')['m0']['value']
+    if  line=='12co':
+        restfreq=me.spectralline('CO_1_0')['m0']['value']
+    casalog.filter('INFO')
+    c=qa.constants('c')['value']/1000.0
+    
+    fgrid=(1.0-np.array(vgrid)/c)*restfreq
+    fgrid[2]=vgrid[2]/c*restfreq
+    im.open(vis)
+    print fgrid
+    selinfo=im.advisechansel(freqstart=np.min(fgrid[0]),freqend=np.max(fgrid[1]),freqstep=fgrid[2],freqframe=outframe)
+    print selinfo
+    im.close
+                
 
 def bpcopy(table,
            reference='0',
@@ -2179,6 +2233,8 @@ if  __name__=="__main__":
     """
     test function
     """
+    checkvrange(vis='comb/n3593hi.src.ms.contsub',spw='1',outframe='BARY',line='hi')
+    checkchsel(vis='comb/n3593hi.src.ms.contsub',outframe='BARY',line='hi',vgrid=[300,400,10.0])
     #rmcolumn("n0772hi.src.ms.contsub",column='WEIGHT_SPECTRUM')
     #rmcolumn("n0772hi.src.ms.cont",column='WEIGHT_SPECTRUM')
     #rmcolumn("n0772hi.src.ms",column='WEIGHT_SPECTRUM')
