@@ -184,7 +184,7 @@ def comb():
     xp['clean_width']       ='5.2km/s'
     xp['clean_nchan']       =int((1890.40-1406.8)/5.2+1.0)
 
-    xp['multiscale']        =[int(x*(18/4.0)) for x in [0.,1.,3.]]
+    xp['multiscale']        =[int(x*(18/3.0)) for x in [0.,1.,3.]]
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0

@@ -419,8 +419,8 @@ def comb():
     xp['mosweight']         =True
     xp['scalewt']           =True
     
-    xp['imsize']            =2**5*10*3
-    xp['cell']              ='4.0arcsec'
+    xp['imsize']            =2**8*5
+    xp['cell']              ='3.0arcsec'
     
     xp['clean_mask']        =0.1
     xp['clean_mask_cont']   =0.01
@@ -431,10 +431,10 @@ def comb():
     xp['clean_width']       ='20.8km/s'
     xp['clean_nchan']       =int((3052.8-2532.8)/20.8)+1
     
-    xp['multiscale']        =[int(x*(13.0/4.0)) for x in [0.,1.,3.]]
+    xp['multiscale']        =[int(x*(13.0/3.0)) for x in [0.,2.]]
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
-    xp['negcomponent']      =0
+    xp['negcomponent']      =-1
     
     xp['fitspw']            ='*:0~16;40~56'
     

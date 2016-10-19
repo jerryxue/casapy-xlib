@@ -392,19 +392,19 @@ def comb():
     xp['clean_width']        ='5.2km/s'
     xp['clean_nchan']        =101
     
-    xp['imsize']            =2**6*10*3
-    xp['cell']              ='2.0arcsec'
+    xp['imsize']            =2**8*5
+    xp['cell']              ='3.0arcsec'
     
     xp['clean_mask']        =0.1
     xp['clean_mask_cont']   =0.01
     xp['minpb']             =0.01
     
-    xp['multiscale']        =[int(x*(7.0/2.0)) for x in [0.,1.,3.]]
+    xp['multiscale']        =[int(x*(7.0/3.0)) for x in [0.,2.,5.]]
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
     xp['negcomponent']      =0
     xp['usescratch']        =True
-    
+    xp['threshold_spec']    ='0.6mJy'
     # RUN SCRIPTS:
     #xp=xu.xconsol(xp)
     

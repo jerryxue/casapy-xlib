@@ -180,7 +180,7 @@ def comb():
     xp['mosweight']         =True
     xp['scalewt']           =True
 
-    xp['imsize']            =2**6*10*3
+    xp['imsize']            =2**8*5
     xp['cell']              ='2.0arcsec'
     
     xp['clean_start']       ='2252km/s'
@@ -190,7 +190,7 @@ def comb():
     xp['clean_mask_cont']   =0.01
     xp['minpb']             =0.01
 
-    xp['multiscale']        =[int(x*(7/2.0)) for x in [0.,1.,3.]]
+    xp['multiscale']        =[int(x*(7/3.0)) for x in [0.,1.,3.]]
     
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0

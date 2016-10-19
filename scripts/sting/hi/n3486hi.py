@@ -1,27 +1,4 @@
 
-def config(xp):
-    
-    # CONSOLIDATING
-    xp['spwrgd']            ='spw'
-    xp['scalewt']           =True
-    xp['uvcs']              =True
-    xp['fitspw']            ='*:0~3;44~46'
-    xp['fitorder']          =1
-    
-    # IMAGING
-    xp['cleanspec']         =True
-    xp['cleancont']         =True
-    
-    xp['imsize']            =2**5*10
-    xp['cell']              ='8.0arcsec'
-    
-    xp['cleanmode']         ='velocity'
-    xp['clean_start']       ='400km/s'
-    xp['clean_width']       ='10.4km/s'
-    xp['clean_nchan']       =47
-    xp['phasecenter']       ='J2000 11h00m23.9 +28d58m29.0'
-    
-    return xp
     
 def b13a():
 
@@ -330,7 +307,31 @@ def d91():
     xp=xu.xcal(xp)
     xp=xu.xconsol(xp)
     xp=xu.xclean(xp)
+
+
+def config(xp):
     
+    # CONSOLIDATING
+    xp['spwrgd']            ='spw'
+    xp['scalewt']           =True
+    xp['uvcs']              =True
+    xp['fitspw']            ='*:0~3;44~46'
+    xp['fitorder']          =1
+    
+    # IMAGING
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+    
+    xp['imsize']            =2**5*10
+    xp['cell']              ='8.0arcsec'
+    
+    xp['cleanmode']         ='velocity'
+    xp['clean_start']       ='400km/s'
+    xp['clean_width']       ='10.4km/s'
+    xp['clean_nchan']       =47
+    xp['phasecenter']       ='J2000 11h00m23.9 +28d58m29.0'
+    
+    return xp
 
 def comb():
     # execfile(stinghi+'n3486c13a.py')
@@ -364,19 +365,26 @@ def comb():
     xp['mosweight']         =True
     xp['scalewt']           =True
 
-    xp['imsize']            =2**5*10*3
-    xp['cell']              ='4.0arcsec'
+    xp['imsize']            =2**8*5
+    xp['cell']              ='3.0arcsec'
     
     xp['clean_mask']        =0.1
     xp['clean_mask_cont']   =0.01
     xp['minpb']             =0.01
     
-    xp['multiscale']        =[int(x*(9.0/4.0)) for x in [0.,1.,3.]]
+    xp['multiscale']        =[int(x*(11.0/3.0)) for x in [0.,1.,3.]]
+    xp['multiscale']        =[int(x*(11.0/3.0)) for x in [0.,2.]]
+    xp['smallscalebias']    =0.9
+    
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
-    xp['negcomponent']      =0
-    xp['usescratch']        =True
+    xp['negcomponent']      =-1
+    xp['usescratch']        =False
     
+    xp['cleanmode']         ='velocity'
+    xp['clean_start']       ='410.4km/s'
+    xp['clean_width']       ='10.4km/s'
+    xp['clean_nchan']       =45
     
     xp['fitspw']            ='*:0~3;44~46'
     

@@ -77,8 +77,10 @@ def xclean(xp):
                 +str(int(imsize[0]-1))+','+str(int(imsize[1]*1/4))+','\
                 +str(int(imsize[0]*3/4))+','+str(int(imsize[1]*3/4))+','\
                 +str(int(imsize[0]-1))+','+str(int(imsize[1]-1))    
+    #WE DON"T USE INNER/OUTER QUARTER ANYMORE (COULD OVERESTIMATE IN CASAES OF STRONG EMISSION
+    #TRUE RMS CAN BE EBTTER DERTERMINED BY PROPER WEIGHT/SIGMA   
     if  xp['imstat_box_spec']=='':
-        xp['imstat_box_spec']=innerquarter    
+        xp['imstat_box_spec']=''            
         if  xp['imcs']==True:
             xp['imstat_box_spec']=outerquarter
     if  xp['imstat_box_cont']=='':
@@ -230,6 +232,10 @@ def xclean(xp):
         else:
             uvtaper=True
         
+        im.open(vis_loop[i])
+        im.advise(takeadvice=False)
+        im.close()
+        
         clean(vis=vis_loop[i],
               imagename=outname_loop[i],
               field=xp['clean_field'],
@@ -257,6 +263,7 @@ def xclean(xp):
               ftmachine=xp['ftmachine'],
               outframe=xp['outframe'],
               restfreq=xp['restfreq'],
+              smallscalebias=xp['smallscalebias'],
               scaletype='SAULT',
               mosweight=xp['mosweight'],
               minpb=xp['minpb'],
@@ -280,8 +287,14 @@ def xclean(xp):
             xu.genmask0(outname_loop[i]+'.flux')    
             #   MASK DATA PRODUCTS USING MASK0 
             xu.mask0clean(outname_loop[i],outname_loop[i]+'.flux.mask0')
-    
-        xu.modelconv(outname_loop[i])
+        
+        
+        if  outname_loop[i][-2:]=='_d':
+            #   REMOVE RESIAUL FOR DIRTY MAP
+            xu.rmctable(outname_loop[i]+'.residual')
+        else:
+            #   CREATE CMODEL FOR CLEANED MAP 
+            xu.modelconv(outname_loop[i])
         
         xu.news("")
         xu.news("")   
@@ -351,7 +364,7 @@ def xclean(xp):
         xu.exporttasklog('imhead',outname_loop[i]+'.image.imhead.log')
         xu.exporttasklog('imstat',outname_loop[i]+'.image.imstat.log')
         xu.exporttasklog('clean',outname_loop[i]+'.image.iteration.log')
-        os.system("cp -rf clean.last "+outname_loop[i]+'.image.clean.log')
+        os.system("cp -rf clean.last "+outname_loop[i]+'.image.clean.last')
     
     #----------------------------------------------------------------------------------------
     #   image-domain continuum substraction

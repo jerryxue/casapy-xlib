@@ -1,32 +1,10 @@
 
-def config(xp):
-
-    xp['spwgrid']       =''
-    xp['uvcs']          =True
-    xp['fitspw']        ='0:5~18,1:45~56'
-    xp['fitorder']      =1
-    
-    # IMAGING
-    xp['cleanspec']         =True
-    xp['cleancont']         =True
-    
-    xp['imsize']            =2**6*10
-    xp['cell']              ='4.0arcsec'
-    
-    xp['cleanmode']      = 'velocity'
-    xp['clean_start']='410km/s'
-    xp['clean_nchan']=88
-    xp['clean_width']='5.2km/s'
-    
-    xp['phasecenter']='J2000 11h14m37.0 +12d49m3.6'
-    
-    return xp
     
 def c96():
     
     xp=xu.init()
     
-    xp['prefix']        ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
+    xp['prefix']        =inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
     xp['rawfiles']      =[st['hi_raw']+'AC459_2',st['hi_raw']+'AC459_3',st['hi_raw']+'AC459_4']
     xp['starttime']     =''
     xp['stoptime']      =''
@@ -58,10 +36,10 @@ def c96():
     xp['niter']        =0
     
     # RUN SCRIPTS
-    xp=xu.ximport(xp)
-    xu.checkvrange(xp['prefix']+'.ms')
+    #xp=xu.ximport(xp)
+    #xu.checkvrange(xp['prefix']+'.ms')
     #au.timeOnSource(xp['prefix']+'.ms')
-    xp=xu.xcal(xp)
+    #xp=xu.xcal(xp)
     xp=xu.xconsol(xp)
     xp=xu.xclean(xp)
 
@@ -69,7 +47,7 @@ def d96():
 
     xp=xu.init()
     
-    xp['prefix']        ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
+    xp['prefix']        =inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
     xp['rawfiles']      =[st['hi_raw']+'AC459_5',st['hi_raw']+'AC459_6']
     xp['starttime']     =''
     xp['stoptime']      =''
@@ -109,14 +87,37 @@ def d96():
     xp['niter']        =0
     
     # RUN SCRIPTS
-    xp=xu.ximport(xp)
-    xu.checkvrange(xp['prefix']+'.ms')
+    #xp=xu.ximport(xp)
+    #xu.checkvrange(xp['prefix']+'.ms')
     #au.timeOnSource(xp['prefix']+'.ms')
-    xp=xu.xcal(xp)
+    #xp=xu.xcal(xp)
     xp=xu.xconsol(xp)
     xp=xu.xclean(xp)
     
+
+def config(xp):
+
+    xp['spwrgd']       ='spw'
+    xp['uvcs']          =True
+    xp['fitspw']        ='0:3~10;90~97'
+    xp['fitorder']      =1
     
+    # IMAGING
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+    
+    xp['imsize']            =2**6*10
+    xp['cell']              ='4.0arcsec'
+    
+    xp['cleanmode']      = 'velocity'    
+    xp['clean_start']='352km/s'
+    xp['clean_nchan']=104
+    xp['clean_width']='5.2km/s'
+    
+    xp['phasecenter']='J2000 11h14m37.0 +12d49m3.6'
+    
+    return xp
+
 def comb():
     #[470,770]
 
@@ -136,21 +137,19 @@ def comb():
     xp['mosweight']         =True
     xp['scalewt']           =True
     
-    xp['imsize']            =2**5*10*3
-    xp['cell']              ='4arcsec'
+    xp['imsize']            =2**8*5
+    xp['cell']              ='3arcsec'
     
     xp['clean_mask']        =0.1
     xp['clean_mask_cont']   =0.01
     xp['minpb']             =0.01
     
-    xp['multiscale']        =[int(x*(14.0/4.0)) for x in [0.,1.,3.]]
+    xp['multiscale']        =[int(x*(14.0/3.0)) for x in [0.,1.,3.]]
     
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
-    xp['negcomponent']      =0
-    xp['usescratch']        =True
-    
-    xp['fitspw']            ='0:5~18,1:45~56'
+    xp['negcomponent']      =-1
+    xp['usescratch']        =False
     
     # RUN SCRIPTS:
     #xp=xu.xconsol(xp)
@@ -160,6 +159,6 @@ def comb():
     xp=xu.xclean(xp)
     
 if  __name__=="__main__":
-    #c96()
-    #d96()
+    c96()
+    d96()
     comb() 

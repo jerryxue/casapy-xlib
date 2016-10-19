@@ -566,8 +566,8 @@ def comb():
     xp['scalewt']           =True
     
     xp['wnpixels']          =45*60
-    xp['imsize']            =2**6*10*3
-    xp['cell']              ='2.0arcsec'
+    xp['imsize']            =2**8*5
+    xp['cell']              ='3.0arcsec'
 
     xp['cleanmode']         ='velocity'
     xp['clean_start']       ='2031.2km/s'
@@ -578,7 +578,7 @@ def comb():
     xp['clean_mask']        =0.10
     xp['clean_mask_cont']   =0.01
     
-    xp['multiscale']        =[int(x*(6.0/2.0)) for x in [0.,1.,3.]]
+    xp['multiscale']        =[int(x*(6.0/3.0)) for x in [0.,1.,3.]]
     
     xp['clean_gain']        =0.3
     xp['cyclefactor']       =5.0
