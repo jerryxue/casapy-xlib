@@ -37,5 +37,5 @@ Check out the comment section in /xlib/init.py for the setup details
 
 Examples:
 
-    VLA 21cm HI data reduction  -- scripts/sting-hi/n4254hi.py
-    CARMA CO 1-0 imaging        -- scripts/sting-co/n4254co.py
+    VLA 21cm HI data reduction  -- scripts/sting/hi/n4254hi.py
+    CARMA CO 1-0 imaging        -- scripts/sting/12co/n4254co.py
