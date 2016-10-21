@@ -1,2 +1,0 @@
-*   converting single-dish images into "visibility" for a joint CLEAN (compare results from feathering or mosmem)
-*   watch out the change of mstransform() on handling WEIGHTS (regridding based on WEIGHT_SPECTRUM)
