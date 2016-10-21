@@ -430,7 +430,16 @@ def xcal(xp):
                 reference=reference+[str(spwid_passcal[i])]
             else:
                 reference=reference+[str(spwid_passcal[i-len(spwid_passcal)])]
+        
         bptables=[xp['prefix']+'.bcal',xp['prefix']+'.bcal_comb']
+        
+        xu.news(" "+xp['passcal']+' -> '+xp['source'])
+        xu.news(" "+xp['passcal']+' -> '+xp['phasecal'])
+        xu.news(" "+xp['passcal']+' -> '+xp['fluxcal'])
+        xu.news("")
+        xu.news(" transfer:  "+str(transfer))
+        xu.news(" reference: "+str(reference))
+        xu.news("")
         
         for bptable in bptables:
             if  os.path.exists(bptable):
@@ -480,7 +489,9 @@ def xcal(xp):
     
     spwmap_bcal2phasecal=list(spwid)
     spwmap_bcal2fluxcal=list(spwid)
+    
     if  xp['bpcopy']==False:
+    
         for i in range(0,len(spwid_phasecal)):
             if  i<len(spwid_passcal):
                 spwmap_bcal2phasecal[int(spwid_phasecal[i])]=int(spwid_passcal[i])
