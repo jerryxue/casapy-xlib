@@ -1,29 +1,4 @@
 
-def config(xp):
-    
-    # CONSOLIDATING
-    xp['spwrgd']            ='spw'
-    xp['scalewt']           =True
-    xp['uvcs']              =True
-    xp['fitspw']            ='*:0~16;40~56'
-    xp['fitorder']          =1
-    
-    # IMAGING
-    xp['cleanspec']         =True
-    xp['cleancont']         =True
-    
-    xp['imsize']            =2**5*10
-    xp['cell']              ='8.0arcsec'
-    
-    xp['cleanmode']         ='velocity'
-    xp['clean_start']       ='2200.0km/s'
-    xp['clean_width']       ='20.8km/s'
-    xp['clean_nchan']       =int((3400-2200)/20.8)
-    xp['phasecenter']       ='J2000 10h16m53.6 +73d24m03.0'
-    
-    return xp
-
-    
 def a03():
     
     xp=xu.init()
@@ -167,59 +142,6 @@ def b13c():
     
     xp=config(xp)
     xp['niter']             =0
-    
-    # RUN SCRIPTS:
-    xp=xu.ximport(xp)
-    xu.checkvrange(xp['prefix']+'.ms')
-    #au.timeOnSource(xp['prefix']+'.ms')
-    xp=xu.xcal(xp)
-    xp=xu.xconsol(xp)
-    xp=xu.xclean(xp)
-
-    
-def bc04():
-    
-    xp=xu.init()
-
-    # IMPORT
-    xp['prefix']            ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
-    xp['rawfiles']          =st['hi_raw']+'AS787_13'
-    xp['starttime']         ="2004/02/22/08:21:25"
-    xp['stoptime']          ="2004/02/22/13:00:00"
-    
-    # CALIBRATION
-    xp['source']            ='NGC3147'
-    xp['fluxcal']           ='0542+498'
-    xp['fluxcal_uvrange']   ='<50klambda'
-    xp['phasecal']          ='0841+708'
-    xp['phasecal_uvrange']  ='<20klambda'
-    xp['spw_source']        ='0,1'
-    
-    xp['flagspw']           ='0:0;62,1:0;60~62'
-    xp['flagselect']        =["antenna='VA04' timerange='2004/02/22/09:41:40~09:53:30.6'",
-                              "antenna='VA06' timerange='2004/02/22/09:41:40~09:53:30.6'",
-                              "antenna='VA08' timerange='2004/02/22/11:28:00~11:35:25.0'",
-                              "antenna='VA10' timerange='2004/02/22/10:16:00~10:39:00.0'",
-                              "antenna='VA11' timerange='2004/02/22/10:16:00~10:39:00.0'",
-                              "antenna='VA22' ",
-                              "timerange='2004/02/22/08:28:49~08:28:59.5' field='1'",
-                              "timerange='2004/02/22/11:50:53~11:51:00.0' field='1'",
-                              "timerange='2004/02/22/08:21:20~08:21:40.0' field='0'",
-                              "antenna='VA02&VA04'",
-                              "antenna='VA08&VA14'",
-                              "antenna='VA18&VA04'",
-                              "antenna='VA18&VA25'",
-                              "timerange='10:59:15~10:59:25'",
-                              "mode='quack' quackinterval=5.0 field='NGC3147'",
-                              "timerange='11:29:30~11:30:00' field='NGC3147'"]
-    
-    # CONSOLIDATING & IMAGING
-    xp=config(xp)
-    
-    xp['niter']             =0
-    xp['spwrgd_method']     ='mstransform'
-    xp['fitorder']          =0
-    # some record with half spw flagged; oder=1 will create bad line data
     
     # RUN SCRIPTS:
     xp=xu.ximport(xp)
@@ -390,11 +312,88 @@ def d89():
     xp=xu.xclean(xp)
 
 
-# locked
-# 4B-396.sb29895068.eb30086390.57017.618360092594 (program code)
-#Sandstrom, Karin    VLA/14A-468    The Dust-HI-Star Formation Connection Across the Local Universe    42    Regular
-#Sandstrom, Karin    VLA/14B-396    The Dust-HI-Star Formation Connection Across the Local Universe    56    Regular
-#  
+    
+def bc04():
+    
+    xp=xu.init()
+
+    # IMPORT
+    xp['prefix']            =inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
+    xp['rawfiles']          =st['hi_raw']+'AS787_13'
+    xp['starttime']         ="2004/02/22/08:21:25"
+    xp['stoptime']          ="2004/02/22/13:00:00"
+    
+    # CALIBRATION
+    xp['source']            ='NGC3147'
+    xp['fluxcal']           ='0542+498'
+    xp['fluxcal_uvrange']   ='<50klambda'
+    xp['phasecal']          ='0841+708'
+    xp['phasecal_uvrange']  ='<20klambda'
+    xp['spw_source']        ='0,1'
+    
+    xp['flagspw']           ='0:0;62,1:0;60~62'
+    xp['flagselect']        =["antenna='VA04' timerange='2004/02/22/09:41:40~09:53:30.6'",
+                              "antenna='VA06' timerange='2004/02/22/09:41:40~09:53:30.6'",
+                              "antenna='VA08' timerange='2004/02/22/11:28:00~11:35:25.0'",
+                              "antenna='VA10' timerange='2004/02/22/10:16:00~10:39:00.0'",
+                              "antenna='VA11' timerange='2004/02/22/10:16:00~10:39:00.0'",
+                              "antenna='VA22' ",
+                              "timerange='2004/02/22/08:28:49~08:28:59.5' field='1'",
+                              "timerange='2004/02/22/11:50:53~11:51:00.0' field='1'",
+                              "timerange='2004/02/22/08:21:20~08:21:40.0' field='0'",
+                              "antenna='VA02&VA04'",
+                              "antenna='VA08&VA14'",
+                              "antenna='VA18&VA04'",
+                              "antenna='VA18&VA25'",
+                              "timerange='10:59:15~10:59:25'",
+                              "mode='quack' quackinterval=5.0 field='NGC3147'",
+                              "timerange='11:29:30~11:30:00' field='NGC3147'"]
+    
+    # CONSOLIDATING & IMAGING
+    xp=config(xp)
+    xp['fitspw']            ='0:0~17;39~56'
+    
+    xp['niter']             =0
+    xp['spwrgd_method']     ='mstransform'
+    xp['fitorder']          =1
+    # some record with half spw flagged; oder=1 will create bad line data
+    
+    # RUN SCRIPTS:
+    #xp=xu.ximport(xp)
+    #xu.checkvrange(xp['prefix']+'.ms')
+    #au.timeOnSource(xp['prefix']+'.ms')
+    #xp=xu.xcal(xp)
+    xp=xu.xconsol(xp)
+    xp=xu.xclean(xp)
+
+
+
+def config(xp):
+    
+    # CONSOLIDATING
+    xp['spwrgd']            ='spw'
+    xp['scalewt']           =True
+    xp['uvcs']              =True
+    xp['fitspw']            ='*:0~16;40~56'
+    xp['fitorder']          =1
+    
+    # IMAGING
+    xp['cleanspec']         =True
+    xp['cleancont']         =True
+    
+    xp['imsize']            =2**5*10
+    xp['cell']              ='8.0arcsec'
+    
+    xp['cleanmode']         ='velocity'
+    xp['clean_start']       ='2200.0km/s'
+    xp['clean_width']       ='20.8km/s'
+    xp['clean_nchan']       =int((3400-2200)/20.8)
+    xp['phasecenter']       ='J2000 10h16m53.6 +73d24m03.0'
+    
+    return xp
+
+    
+
 def comb():
     
     xp=xu.init()
@@ -448,7 +447,7 @@ def comb():
 
 if  __name__=="__main__":
     #a03()
-    #bc04()
+    bc04()
     #c90()
     #d03b()
     #d89()
@@ -456,4 +455,4 @@ if  __name__=="__main__":
     #b13a()
     #b13b()
     #b13c()
-    comb()
+    #comb()

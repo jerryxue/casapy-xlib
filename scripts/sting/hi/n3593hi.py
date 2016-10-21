@@ -84,13 +84,13 @@ def d96():
                     "antenna='VA12' timerange='23:16:30~23:17:00'"
                     ]
     xp=config(xp)
-    xp['niter']        =0
+    #xp['niter']        =0
     
     # RUN SCRIPTS
-    #xp=xu.ximport(xp)
+    xp=xu.ximport(xp)
     #xu.checkvrange(xp['prefix']+'.ms')
     #au.timeOnSource(xp['prefix']+'.ms')
-    #xp=xu.xcal(xp)
+    xp=xu.xcal(xp)
     xp=xu.xconsol(xp)
     xp=xu.xclean(xp)
     
@@ -110,9 +110,9 @@ def config(xp):
     xp['cell']              ='4.0arcsec'
     
     xp['cleanmode']      = 'velocity'    
-    xp['clean_start']='352km/s'
-    xp['clean_nchan']=104
-    xp['clean_width']='5.2km/s'
+    xp['clean_start']   ='352km/s'
+    xp['clean_nchan']   =104
+    xp['clean_width']   ='5.2km/s'
     
     xp['phasecenter']='J2000 11h14m37.0 +12d49m3.6'
     
@@ -151,6 +151,9 @@ def comb():
     xp['negcomponent']      =-1
     xp['usescratch']        =False
     
+    xp['clean_start']       ='383.2km/s'
+    xp['clean_nchan'        ]=int((872-383.2)/5.2+1)
+    
     # RUN SCRIPTS:
     #xp=xu.xconsol(xp)
     
@@ -159,6 +162,6 @@ def comb():
     xp=xu.xclean(xp)
     
 if  __name__=="__main__":
-    c96()
+    #c96()
     d96()
-    comb() 
+    #comb() 

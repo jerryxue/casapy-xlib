@@ -97,6 +97,7 @@ def ximport(xp):
 
         importvla(archivefiles=xp['rawfiles'],
                   vis=xp['msfile'],
+                  applytsys=xp['applytsys'],
                   starttime=xp['starttime'],
                   stoptime=xp['stoptime'],
                   bandname=xp['importband'],

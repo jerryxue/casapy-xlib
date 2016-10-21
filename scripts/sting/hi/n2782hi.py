@@ -181,7 +181,7 @@ def comb():
     xp['scalewt']           =True
 
     xp['imsize']            =2**8*5
-    xp['cell']              ='2.0arcsec'
+    xp['cell']              ='3.0arcsec'
     
     xp['clean_start']       ='2252km/s'
     xp['clean_nchan']       =int((2824-2252.)/10.4)

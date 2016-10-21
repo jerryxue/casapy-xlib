@@ -61,6 +61,7 @@ def init():
     'starttime':'',             # start time to search for data (only for importmode='vla')
     'stoptime':'',              # end time to search for data (only for importmode='vla')
     
+    'applytsys':True,           # applytsys for importvla()
     # OBS INFO
     'source':'',                # target name
     'fluxcal':'',               # flux calibrator name
@@ -258,7 +259,8 @@ def init():
                                 #+++ too large and the clean may not converge at the requested thresholds.
                                 #+++ Another indication of this ponetial clean problem is large-scale PSF pattern in the cleaned 
                                 #+++ image even threshold/niter are reasonable.
-    'cyclefactor':1.5,
+    'cyclefactor':1.5,          # if the PSF is severely non-Gaussian due to poor UV-cpverage, try to increase the value for more frequently
+                                # major cycles
     'clean_gain':0.1,           # gain factor for clean, 
                                 # for multiscale clean, clean_gain can be higher (e.g. 0.7)
     'clean_field':'',
@@ -312,6 +314,7 @@ def init():
                                 # If the UV coverage is very different, it might doesn't much difference.
                                 # ????
     'psfmode':'clark',          # psfmode in CLEAN()
+                                # switch to the slower hogbom if the PSF and UV-coverage look bad....
     'fitpsf':False,             # out-of-date, not verified
     'negcomponent':-1,          # allowed number of negative component for CLEAN components at the largest scale
     'smallscalebias':0.6,       # the smallscalebias attempts to balance the weight given to larger scales, which usually have 
@@ -1366,35 +1369,35 @@ def genmask0(imfile,verbose=False):
 
         
     rmctable(imfile+'.mask0')
-    rmctable('tmp0')
-    rmctable('tmp1')
-    rmctable('tmp2')
-    rmctable('tmp3')
+    rmctable('__tmp0',rmfile=True)
+    rmctable('__tmp1',rmfile=True)
+    rmctable('__tmp2',rmfile=True)
+    rmctable('__tmp3',rmfile=True)
 
     
     if  verbose==False:
         casalog.filter('ERROR')
             
-    os.system('cp -rf '+imfile+' tmp0')
-    immath(imagename=['tmp0','tmp0'],\
+    os.system('cp -rf '+imfile+' __tmp0')
+    immath(imagename=['__tmp0','__tmp0'],\
         expr='IM0/IM1',\
-        outfile='tmp1',\
-        mask='"tmp0"!=0')
-    immoments(imagename='tmp1',moments=0,outfile='tmp2')
-    stat=imstat('tmp2')
+        outfile='__tmp1',\
+        mask='"__tmp0"!=0')
+    immoments(imagename='__tmp1',moments=0,outfile='__tmp2')
+    stat=imstat('__tmp2')
     cutoff=stat['max'][0]
-    immath(imagename='tmp2',expr='IM0/'+str(cutoff),
-        outfile='tmp3')
-    immath(imagename='tmp3',expr='IM0',outfile=imfile+'.mask0',
-        mask='"tmp3">=1.0')
+    immath(imagename='__tmp2',expr='IM0/'+str(cutoff),
+        outfile='__tmp3')
+    immath(imagename='__tmp3',expr='IM0',outfile=imfile+'.mask0',
+        mask='"__tmp3">=1.0')
     
     if  verbose==False:
         casalog.filter('INFO')
     
-    rmctable('tmp0')
-    rmctable('tmp1')
-    rmctable('tmp2')
-    rmctable('tmp3')
+    rmctable('__tmp0',rmfile=True)
+    rmctable('__tmp1',rmfile=True)
+    rmctable('__tmp2',rmfile=True)
+    rmctable('__tmp3',rmfile=True)
     
 
 def mask0clean(outname,mask0):
@@ -2179,6 +2182,8 @@ def bpcopy(table,
     #   xu.bpcopy(table,reference=reference,transfer=transfer,replace=True)
     #
     ###
+    
+    news("")
     idr=reference.split(',')
     idt=transfer.split(',')
 
@@ -2190,28 +2195,36 @@ def bpcopy(table,
         table=table+"_bpcopy"
         
     for k in range(len(idr)):
-        if  os.path.exists("tmp.bcal"):
-            rmtables("tmp.bcal")
+        
+        if  os.path.exists("__tmp.bcal"):
+            rmtables("__tmp.bcal")
         
         tb.open(table,nomodify=False)
-        subtb=tb.query('SPECTRAL_WINDOW_ID=='+str(idr[k]))
-        subtb1=tb.query('SPECTRAL_WINDOW_ID=='+str(idt[k]))
-        docopy=(subtb1.nrows()==0 and subtb.nrows()!=0)
+        subtbr=tb.query('SPECTRAL_WINDOW_ID=='+str(idr[k]))
+        subtbt=tb.query('SPECTRAL_WINDOW_ID=='+str(idt[k]))
+        docopy=(subtbt.nrows()==0 and subtbr.nrows()!=0)
+        
+        
         news(" reference: "+str(idr[k])+" transfer: "+str(idt[k])+" copy: "+str(docopy))
         if  docopy:
-            copytb=subtb.copy('tmp.bcal',deep=True,valuecopy=True,memorytable=True,returnobject=True)
-        subtb.close()
-        subtb1.close()
-        tb.close()
-        if  docopy:
+            
+            copytb=subtbr.copy('__tmp.bcal',deep=True,valuecopy=True,memorytable=True,returnobject=True)
+            
             spws=copytb.getcol("SPECTRAL_WINDOW_ID").tolist()
             for i in range(len(spws)):
                 spws[i]=int(idt[k])
             copytb.putcol("SPECTRAL_WINDOW_ID",spws)
+            
             copytb.copyrows(table)
             copytb.close()
-        if  os.path.exists("tmp.bcal"):    
-            rmtables("tmp.bcal")
+
+
+        subtbr.close()
+        subtbt.close()
+        tb.close()
+        
+        if  os.path.exists("__tmp.bcal"):    
+            rmtables("__tmp.bcal")
         
 def rmcolumn(msfile,column=""):
     """

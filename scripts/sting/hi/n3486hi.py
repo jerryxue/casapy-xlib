@@ -5,7 +5,7 @@ def b13a():
     xp=xu.init()
     
     # IMPORT
-    xp['prefix']            ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
+    xp['prefix']            =inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
     xp['rawfiles']          =st['hi_raw']+'13B-363.sb24635611.eb28558623.56626.60561628472.ms'
     xp['importspw']         ='2,12'
     xp['importscan']        ='2~13'
@@ -45,7 +45,7 @@ def b13b():
     xp=xu.init()
     
     # IMPORT
-    xp['prefix']            ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
+    xp['prefix']            =inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
     xp['rawfiles']          =st['hi_raw']+'13B-363.sb24635611.eb28563417.56632.4332934375.ms'
     xp['importspw']         ='2,12'
     xp['importscan']        ='2~13'
@@ -83,7 +83,7 @@ def c13a():
     xp=xu.init()
     
     # IMPORT
-    xp['prefix']            ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
+    xp['prefix']            =inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
     xp['rawfiles']          =st['hi_raw']+'13A-107.sb21345593.eb24163653.56499.04867690972.ms'
     xp['importspw']         ='0'
     xp['importscan']        ='2~18'
@@ -121,7 +121,7 @@ def c13b():
     xp=xu.init()
     
     # IMPORT
-    xp['prefix']            ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
+    xp['prefix']            =inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
     xp['rawfiles']          =st['hi_raw']+'13A-107.sb21389050.eb24163301.56497.97860929398.ms'
     xp['importspw']         ='0'
     xp['importscan']        ='2~9'
@@ -159,7 +159,7 @@ def c13c():
     xp=xu.init()
     
     # IMPORT
-    xp['prefix']            ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
+    xp['prefix']            =inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
     xp['rawfiles']          =st['hi_raw']+'13A-107.sb21767032.eb24161877.56496.99179714121.ms'
     xp['importspw']         ='0'
     xp['importscan']        ='2~9'
@@ -197,7 +197,7 @@ def c13d():
     xp=xu.init()
     
     # IMPORT
-    xp['prefix']            ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
+    xp['prefix']            =inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
     xp['rawfiles']          =st['hi_raw']+'13A-107.sb21767248.eb24085777.56481.08748224537.ms'
     xp['importspw']         ='0'
     xp['importscan']        ='2~18'
@@ -235,7 +235,7 @@ def c13e():
     xp=xu.init()
     
     # IMPORT
-    xp['prefix']            ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
+    xp['prefix']            =inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
     xp['rawfiles']          =st['hi_raw']+'13A-107.sb24167009.eb24172200.56503.02696798611.ms'
     xp['importspw']         ='0'
     xp['importscan']        ='2~18'
@@ -274,10 +274,11 @@ def d91():
     
     # IMPORT
     
-    xp['prefix']            ='../'+inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
-    xp['rawfiles']          =st['hi_raw']+'AS428_1'
+    xp['prefix']            =inspect.stack()[0][3]+'/'+inspect.stack()[0][3]
+    xp['rawfiles']          =st['hi_raw']+'AS428_A910322.xp2'
     xp['importscan']        ='1,12,13,15'
     xp['importspw']         ='0,1,8,9'
+    xp['applytsys']         =True
     
     # CALIBRATION
     xp['source']            ='NGC3486'
@@ -285,11 +286,12 @@ def d91():
     xp['fluxcal_uvrange']   ='<40klambda'
     xp['phasecal']          ='1117+146' 
     xp['phasecal_uvrange']  =''
+    
     xp['spw_source']        ='2,3'
     xp['spw_phasecal']      ='2,3'
     xp['spw_fluxcal']       ='0,1'
     
-    xp['flagspw']           ='*:0;60~62'
+    xp['flagspw']           ='*:0;58~62'
     xp['flagselect']        =["antenna='VA18'",
                               "uvrange='<1200lambda' field='0134+329'",
                               "timerange='23:40:00~23:45:00' field='0134+329'",
@@ -298,14 +300,38 @@ def d91():
     
     # CONSOLIDATING
     xp=config(xp)
-    xp['niter']             =0
     
+    
+    xp['spw_source']        ='2'
+    xp['spw_phasecal']      ='2'
+    xp['spw_fluxcal']       ='0'
+    xp['uvcs']              =False
+    xp['cleancont']         =False
+    xp['combinespws']       =False
+    
+    #xp['niter']             =0
+    xp['imagermode']        ='csclean'
+    xp['ftmachine']         ='ft'
+    xp['clean_mask']        =0.10
+    xp['clean_mask_cont']   =0.01
+    xp['minpb']             =0.01
+    xp['imsize']            =2**7*5
+    xp['cell']              ='12.0arcsec'
+    xp['cleanweight']       ='briggs'
+    xp['cyclefactor']       =20.0
+    xp['psfmode']           ='hogbom'
+
+    xp['niter']             =10000
+    #xp['cleanspw']          ='1'
     # RUN SCRIPTS:
     xp=xu.ximport(xp)
-    xu.checkvrange(xp['prefix']+'.ms')
+    #xu.checkvrange(xp['prefix']+'.ms')
     # au.timeOnSource(xp['prefix']+'.ms')
     xp=xu.xcal(xp)
     xp=xu.xconsol(xp)
+    
+    #xp['ctag']              ='_clark'
+    
     xp=xu.xclean(xp)
 
 
@@ -315,15 +341,15 @@ def config(xp):
     xp['spwrgd']            ='spw'
     xp['scalewt']           =True
     xp['uvcs']              =True
-    xp['fitspw']            ='*:0~3;44~46'
+    xp['fitspw']            ='0:0~3;44~46'
     xp['fitorder']          =1
     
     # IMAGING
     xp['cleanspec']         =True
     xp['cleancont']         =True
     
-    xp['imsize']            =2**5*10
-    xp['cell']              ='8.0arcsec'
+    xp['imsize']            =2**7*5
+    xp['cell']              ='6.0arcsec'
     
     xp['cleanmode']         ='velocity'
     xp['clean_start']       ='400km/s'
@@ -373,11 +399,10 @@ def comb():
     xp['minpb']             =0.01
     
     xp['multiscale']        =[int(x*(11.0/3.0)) for x in [0.,1.,3.]]
-    xp['multiscale']        =[int(x*(11.0/3.0)) for x in [0.,2.]]
     xp['smallscalebias']    =0.9
-    
+
     xp['clean_gain']        =0.3
-    xp['cyclefactor']       =5.0
+    xp['cyclefactor']       =10.0
     xp['negcomponent']      =-1
     xp['usescratch']        =False
     
@@ -388,12 +413,15 @@ def comb():
     
     xp['fitspw']            ='*:0~3;44~46'
     
+    xp['psfmodel']          ='hogbom'
+
     # RUN SCRIPTS:
     #xp=xu.xconsol(xp)
     
     xp['ctag']              ='_ro'
     xp['cleanweight']       ='briggs'
     xp=xu.xclean(xp)
+    
 
 if  __name__=="__main__":
     #d91()

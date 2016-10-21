@@ -424,6 +424,9 @@ def comb():
     xp['negcomponent']      =0
     xp['usescratch']        =True
     
+    xp['clean_gain']        =0.1
+    xp['cleancont']         =False
+    
     xp['fitspw']            ='*:0~11;53~60'
     
     # RUN SCRIPTS:

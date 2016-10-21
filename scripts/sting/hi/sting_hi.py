@@ -2,13 +2,13 @@
 # execfile(stinghi+'n0772hi.py')
 # execfile(stinghi+'n1156hi.py')
 # execfile(stinghi+'n1569hi.py')
-# execfile(stinghi+'n1637hi.py') # waiting
-# execfile(stinghi+'n2782hi.py') # waiting
-execfile(stinghi+'n2976hi.py')
-execfile(stinghi+'n3147hi.py')
+execfile(stinghi+'n1637hi.py') # waiting
+execfile(stinghi+'n2782hi.py') # waiting
+#execfile(stinghi+'n2976hi.py')
+#execfile(stinghi+'n3147hi.py') # waiting
 #execfile(stinghi+'n3198hi.py') 
-execfile(stinghi+'n3486hi.py')
-execfile(stinghi+'n3593hi.py')
+#execfile(stinghi+'n3486hi.py') # waiting
+#execfile(stinghi+'n3593hi.py')
 #execfile(stinghi+'n4151hi.py')
 #execfile(stinghi+'n4254hi.py')
 #execfile(stinghi+'n4273hi.py')
