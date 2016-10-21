@@ -333,7 +333,7 @@ class cleanhelper:
                             facets=facets)
 
     def definemultiimages(self, rootname, imsizes, cell, stokes, mode, spw,
-                          nchan, start, width, restfreq, field, phasecenters,
+                          nchan, start, width, restfreq, field, phasecenters,minpb=0.1,
                           names=[], facets=1, outframe='', veltype='radio',
                           makepbim=False, checkpsf=False):
         """
@@ -415,7 +415,7 @@ class cleanhelper:
 #                      pass
 
                 # set to default minpb(=0.1), should use input minpb?
-                self.im.setmfcontrol()
+                self.im.setmfcontrol(minpb=minpb)
                 self.im.setvp(dovp=True)
                 self.im.makeimage(type='pb', image=self.imagelist[n]+'.flux',
                                   compleximage="", verbose=False)
