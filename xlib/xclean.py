@@ -292,6 +292,10 @@ def xclean(xp):
         if  outname_loop[i][-2:]=='_d':
             #   REMOVE RESIAUL FOR DIRTY MAP
             xu.rmctable(outname_loop[i]+'.residual')
+            xu.rmctable(outname_loop[i]+'.flux')
+            xu.rmctable(outname_loop[i]+'.flux.mask0')
+            xu.rmctable(outname_loop[i]+'.psf')
+            xu.rmctable(outname_loop[i]+'.model')
         else:
             #   CREATE CMODEL FOR CLEANED MAP 
             xu.modelconv(outname_loop[i])
@@ -356,15 +360,16 @@ def xclean(xp):
                expr='IM0/IM1',
                outfile=outname_loop[i]+'.cm')
         """
-        impbcor(imagename=outname_loop[i]+'.image',\
-                pbimage=outname_loop[i]+'.flux',\
-                outfile=outname_loop[i]+'.cm',\
-                cutoff=-1.0,overwrite=True)
+        if  outname_loop[i][-2:]!='_d':
+            impbcor(imagename=outname_loop[i]+'.image',\
+                    pbimage=outname_loop[i]+'.flux',\
+                    outfile=outname_loop[i]+'.cm',\
+                    cutoff=-1.0,overwrite=True)
         
         xu.exporttasklog('imhead',outname_loop[i]+'.image.imhead.log')
         xu.exporttasklog('imstat',outname_loop[i]+'.image.imstat.log')
-        xu.exporttasklog('clean',outname_loop[i]+'.image.iteration.log')
-        os.system("cp -rf clean.last "+outname_loop[i]+'.image.clean.last')
+        xu.exporttasklog('clean',outname_loop[i]+'.clean.log')
+        os.system("cp -rf clean.last "+outname_loop[i]+'.clean.last')
     
     #----------------------------------------------------------------------------------------
     #   image-domain continuum substraction
@@ -492,17 +497,22 @@ def xclean(xp):
     xu.news("")
     xu.news("Export all images to FITS format")
     xu.news("")
-    xu.exportclean(xp['prefix']+xp['ctag']+'.line_d',keepcasaimage=xp['keepcasaimage'],
+    
+    if  xp['cleanspec']==True:
+        xu.exportclean(xp['prefix']+xp['ctag']+'.line_d',keepcasaimage=xp['keepcasaimage'],
                    dropdeg=xp['dropdeg'],optical=xp['optical'],dropstokes=xp['dropstokes'])
-    xu.exportclean(xp['prefix']+xp['ctag']+'.line',keepcasaimage=xp['keepcasaimage'],
+        xu.exportclean(xp['prefix']+xp['ctag']+'.line',keepcasaimage=xp['keepcasaimage'],
                    dropdeg=xp['dropdeg'],optical=xp['optical'],dropstokes=xp['dropstokes'])
-    xu.exportclean(xp['prefix']+xp['ctag']+'.cont_d',keepcasaimage=xp['keepcasaimage'],
+    
+    if  xp['cleancont']==True:
+        xu.exportclean(xp['prefix']+xp['ctag']+'.cont_d',keepcasaimage=xp['keepcasaimage'],
                    dropdeg=xp['dropdeg'],optical=xp['optical'],dropstokes=xp['dropstokes'])
-    xu.exportclean(xp['prefix']+xp['ctag']+'.cont',keepcasaimage=xp['keepcasaimage'],
+        xu.exportclean(xp['prefix']+xp['ctag']+'.cont',keepcasaimage=xp['keepcasaimage'],
                    dropdeg=xp['dropdeg'],optical=xp['optical'],dropstokes=xp['dropstokes'])
-    xu.exportclean(xp['prefix']+xp['ctag']+'.coli_d',keepcasaimage=xp['keepcasaimage'],
+    if  xp['imcs']==True:
+        xu.exportclean(xp['prefix']+xp['ctag']+'.coli_d',keepcasaimage=xp['keepcasaimage'],
                    dropdeg=xp['dropdeg'],optical=xp['optical'],dropstokes=xp['dropstokes'])
-    xu.exportclean(xp['prefix']+xp['ctag']+'.coli',keepcasaimage=xp['keepcasaimage'],
+        xu.exportclean(xp['prefix']+xp['ctag']+'.coli',keepcasaimage=xp['keepcasaimage'],
                    dropdeg=xp['dropdeg'],optical=xp['optical'],dropstokes=xp['dropstokes'])
     xu.news("")
     
