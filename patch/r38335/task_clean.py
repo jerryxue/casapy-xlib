@@ -753,7 +753,7 @@ def clean(vis, imagename,outlierfile, field, spw, selectdata, timerange,
                                     casalog.post('Multi-term PSF '+psfim+' not made','WARN')
 
             if dochaniter and not imset.skipclean :
-                imset.storeCubeImages(finalimagename,imset.imagelist,j,imagermode)
+                imset.storeCubeImages(finalimagename,imset.imagelist,j,localFTMachine)
 
             ## Set frame conversion layer for all masks at the end. This doesn't happen from C++.
             ## This is because setReferenceFrame is called within makemultifieldmask2 to

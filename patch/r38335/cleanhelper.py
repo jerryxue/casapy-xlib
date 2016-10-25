@@ -1943,10 +1943,12 @@ class cleanhelper:
         ia.open(cubimage)
         cubeshape=ia.shape()
         if not (cubeshape[3] > (chan+inimshape[3]-1)):
+            ia.close()
             return False
         #rg0=ia.setboxregion(blc=blc,trc=trc)
         rg0=rg.box(blc=blc,trc=trc)
-        if inimshape[0:3]!=cubeshape[0:3]:
+        if numpy.any(inimshape[0:3]!=cubeshape[0:3]):
+            ia.close()
             return False
         #ia.putchunk(pixels=imdata,blc=blc)
         ia.putregion(pixels=imdata,pixelmask=immask, region=rg0)

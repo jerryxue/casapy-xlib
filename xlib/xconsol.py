@@ -90,6 +90,7 @@ def xconsol(xp):
         xp['msfile']=xp['prefix']+'.ms' 
         xp['srcfile']=xp['prefix']+'.src.ms'
         xu.rmctable(xp['srcfile'])
+        xu.rmctable(xp['srcfile']+'.flagversions',rmfile=True)
         
         xu.news("")
         xu.news("--mstransform--")
@@ -247,6 +248,7 @@ def xconsol(xp):
             xu.news("")
             xu.news("checking flagging consistency among channels:")
             xu.news("")
+            #sys.exit()
             xu.checkchflag(xp['srcfile'])
         
         #    
@@ -276,15 +278,19 @@ def xconsol(xp):
         # 
         if  xp['unchflag']==True:
             xu.unchflag(xp['srcfile'])
+        
         tb.open(xp['srcfile'],nomodify=False)
         wts_exist=tb.iscelldefined('WEIGHT_SPECTRUM',0)
         tb.close()
         if  wts_exist==True:
             xu.copyweight(xp['srcfile'],copyback=True)
+            
             if  xp['meanwt']==True:
-                xu.copyweight(xp['srcfile'])  
+                xu.copyweight(xp['srcfile'])
+             
         else:
             xu.copyweight(xp['srcfile'])
+        
         
         xu.news("")
         xu.news("--check split data & weight--")

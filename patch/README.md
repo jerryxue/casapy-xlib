@@ -12,6 +12,7 @@ Just replace them with the modified version here.
     cleanheper.py
     task_clean.py
 
-*   fix a minor issue that image tables could be left open / locked after CLEAN
+*   fix a minor issue that image tables could be left open / locked after CLEAN()
 (reported to the Helpdesk).
 *   fix a problem that .flux was always masked at PB<0.1 when imagermode='csclean'.
+*   fix a problem of CLEAN() when chaniter=True (reported to the Helpdesk)

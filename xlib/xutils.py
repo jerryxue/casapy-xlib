@@ -166,6 +166,8 @@ def init():
                                 #   not strictly correct in the statistical sense.
                                 # ?the new SIGMA column is also adjusted?
                                 #
+                                # as for v4.7.. mstransform still has some unexpected behavior near spw edges (in both amp and wt)
+                                # e.g. NGC3147-BC04
     'combinespws':True,         # combine spws when regridding spws
     'meanwt':True,              # replace WEIGHT_SPECTRUM with MEAN(WEIGHT_SPECTRUM)
                                 # this could avoid undesired small beam variations on a channel by channel basis 
@@ -228,7 +230,8 @@ def init():
                                 # [0,0,511,511]:    a clean box specified by bl/tr
                                 # 'cleanbox.txt'    a cleanbox file
     'clean_mask_cont':0.2,      # clean mask for continuum                              
-    'niter':10000,              # clean iteration threshold
+    'niter':25000,              # clean iteration number threshold
+                                # increase if the threshold was not reached anot no clear issuese detected.
     'sigcutoff_spec':2.5,       # <sigcutoff_spec>*<sig> is the default threshold value for spectral-cube CLEAN
     'sigcutoff_cont':2.5,       # <sigcutoff_cont>*<sig> is the default threshold value for continuum MFS CLEAN
     'threshold_spec':'0.0mJy',  # threshold for spec cleaning, the default value is <sigcutoff_spec>*<sig>
@@ -267,7 +270,7 @@ def init():
     
     'cleanweight':'briggs',     # e.g. 'briggs', 'uniform' or 'natural'
     'cleanspw':'',
-    'iterchan':False,
+    'chaniter':False,
     'outertaper':[],            # taper function for weighting
     'cleanspec':True,           # imaging spectral line?
     'wrobust':0.5,              # robust weight "R" parameter
@@ -1558,7 +1561,8 @@ def copyweight(srcfile,
     else:
         news("  weight->weight_spectrum")
         tb.open(srcfile,nomodify=False)
-        wts=tb.getcol('FLAG')*1.0
+        wts=tb.getcol('FLAG')
+        wts=wts.astype(float)
         wtt=tb.getcol('WEIGHT')
         for i in range(0,wtt.shape[0]):
             wts[i,:,:]=wtt[i,:]
@@ -2246,8 +2250,9 @@ if  __name__=="__main__":
     """
     test function
     """
-    checkvrange(vis='comb/n3593hi.src.ms.contsub',spw='1',outframe='BARY',line='hi')
-    checkchsel(vis='comb/n3593hi.src.ms.contsub',outframe='BARY',line='hi',vgrid=[300,400,10.0])
+    #checkvrange(vis='comb/n3593hi.src.ms.contsub',spw='1',outframe='BARY',line='hi')
+    #checkchsel(vis='comb/n3593hi.src.ms.contsub',outframe='BARY',line='hi',vgrid=[300,400,10.0])
+    genmask0('bc04/bc04.line.flux')
     #rmcolumn("n0772hi.src.ms.contsub",column='WEIGHT_SPECTRUM')
     #rmcolumn("n0772hi.src.ms.cont",column='WEIGHT_SPECTRUM')
     #rmcolumn("n0772hi.src.ms",column='WEIGHT_SPECTRUM')

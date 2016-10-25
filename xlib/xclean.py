@@ -275,7 +275,7 @@ def xclean(xp):
               restoringbeam=restorbeam_loop[i],
               gain=xp['clean_gain'],
               stokes='I',
-              chaniter=xp['iterchan'],
+              chaniter=xp['chaniter'],
               allowchunk=xp['allowchunk'],
               usescratch=xp['usescratch'],
               interactive=xp['interactive'],
@@ -285,9 +285,10 @@ def xclean(xp):
         if  xp['mask0']==True:
             #   DERIVE MASK0 FROM FLUX
             xu.genmask0(outname_loop[i]+'.flux')    
-            #   MASK DATA PRODUCTS USING MASK0 
+            #   MASK DATA PRODUCTS USING MASK0
+            #sys.exit("Please ignore the above color Trackback error message") 
             xu.mask0clean(outname_loop[i],outname_loop[i]+'.flux.mask0')
-        
+            #sys.exit("Please ignore the above color Trackback error message") 
         
         if  outname_loop[i][-2:]=='_d':
             #   REMOVE RESIAUL FOR DIRTY MAP
