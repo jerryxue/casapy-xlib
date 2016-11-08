@@ -21,7 +21,7 @@ from email import Encoders
 
 
 def init():
-    
+
     ################################################################################
     #    DEFAULT PIPELINE SETTING
     ################################################################################
@@ -34,7 +34,7 @@ def init():
     'prepfile':'',
     'srcfile':'',
     'srcfile_comb':'',
-    
+
     # IMPORT DATA
     'prefix':'test',            # Pre-name of reduction files
     'importmode':'vla',         # Data importing mode
@@ -43,24 +43,24 @@ def init():
                                 # 'evla':   import data from a EVLA ASDM file
                                 # 'mir':    import data in the MIRIAD format using MIRIAD
                                 # 'miriad': import data in the MIRAID format using importmiriad available in r4.3
-                                #           importmiriad doesn't work with BIMA data -> try importmode='mir'  
+                                #           importmiriad doesn't work with BIMA data -> try importmode='mir'
                                 # 'ms':     copy/split data from a MS file, leave the orginal file untouched
     'importspw':'',             # MS spectral windows to be imported (note: spw starts with 1 in MIRIAD, e.g. '1,2,7')
-    'importmirspw':'',          # MIRIAD spectral windows to ve imported 
+    'importmirspw':'',          # MIRIAD spectral windows to ve imported
     'importscan':'',            # Select the scans to be imported
     'importcorr':'',            # Select the correlations to be imported
     'importtimerange':'',       # Select the timerange to be imported
-    'importchanbin':1,          # pre-channel averaging during data importing 
+    'importchanbin':1,          # pre-channel averaging during data importing
     'importfield':'',           # Select the fields to be imported
     'importband':'',            # Select the band to be imported
     'importmirarray':'CARMA',   # Select the array name when importing MIRIAD files (CARMA, BIMA, SMA)
     'importmirnocal':False,     # Dont apply the gain table in MIRIAD files when importing data
     'importtimebin':'',       # pre-time averaging during data importing
     'importmirline':'',         # regridding the MIRIAD spectral windows before importing data
-    
+
     'starttime':'',             # start time to search for data (only for importmode='vla')
     'stoptime':'',              # end time to search for data (only for importmode='vla')
-    
+
     'applytsys':True,           # applytsys for importvla()
     # OBS INFO
     'source':'',                # target name
@@ -93,19 +93,19 @@ def init():
     'flagselect':[],            # flagging before calibration
     'flagselect_cal':[],        # flagging after calibration
     'flagspw':'',               # flagging based on spw selecting (kept for historical reasons)
-                                # flagging edge channel is important for merging spws because overlapping region 
-                                # is still equally weighted in CVEL() although MSTRANSFORM() may take care of it in future. 
-    'flagreset':True,           # reset flagging to the orginal status 
+                                # flagging edge channel is important for merging spws because overlapping region
+                                # is still equally weighted in CVEL() although MSTRANSFORM() may take care of it in future.
+    'flagreset':True,           # reset flagging to the orginal status
                                 # if False, flagging will be accumulated after each run of xcal.py.
     'flagtest':False,           # abort processing after flagging
     'flagselect_default':[],    # default flagging
                                 # examples:
                                 #    [mode='shadow']       shadow flagging (will crash flagcmd in B1950 in v4.2)
-                                #                          by default, importvla & importevla will flag shadowed antennas. 
+                                #                          by default, importvla & importevla will flag shadowed antennas.
                                 #    ["antenna='*&&&'"]    flagging auto-correlation.
     'dirtol':'',
     'freqtol':'',
-    
+
     # BASELINE
     'bcant':'',                 # for baseline corrections (useless for HI) here is an example:
     'bctype':'antposvla',       # bcant='VA06,VA02,VA03,VA07,VA10,VA11,VA16,VA17,VA18,VA19'
@@ -118,7 +118,7 @@ def init():
     #                                        0.0000, -0.0006,  0.0000,
     #                                       -0.0008,  0.0000,  0.0000,
     #                                        0.0000, -0.0004,  0.0000,
-    #                                        0.0000, -0.0004,  0.0000]    
+    #                                        0.0000, -0.0004,  0.0000]
     # CAL
     'interpmode':['linear','nearest'],
     'ref_ant':'15',                 # reference antenna name
@@ -129,40 +129,40 @@ def init():
                                     # syscal='tsys'...: bring up tsys table .
     'scalsmooth':False,             # only tested for EVLA data
     'scalsmoothtime':60,            # only tested for EVLA data
-    
+
     'flagtsys':True,                # flagging based on Tsys (only tested for EVLA data)
     'flagtsys_range':[5.0,1000.0],  # flagging based on Tsys
-    
+
     # CONSOLIDATE
-    
+
     'spwrgd':'',                # if spwrgd='spw', we will regrid spw to the clean setup
                                 # if spwrgd='', we will keep the native spw
-                                # 
+                                #
                                 # * clean()/concat() can't work with a dataset with TOPO+LSRK or TOPO+BARY frames
                                 # if spwrgd='frame', we will only transform the spw frame to the desired one, which
                                 # might help resolve the above issue when combing multiple tracks with various frames.
                                 # spwgrd='spw' will also help to reduce the vis data size to the mininmal required:
-                                # 
+                                #
                                 # * If the splitted vis already has the channel rebinned, CLEAN() will be speeded up
                                 #   because a smaller number vis records were handled during the major cycle.
-                                
+
                                 # * (this has been corrected in v4.2.1)
-                                #   If two corrs setup are in one spw (which may happen when two tracks with different 
+                                #   If two corrs setup are in one spw (which may happen when two tracks with different
                                 #   corr-config were regridding to the same channel setup), CLEAN() will consider
                                 #   one corr and ignore another corr. You want to void two corr-setup in one spw
                                 #   -> avoid regridding dual-pol and single-pol tracks into the same channel setup.
                                 #
-    'spwrgd_method':'mstransform',     
-                                # choose the regridding task: CVEL (default) or MSTRANSFORM 
-                                # mstransform() is much faster with less I/O (mx3 faster in a test case) 
-                                # However, some tests indicated that it might overflag channels 
-                                # when regridms=True + combinespws=True for MSs with multiple partly overlapping windows. 
-                                # The current solution in the pipline is running MTRANSFORM twice: 
-                                # one for regridms=True+combinespw=False, one for regridms=True+combinespw=False. 
+    'spwrgd_method':'mstransform',
+                                # choose the regridding task: CVEL (default) or MSTRANSFORM
+                                # mstransform() is much faster with less I/O (mx3 faster in a test case)
+                                # However, some tests indicated that it might overflag channels
+                                # when regridms=True + combinespws=True for MSs with multiple partly overlapping windows.
+                                # The current solution in the pipline is running MTRANSFORM twice:
+                                # one for regridms=True+combinespw=False, one for regridms=True+combinespw=False.
                                 # But mstransform() still has some issues under certain circumstances as CASA 4.3.0:
                                 #    e.g. combining 3 adjucent windows
-                                # * ??cvel() may not work properly when combing spws with different polns?? * 
-                                # * cvel() and mstransform() will adjust weight_spectrum by scaling up with nbin in CASA>=4.2.2 
+                                # * ??cvel() may not work properly when combing spws with different polns?? *
+                                # * cvel() and mstransform() will adjust weight_spectrum by scaling up with nbin in CASA>=4.2.2
                                 #   not strictly correct in the statistical sense.
                                 # ?the new SIGMA column is also adjusted?
                                 #
@@ -170,14 +170,14 @@ def init():
                                 # e.g. NGC3147-BC04
     'combinespws':True,         # combine spws when regridding spws
     'meanwt':True,              # replace WEIGHT_SPECTRUM with MEAN(WEIGHT_SPECTRUM)
-                                # this could avoid undesired small beam variations on a channel by channel basis 
-                                # (e.g. spws edges, error in the original WEIGHT_SPECTRUM) 
-    'chanbin':1,                
+                                # this could avoid undesired small beam variations on a channel by channel basis
+                                # (e.g. spws edges, error in the original WEIGHT_SPECTRUM)
+    'chanbin':1,
     'hs':False,                 # hanning smooth when preparing MS for imaging.
     'unchflag':False,           # unflag records with several channel flagged, so each channel has the same flagging
-                                # this will be like slop=1 in MIRIAD in some sense 
-                                
-    
+                                # this will be like slop=1 in MIRIAD in some sense
+
+
     # CONTINUE SUBTRACTION FOR INDIVIDUAL TRACK
     'fitorder':0,               # polynomial order for fitting the continuum
                                 # high-order polynomial may work better of the continuum source
@@ -193,17 +193,17 @@ def init():
     'fitchans':'',              # channel selecting for continumm subtraction after imaging (e.g., fitchans='1~7;79~85')
     'uvcs_combine':'spw',       # data axes to combine for the continuum estimate
                                 # combine='spw' --> form spw-merged continuum estimate
-    
+
     # COMBING MSs FROM INDIVIDUAL TRACK
-    'prefix_comb':[],           # names of MS files to be combined 
+    'prefix_comb':[],           # names of MS files to be combined
     'freqtol':'',               # frequency tolerant when combing spws.
-    'usevconcat':False,         # using virtual concat (which is not 
+    'usevconcat':False,         # using virtual concat (which is not
     'scalewt':False,            # scaling weight using the WEIGHT_SCALING value saved in MSs during CONCAT()
     'visweightscale':[],        # scaling weight using a specified value rather than the WEIGHT_SCALING value in MSs
     'scalewt_fitspw':'',        # the data range used to calculate the WEIGHT_SCALING value, default: fitspw
     'scalewt_uvrange':'',       # the data range used to calculate the WEIGHT_SCALING value, not implemented
-    'scalewt_minsamp':2,        # the minimal number of channels required for a reliable sigma/weight calculation 
-    
+    'scalewt_minsamp':2,        # the minimal number of channels required for a reliable sigma/weight calculation
+
     # CLEAN
     'cresume':False,                # resume CLEAN() from the last model (prefix+ctag+'line.model')
     'ctag':'',                      # tag name for clean products: outname=prefix+ctag
@@ -211,8 +211,8 @@ def init():
     'resmooth':True,                # smooth the channel-dependent beam to a common resolution
     'restorbeam_default':[''],      # not useful any more
     'restorbeam_method':'maximum',  # not useful any more
-    
-    'mask0':True,               # mask any regions with partial channel coverage 
+
+    'mask0':True,               # mask any regions with partial channel coverage
     'minpb':0.10,               # masked out the region with pb response < minbp
     'cleanspw':'',
     'phasecenter':'',           # imaging phasecenter, e.g.'J2000 12h18m49.6 14d24m59.01' or '2' (=fieldid2)
@@ -221,7 +221,7 @@ def init():
     'outframe':'BARY',          # frame of the output image
     'allowchunk':False,
     'interactive':False,
-    
+
     'imsize':2**5*10,           # imaging size (numbers of pixels) (2**x)*(3**y)*(5**z)*(7**r)
     'cell':'8.0arcsec',         # imaging pixel size.
                                 # ~3-5 pixels across beam, compared with smaller axis
@@ -229,7 +229,7 @@ def init():
                                 # True:    a clean box with pb response higher <minpb>
                                 # [0,0,511,511]:    a clean box specified by bl/tr
                                 # 'cleanbox.txt'    a cleanbox file
-    'clean_mask_cont':0.2,      # clean mask for continuum                              
+    'clean_mask_cont':0.2,      # clean mask for continuum
     'niter':25000,              # clean iteration number threshold
                                 # increase if the threshold was not reached anot no clear issuese detected.
     'sigcutoff_spec':2.5,       # <sigcutoff_spec>*<sig> is the default threshold value for spectral-cube CLEAN
@@ -238,10 +238,10 @@ def init():
     'threshold_cont':'0.0mJy',  # threshold for mfs cleaning, the default values is <sigcutoff_cont>*<sig>
     'threshold_spec_last':'0.0mJy',  # threshold actually used for the last run
     'threshold_cont_last':'0.0mJy',  # threshold actually used for the last run
-        
+
     'imstat_box_spec':'',       # a box selected for RMS calculations, default: inner quarters
     'imstat_rg_spec':'',        # a region selected for RMS calculations
-    'imstat_chan':'',           # 
+    'imstat_chan':'',           #
     'imstat_box_cont':'',       # a box selected for the RMS calculations, default: inner quarters
     'imstat_rg_cont':'',        # a region selected for RMS calculations
     'imstat_sigcalc':'min',     # choose 'min' or 'median' sigma for noise estimate
@@ -249,8 +249,8 @@ def init():
     'imstat_mask_spec':'',      # imstat_mask e.g. 'n6951co.line.flux>0.25'
     'imstat_mask_cont':'',      # imstat_mask e.g. 'n6951co.line.flux>0.25'
     'imstat_algorithm':'classic',   # imstat_algorithm
-    'imagermode':None,          # imagermode for clean, options include: 'csclean', 'mosaic' 
-                                # 'mosaic' must be be used if your science target is in 
+    'imagermode':None,          # imagermode for clean, options include: 'csclean', 'mosaic'
+                                # 'mosaic' must be be used if your science target is in
                                 # multiple fields or it's heterogeneous-array observation.
                                 # 'csclean' for single point+homogeneous array data.
                                 # by default, it will automatically choose the best option after inspecting the data
@@ -260,14 +260,14 @@ def init():
                                 # multi_scale=[0,2,5]*beam/psize is recommened, and units is pixel
                                 #+++ if cmodel show larger structures than the expected true emission, the specified scales are properbally
                                 #+++ too large and the clean may not converge at the requested thresholds.
-                                #+++ Another indication of this ponetial clean problem is large-scale PSF pattern in the cleaned 
+                                #+++ Another indication of this ponetial clean problem is large-scale PSF pattern in the cleaned
                                 #+++ image even threshold/niter are reasonable.
     'cyclefactor':1.5,          # if the PSF is severely non-Gaussian due to poor UV-cpverage, try to increase the value for more frequently
                                 # major cycles
-    'clean_gain':0.1,           # gain factor for clean, 
+    'clean_gain':0.1,           # gain factor for clean,
                                 # for multiscale clean, clean_gain can be higher (e.g. 0.7)
     'clean_field':'',
-    
+
     'cleanweight':'briggs',     # e.g. 'briggs', 'uniform' or 'natural'
     'cleanspw':'',
     'chaniter':False,
@@ -276,37 +276,37 @@ def init():
     'wrobust':0.5,              # robust weight "R" parameter
     'wnpixels':0,               # number of pixels to determine uv-cell
     'gridmode':'aprojection',
-    
+
     'cleanmode':'channel',      # e.g. "channel" or "velocity"
     'clean_start':'',           # first channel/velocity to clean
-    'clean_width':1,            # number of input channels to average or the velocity width for each image plane 
+    'clean_width':1,            # number of input channels to average or the velocity width for each image plane
     'clean_nchan':-1,           # number of planes in the output image
     'keepcasaimage':True,       # keep a copy casa images after exporting them to FITS
-    
+
     'mosweight':False,          # mosweight in CLEAN()
                                 # ????
                                 # mosweight=True equivalent as
-                                # 
+                                #
                                 #   inverting each pointing by its own weights and 1/noise^2-weight each pointing in mosaicing
-                                #   this is similar with MIRAID/MOSSDI and will give more weight to higher sensitivity fields 
+                                #   this is similar with MIRAID/MOSSDI and will give more weight to higher sensitivity fields
                                 #   in the overlap regions.(good for sting-co)
-                                #   will produce an image optimzed local SNR, but scarify the uniformity 
+                                #   will produce an image optimzed local SNR, but scarify the uniformity
                                 #   of noise and psf across the whole mosaicing pattern. Usually it will produce a slight larger
                                 #   beam.
-                                # 
+                                #
                                 # mosweight=True is closer to MIRAID's linear-mosaicing approach becaue each pointig are
-                                # inverted independently (less phase bluring). 
+                                # inverted independently (less phase bluring).
                                 # Although the primary pattern & the weight for each pointing (from integration time) are still embeded in the
-                                # the basic weight and the additional PB pattern convolved during UV gridding.                            
+                                # the basic weight and the additional PB pattern convolved during UV gridding.
                                 #   ??
                                 #   Since a global UV sampling density function doesn't make much sense when combing
-                                #   multiple tracks with several pointing because the phase-shifting from different point 
+                                #   multiple tracks with several pointing because the phase-shifting from different point
                                 #   will reduce local sensitiviy by bluring phase information.
                                 #   ??
                                 #
                                 # mosweight=False  equivalent as
                                 #   inverting each pointing and equal-weight each pointing
-                                #   weights from vis in each weight are used in absolute sense afer gridding them into 
+                                #   weights from vis in each weight are used in absolute sense afer gridding them into
                                 #   the common regridding UV frame.
                                 #
                                 # ???
@@ -320,21 +320,21 @@ def init():
                                 # switch to the slower hogbom if the PSF and UV-coverage look bad....
     'fitpsf':False,             # out-of-date, not verified
     'negcomponent':-1,          # allowed number of negative component for CLEAN components at the largest scale
-    'smallscalebias':0.6,       # the smallscalebias attempts to balance the weight given to larger scales, which usually have 
+    'smallscalebias':0.6,       # the smallscalebias attempts to balance the weight given to larger scales, which usually have
                                 # more flux density, versus the smaller scales, which often are brighter.
     'cleancont':False,          # imaging continuum using MFS
     'usescratch':False,         # create model column when CLEAN()
-    
-    
+
+
     # PLOTTING
     'plotformat':'pdf',         # out-of-date, not verified
-    
+
     # INFOMATIVE
     'email':'',                 # notification email address
     'password':'',              # notification email password
     'version':'',               # script versaion, not implemented
     'log_listobs_msfile':'',    # not implemented
-    
+
     'dropdeg':False,
     'optical':False,
     'dropstokes':False
@@ -342,47 +342,47 @@ def init():
     return xp
 
 
-def sumwt(visfile='',
+def sumwt(vis='',
           restfreq='115.2712GHz',
           line='',
           field='',
           oldstyle=False,
           topeff=1.0):
     """
-    calculate sum(weight) each channel for a sensitivity analysis 
+    calculate sum(weight) each channel for a sensitivity analysis
     oldstyle=True doesn't calculate frame velocity (therefore no restfreq is required)
     It will correctly handle multiple polarization setup now, providing a single spw in MS!
     Also a point source densitivity estimation will be printed out (only correct if WT=1/(sigma)^2.0/single-pointing/uniform-weighting)
-    
+
     TOP_EFF: Effective Integration Time Fraction on Each Pointing Center
         For CARMA 19 pointing, it would be (1.0+0.5*6)/19. at the FOV center.
         For non-mosaicing observation, it would be 1.
     HI 21cm restfreq='1420405751.786Hz'
-    
+
     Note: imager.sensitivity has a similar function.
     /field/ must be field_id
-    """ 
-    
+    """
+
     if  line=='hi':
         restfreq='1420405751.786Hz'
     if  line=='12co':
-        restfreq='115.2712GHz'   
+        restfreq='115.2712GHz'
     c=qa.constants('c')['value']/1000.0
     restfreq=qa.convertfreq(restfreq)['value']
-    
-    vsfile=open(visfile+'.sumwt.log','w')
-    
-    tb.open(visfile+'/SPECTRAL_WINDOW',nomodify=False)
+
+    vsfile=open(vis+'.sumwt.log','w')
+
+    tb.open(vis+'/SPECTRAL_WINDOW',nomodify=False)
     num_chan = np.min(tb.getcol('NUM_CHAN'))
     chan_freq=tb.getcol('CHAN_FREQ')
     tb.close()
     req_freq=chan_freq[:,0]
     v=c*(restfreq-req_freq)/restfreq
-    
-    tb.open(visfile+'',nomodify=False)
+
+    tb.open(vis+'',nomodify=False)
     ids=np.unique(tb.getcol("DATA_DESC_ID"))
     cwt=0
-    
+
     for id in ids:
         news("")
         qq='DATA_DESC_ID=='+str(id)
@@ -393,7 +393,7 @@ def sumwt(visfile='',
         news('nrows: '+str(subtb.nrows()))
         news("")
         flg=subtb.getcol('FLAG')
-        if  'WEIGHT_SPECTRUM' in subtb.colnames(): 
+        if  'WEIGHT_SPECTRUM' in subtb.colnames():
             swt=subtb.getcol('WEIGHT_SPECTRUM')
         else:
             swt=subtb.getcol('FLAG')*1.0
@@ -407,29 +407,60 @@ def sumwt(visfile='',
         cwt=np.ma.sum(swt,axis=0)+cwt
 
     tb.close()
-    
+
     #   make sure: freq-increasing / v-decreasing in the output table.
     if  req_freq[0]>req_freq[1]:
         cwt=cwt[::-1]
         v=v[::-1]
-    
-    
-    news("   channel:       velocity : sum(weight)")
+
+
+    str_ch="{:>5}".format('ch')
+    str_vr="{:>10}".format('velocity')
+    str_wt="{:>15}".format('sumwt')
+    str_se="{:>10}".format('sens')
+    str_one=str_ch+str_vr+str_wt+str_se
+    news(str_one)
+    print >>vsfile,str('#'+str_one[1:])
+
+    str_ch="{:>5}".format('--')
+    str_vr="{:>10}".format('km/s')
+    str_wt="{:>15}".format('--')
+    str_se="{:>10}".format('mJy')
+    str_one=str_ch+str_vr+str_wt+str_se
+    news(str_one)
+    print >>vsfile,str('#'+str_one[1:])
+
+    str_one='-'*40
+    news(str_one)
+    print >>vsfile,str('#'+str_one[1:])
+
     for ic in range(0,len(v)):
+
         np.seterr(divide='ignore')
-        news(" "+'ch'+"{0:5.0f}".format(ic)+'   :   '+"{0:>10.2f}".format(v[ic])+\
-             ' km/s   :   '+"{0:15.2f}".format(cwt[ic])+'   :   '+"{0:15.2f}".format(1000.0*np.sqrt(1/cwt[ic])*np.sqrt(1.0/topeff)/np.sqrt(2.0))+' mJy')
+
+        #         news(" "+'ch'+"{0:5.0f}".format(ic)+'   :   '+"{0:>10.2f}".format(v[ic])+\
+        #              ' km/s   :   '+"{0:15.2f}".format(cwt[ic])+'   :   '+"{0:15.2f}".format(1000.0*np.sqrt(1/cwt[ic])*np.sqrt(1.0/topeff)/np.sqrt(2.0))+' mJy')
+
+        str_ch="{0:>5.0f}".format(ic)
+        str_vr="{0:>10.2f}".format(v[ic])
+        str_wt="{0:>15.2f}".format(cwt[ic])
+        str_se="{0:>10.2f}".format(1000.0*np.sqrt(1/cwt[ic])*np.sqrt(1.0/topeff)/np.sqrt(2.0))
+        str_one=str_ch+str_vr+str_wt+str_se
+
+        news(str_one)
+        print >>vsfile,str(str_one)
+
         np.seterr(divide='warn')
-        if  oldstyle==False:
-            print >>vsfile,str(" "+''+"{0:5.0f}".format(ic)+'   '+"{0:>10.2f}".format(v[ic])+'   '+"{0:10.2f}".format(cwt[ic]))
-        else:
-            print >>vsfile,str(cwt[ic])
+
+    str_one='-'*40
+    news(str_one)
+
     # for ic in range(1,num_chan-3):
     #     #vs=ms.statistics(useflags=True,spw='*:'+str(ic),column='WEIGHT_SPECTRUM')
-    #     vs=visstat(vis=visfile,axis='weight_spectrum',useflags=True,spw='*:'+str(ic))
+    #     vs=visstat(vis=vis,axis='weight_spectrum',useflags=True,spw='*:'+str(ic))
     #     print "chan"+' '+str(ic)+' '+str(vs['WEIGHT_SPECTRUM']['sum'])
     #     print >>vsfile,str(vs['WEIGHT_SPECTRUM']['sum'])
-    
+
     vsfile.close()
 
 def mossen(vis='',
@@ -438,49 +469,179 @@ def mossen(vis='',
            step=0,
            spw='',
            field='',
-           log='',
+           logfile='',
            robust=0.5,
            ftmachine='mosaic',
            mosweight=False,
            imsize=256,          # not used
            cell='1arcsec',      # not used
-           weight='natural'):
+           weight='natural',
+           verbose=False):
     #
     #   use imager.apparentsens() to estimate the sensitivity from weight
     #       note: as to v4.7, im.apparentsens() only read the WEIGHT column.
     #             it will assume the weight column represents the 1-channel noise for each vis record
     #             then derive the continuum or channel noise (depending on what is "selectvis")
-    #   
-    if  log=='':
-        log=vis+'.mossen.log'
-    vsfile=open(log,'w')
-    
-    
-    im.open(vis)
- 
-#     for i in range(0,nchan):
-#         im.selectvis(spw='*:'+str(i))
-#         im.weight(type=weight,robust=robust,mosaic=mosweight) 
-#         sens=im.apparentsens()
-    im.selectvis(spw=spw,nchan=nchan,start=start,step=step,field=field)
-    im.defineimage()
-    im.setvp(dovp=True)
-    im.setoptions(ftmachine=ftmachine,padding=1.2)  
-    im.weight(type=weight,robust=robust,mosaic=mosweight) 
-    sens=im.apparentsens()
-        #print >>vsfile,str(sens[1]),str(sens[2])
-    im.close()
-    
-    vsfile.close()
+    #
+    #   spw support list here 
+    if  verbose==True:
 
-    return sens[1]
+        news("")
+        news("run xu.mossen:")
+        news("")
+
+    if  type(spw)==type(''):
+        list_spw=[spw]
+    else:
+        list_spw=spw
+
+    im_sens=[0.0]*len(list_spw)
+
+    #   log=vis+'.mossen.log'
+    if  logfile!='':
+        vsfile=open(logfile,'w')
+
+    if  verbose==False:
+        casalog.filter('ERROR')
+
+    ms.open(vis)
+    im.open(vis)
+
+
+    for i in range(0,len(list_spw)):
+
+        stat=ms.statistics(column='FLAG',spw=list_spw[i],field=field,useflags=False)
+
+        if  verbose==True:
+            news(list_spw[i])
+            news("flagging fraction:"+str(stat['FLAG']['sum']/stat['FLAG']['npts']))
+    
+        if  stat['FLAG']['sum']!=stat['FLAG']['npts']:
+            
+            im.selectvis(spw=list_spw[i],nchan=nchan,start=start,step=step,field=field)
+            im.defineimage()
+            im.setvp(dovp=True)
+            im.setoptions(ftmachine=ftmachine,padding=1.2)
+            im.weight(type=weight,robust=robust,mosaic=mosweight)
+            sens=im.apparentsens()
+            im_sens[i]=sens[1]
+    
+    #print >>vsfile,str(sens[1]),str(sens[2])
+
+    if  verbose==False:
+        casalog.filter('INFO')
+
+    if  logfile!='':
+        vsfile.close()
+
+
+    ms.close()
+    im.close()
+
+    if  len(im_sens)==1:
+        im_sens=im_sens[0]
+        
+    return im_sens
+
+
+def mossen_spec(vis='',
+                vgrid=[1,1,10],
+                frame='LSRK',
+                restfreq='115.2712GHz',
+                line='',
+                ftmachine='mosaic',
+                mosweight=False,
+                weight='natural',
+                robust=0.5,
+                logfile=''):
+    """
+        vgrid: start/width/nchan
+    """
+
+    if  line=='hi':
+        restfreq='1420405751.786Hz'
+    if  line=='12co':
+        restfreq='115.2712GHz'
+    c=qa.constants('c')['value']/1000.0
+    restfreq=qa.convertfreq(restfreq)['value']
+
+    if  logfile!='':
+        vsfile=open(logfile,'w')
+
+    im.selectvis(vis)
+
+    list_spw=[]
+    list_vel=[]
+    
+    for i in range(0,vgrid[2]):
+
+        v0=vgrid[0]+vgrid[1]*i
+        list_vel=list_vel+[v0]
+        dv=vgrid[1]
+
+        f0=(1.0-v0/c)*restfreq
+        df=dv/c*restfreq
+        spwinfo=im.advisechansel(freqstart=f0,freqend=f0,freqstep=df*0.01,freqframe=frame)
+
+        spw_start=spwinfo['ms_0']['start']
+        spw_nchan=spwinfo['ms_0']['nchan']
+        spw_ids=list(spwinfo['ms_0']['spw'])
+        for j in range(0,len(spw_ids)):
+            spw_ids[j]=str(spw_ids[j])+':'+str(spw_start[j])+'~'+str(spw_start[j]+spw_nchan[j]-1)
+        spw_sel=','.join(spw_ids)
+        list_spw=list_spw+[spw_sel]
+
+    im.close()
+
+    list_sen=mossen(vis=vis,spw=list_spw,ftmachine=ftmachine,mosweight=mosweight,weight=weight,robust=robust)
+
+    str_ch="{:>10}".format('plane')
+    str_vr="{:>10}".format('velocity')
+    str_sp="{:^30}".format('spws')
+    str_se="{:>10}".format('sens')
+    str_one=str_ch+str_vr+str_sp+str_se
+    news(str_one)
+    if  logfile!='':
+        print >>vsfile,str('#'+str_one[1:])
+
+    str_ch="{:>10}".format('--')
+    str_vr="{:>10}".format('km/s')
+    str_sp="{:^30}".format('--')
+    str_se="{:>10}".format('mJy')
+    str_one=str_ch+str_vr+str_sp+str_se
+    news(str_one)
+    if  logfile!='':
+        print >>vsfile,str('#'+str_one[1:])
+
+    str_one='-'*60
+    news(str_one)
+
+    for i in range(0,vgrid[2]):
+
+
+        str_ch="{0:>10.0f}".format(i+1)
+        str_vr="{0:>10.2f}".format(list_vel[i])
+        str_sp="{0:^30}".format(list_spw[i])
+        str_se="{0:>10.2f}".format(list_sen[i]*1000.0)
+        
+        str_one=str_ch+str_vr+str_sp+str_se
+        news(str_one)
+        if  logfile!='':
+            print >>vsfile,str(str_one)
+
+    str_one='-'*60
+    news(str_one)
+
+    if  logfile!='':
+        vsfile.close()
+    
 
 def importmir(mirfile='',
               vis='',
               telescope='CARMA',
               fieldname='',
               win_list='',
-              line='',      # miriad/fits line parameter 
+              line='',      # miriad/fits line parameter
               nocal=False,  # line=velocity,$nmaps,$vfirst,$delv,$delv
               rm_noise=True,
               rm_auto=True,
@@ -493,48 +654,48 @@ def importmir(mirfile='',
         mirbin=os.environ['MIRBIN']+os.sep
     else:
         mirbin=mirbin+os.sep
-    
+
     news("mirbin:")
     news(mirbin)
-    
+
     cmd='uvlist options=spec vis='+mirfile+'>'+vis+'.uvlist.log'
     tmp=os.popen(mirbin+cmd).read()
     news(tmp,origin='miriad')
     news('run miriad-uvlist',origin='miriad')
     news(' ',origin='miriad')
-    
+
     uvlist_dict = getuvlist(vis+'.uvlist.log')
     spw_list = range(1,len(uvlist_dict['number of channels'])+1)
     if  win_list=='':
         win_list=spw_list
     else:
         win_list=win_list.split(',')
-        
+
     news('spectral windows list:')
     news(spw_list)
     news('spectral windows to be imported:')
     news(win_list)
-    
+
     win_combine=[]
-    
+
     opt=' op=uvout'
     if  line!='':
         opt=opt+' line='+line
         win_list=[0]
     if  nocal==True:
         opt=opt+' options=nocal'
-    addsel=[]   
+    addsel=[]
     if  rm_auto==True:
         addsel=addsel+["-auto"]
-    if  rm_noise==True: 
-        addsel=addsel+["-source(NOISE)"] 
+    if  rm_noise==True:
+        addsel=addsel+["-source(NOISE)"]
     addsel=",".join(addsel)
-    
+
     for j in range(0,len(win_list)):
 
         fitspre=vis+'.win'+str(win_list[j])+'.fits'
         mspre=vis+'.win'+str(win_list[j])
-        
+
         news("")
         news(">>>miriad-fits")
         news("")
@@ -548,13 +709,13 @@ def importmir(mirfile='',
         if  addsel+selectwin!='':
             selectvis=" select='"+addsel+selectwin+"'"
         cmd="fits in="+mirfile+" out="+fitspre+opt+selectvis
-        
+
         os.system('rm -rf '+fitspre)
         news('',origin='miriad')
         news(cmd,origin='miriad')
         tmp=os.popen(mirbin+cmd).read()
         news(tmp,origin='miriad')
-        
+
         news("")
         news(">>>importuvfits")
         news("")
@@ -575,14 +736,14 @@ def importmir(mirfile='',
     news("Use concat to glue windows and create a new measurement set file:")
     news(vis)
     news("")
-    
+
     rmctable(vis)
     concat(vis=win_combine,concatvis=vis,respectname=False,\
            freqtol='',dirtol='',timesort=True)
-    
+
     for tmp in win_combine:
         rmctable(tmp+'*')
-        
+
     news("")
     news("Changing Antenna Names")
     prefix_ant=''
@@ -594,8 +755,8 @@ def importmir(mirfile='',
         obsname='BIMA'
     if  telescope=='SMA' or telescope=='sma' :
         prefix_ant='SMA'
-        obsname='SMA'               
-    
+        obsname='SMA'
+
     tb.open(vis+"/ANTENNA",nomodify=False)
     namelist=tb.getcol("NAME").tolist()
     for k in range(len(namelist)):
@@ -604,15 +765,15 @@ def importmir(mirfile='',
         namelist[k]=name
     tb.putcol("NAME",namelist)
     tb.close()
-    
+
     tb.open(vis+"/OBSERVATION",nomodify=False)
     namelist=tb.getcol("TELESCOPE_NAME").tolist()
     for k in range(len(namelist)):
         namelist[k]=obsname
     tb.putcol("TELESCOPE_NAME",namelist)
     tb.close()
-    
-    
+
+
     tb.open(vis+"/SPECTRAL_WINDOW",nomodify=True)
     ref_freq=tb.getcol('REF_FREQUENCY')
     tb.close()
@@ -622,7 +783,7 @@ def importmir(mirfile='',
     rest_freq=tb.getcol('REST_FREQUENCY')
     rest_freq=rest_freq[0][spw_id_uni_index]
     tb.close()
-    
+
     news("")
     news("Checking SPW starting velocity")
     news("")
@@ -641,11 +802,11 @@ def importmir(mirfile='',
     # importuvfits() recompute the rest frequency (time-independent if doppler track)
     # using this "starting or sky frequency" in UVFITS.
     #-
-    news("")    
+    news("")
     news(" copy mean(weight_spectrum) to weight")
     copyweight(vis,copyback=True)
     news("")
-    
+
     news("")
     news("++")
     news(mirfile+'-->'+vis+' done!')
@@ -657,24 +818,24 @@ def carmapb(vis,effdish=True):
     # change dish size to hack primary beam size
     # change telescope name to hack primary beam shape (Gaussian rather than Airy)
     ###
-    # The clean task and underlying tools can handle cases where there are multiple dish 
-    # sizes, and thus voltage patterns and primary beams, in the array. This is etected by 
-    # using the dish sizes stored in the ANTENNA sub-table of the MS. Depending on how the 
-    # data was written and imported into CASA, the user may have to manually edit this table 
+    # The clean task and underlying tools can handle cases where there are multiple dish
+    # sizes, and thus voltage patterns and primary beams, in the array. This is etected by
+    # using the dish sizes stored in the ANTENNA sub-table of the MS. Depending on how the
+    # data was written and imported into CASA, the user may have to manually edit this table
     # to insert the correct dish sizes (e.g. using browsetable or the tb table tool).
     ###
-    
+
     ###
     #    Verified:
     #    if telescope='BIMA'/'HATCREEK' then default PB is a built-in Gaussian model.
     #    the model doesn't change with dish_size values in the table. The profile is confirmed to
-    #    be the same as the BIMA model in MIRAID. 
+    #    be the same as the BIMA model in MIRAID.
     #    if telescope='CARMA' then default PB is a airy model calculation based on dish-size
-    #    the model does change with dish_size values in the table. 
-    #    I have created a VPtable for implementing MIRAID models but it 
-    #    has to be set manually at the toolkit level. 
+    #    the model does change with dish_size values in the table.
+    #    I have created a VPtable for implementing MIRAID models but it
+    #    has to be set manually at the toolkit level.
     ###
-      
+
     tb.open(vis+"/ANTENNA",nomodify=False)
     if  effdish==True:
         dslist=tb.getcol("DISH_DIAMETER").tolist()
@@ -696,7 +857,7 @@ def carmapb(vis,effdish=True):
                 if  abs(dslist[kk]-6.1)<2.0:
                     dslist[kk]=6.1
         tb.putcol("DISH_DIAMETER",dslist)
-    
+
     #     namelist=tb.getcol("DISH_DIAMETER").tolist()
     #     typelist=tb.getcol("TYPE").tolist()
     #     for kk in range(len(namelist)):
@@ -704,11 +865,11 @@ def carmapb(vis,effdish=True):
     #             typelist[kk]='OVRO'
     #         if  abs(namelist[kk]-6.1)<2.0:
     #             typelist[kk]='BIMA'
-    #     tb.putcol("TYPE",typelist)    
-    
+    #     tb.putcol("TYPE",typelist)
+
     tb.close()
     listobs(vis)
-    
+
     #     tb.open(vis+"/OBSERVATION",nomodify=False)
     #     namelist=tb.getcol("TELESCOPE_NAME").tolist()
     #     for k in range(len(namelist)):
@@ -718,7 +879,7 @@ def carmapb(vis,effdish=True):
 
 def getuvlist(logname):
     #
-    #    convert a uvlist log file from 
+    #    convert a uvlist log file from
     #    <uvlist options=spec> to a python dict
     #
     uvlist_log = open(logname,'r')
@@ -734,20 +895,20 @@ def getuvlist(logname):
                     'starting velocity':    [],
                     'ending velocity':        [],
                     'velocity interval':    []  }
-    
+
     keys=uvlist_dict.keys()
     for line in lines:
         line=line.lower()
         if  line.find(':')!=-1:
             [key, value]=line.split(':')
-            values=value.split()            
+            values=value.split()
             #values = map(float, values)
             for tmp in keys:
                 if  key.find(tmp)!=-1:
                     uvlist_dict[tmp]=uvlist_dict[tmp]+values
         if  line.find('optical velocities')!=-1:
             break
-            
+
     return uvlist_dict
 
 
@@ -758,7 +919,7 @@ def exporttasklog(taskname,logname,extralog=[]):
     casa_log = open(casalog.logfile(),'r')
     lines = casa_log.readlines()
     casa_log.close()
-    
+
     iswrite=False
     task_log = open(logname,'w')
     for line in lines:
@@ -783,7 +944,7 @@ def exportcasalog(blines,elines,logname):
     task_log = open(logname,'w')
     for i in range(len(elines)):
         if i>=len(blines):
-            task_log.write(elines[i])    
+            task_log.write(elines[i])
     task_log.close()
 
 
@@ -795,15 +956,15 @@ def emailsender(myemail,subject,maintext,attachs,\
     #    send out a reduction log email
     #
     msg = MIMEMultipart()
-    
+
     msg['From'] = eusrname
     if  eusername=='yourname@gmail.com':
         msg['From']=myemail
     msg['To'] = myemail
     msg['Subject'] = subject
-    
+
     msg.attach(MIMEText(maintext))
-    
+
     if  type(attachs)==type('abc'):
            attachs=[attachs]
     for attach in attachs:
@@ -817,7 +978,7 @@ def emailsender(myemail,subject,maintext,attachs,\
         part.add_header('Content-Disposition',
                 'attachment; filename="%s"' % os.path.basename(attach))
         msg.attach(part)
-        
+
     mailServer = smtplib.SMTP(smtpserver,587)
     mailServer.ehlo()
     mailServer.starttls()
@@ -837,7 +998,7 @@ def getprefixlist(prefix):
     for line in lines:
             line=line.strip()
             rawfiles.append(line)
-    
+
     return rawfiles
 
 def importmiriad(mirfile='',
@@ -847,10 +1008,10 @@ def importmiriad(mirfile='',
     #
     #    import visbility data from a miriad file into a CASA MS using CARMAFILLER (experimental)
     #
-    
+
     # FIX UV HEADR FOR BIMA DATA
     if  telescope=='BIMA' or telescope=='bima' :
-        
+
         news(' ',origin='miriad')
         news('##########################################',origin='miriad')
         news('##### Begin Task: UVPUTH             #####',origin='miriad')
@@ -865,9 +1026,9 @@ def importmiriad(mirfile='',
         news(output,origin='miriad')
         news('##### END Task: UVPUTH               #####',origin='miriad')
         news(' ',origin='miriad')
-        news('##########################################',origin='miriad')  
+        news('##########################################',origin='miriad')
         mirfile=vis+'.bima'
-    
+
     # RECREAT WIDEBAND DATA
     news(' ',origin='miriad')
     news('##########################################',origin='miriad')
@@ -880,7 +1041,7 @@ def importmiriad(mirfile='',
     news('##### END Task: UVCAL                #####',origin='miriad')
     news(' ',origin='miriad')
     news('##########################################',origin='miriad')
-    
+
     # RUN CARMAFILLER
     news(' ',origin='miriad')
     news('##########################################',origin='miriad')
@@ -892,7 +1053,7 @@ def importmiriad(mirfile='',
     news(output,origin='miriad')
     news('##### END Task: CARMAFILLER          #####',origin='miriad')
     news('##########################################',origin='miriad')
-    
+
     # FIX ANTENNA NAME & DISH SIZE
     news("")
     news("Changing Antenna Names")
@@ -902,7 +1063,7 @@ def importmiriad(mirfile='',
         obsname='CARMA'
     if  telescope=='BIMA' or telescope=='bima' :
         prefix_ant='BA'
-        obsname='BIMA'            
+        obsname='BIMA'
     tb.open(vis+"/ANTENNA",nomodify=False)
     namelist=tb.getcol("NAME").tolist()
     dialist=tb.getcol("DISH_DIAMETER").tolist()
@@ -915,7 +1076,7 @@ def importmiriad(mirfile='',
     tb.putcol("NAME",namelist)
     tb.putcol("DISH_DIAMETER",dialist)
     tb.close()
-    
+
     # UPDATE SCAN NUMBER TO START FROM 1
     tb.open(vis+"",nomodify=False)
     scanlist=tb.getcol("SCAN_NUMBER")
@@ -924,7 +1085,7 @@ def importmiriad(mirfile='',
         scanlist[k]=str(scan)
     tb.putcol("SCAN_NUMBER",scanlist)
     tb.close()
-    
+
     # FIX TELESCOPE NAME
     tb.open(vis+"/OBSERVATION",nomodify=False)
     namelist=tb.getcol("TELESCOPE_NAME").tolist()
@@ -932,16 +1093,16 @@ def importmiriad(mirfile='',
         namelist[k]=obsname
     tb.putcol("TELESCOPE_NAME",namelist)
     tb.close()
-    
-    # FIX PROJECT 
+
+    # FIX PROJECT
     tb.open(vis+"/OBSERVATION",nomodify=False)
     prolist=tb.getcol("PROJECT").tolist()
     for k in range(len(prolist)):
         prolist[k]=vis
     tb.putcol("PROJECT",prolist)
     tb.close()
-    
-    # FIX TIMERANGE (zero number will cause troubles when concating MSs) 
+
+    # FIX TIMERANGE (zero number will cause troubles when concating MSs)
     ms_stat=visstat(vis=vis,axis='time')
     timerange_max=ms_stat['TIME']['max']    # in s
     timerange_min=ms_stat['TIME']['min']
@@ -955,7 +1116,7 @@ def importmiriad(mirfile='',
     prolist=tb.getcol("RELEASE_DATE").tolist()
     for k in range(len(prolist)):
         prolist[k]=timerange_mean
-    tb.putcol("RELEASE_DATE",prolist) 
+    tb.putcol("RELEASE_DATE",prolist)
     tb.close()
 
 
@@ -975,7 +1136,7 @@ def cleanup(outname,tag='',resume=False):
                 'psf','image','sen',
                 'flux.pbcoverage','flux.pbcoverage.thresh_mask',
                 'flux','flux.thresh_mask',
-                'flux.mask0']        
+                'flux.mask0']
     for i in range(0,len(version)):
         if    os.path.exists(outname+'.'+version[i]):
             if  tag=='':
@@ -1024,7 +1185,7 @@ def savedisk(xp,
             rmctable(ms)
             ms=xp['prefix_comb'][i]+'.src.ms'
             rmctable(ms)
-    
+
     if  rmcombms==True:
         ms=xp['prefix']+'.ms'
         rmctable(ms)
@@ -1034,14 +1195,14 @@ def savedisk(xp,
         rmctable(ms)
         ms=xp['prefix']+'.src.ms.contsub'
         rmctable(ms)
-    
+
     #    remove casa images
     if  rmcasaimage==True:
         cleanup(xp['prefix']+'.line')
         cleanup(xp['prefix']+'.line_d')
         cleanup(xp['prefix']+'.cont')
         cleanup(xp['prefix']+'.cont_d')
-    
+
     #    collect logs
     if  rmlog==True:
         os.system('mkdir '+path+xp['prefix']+'_log')
@@ -1053,8 +1214,8 @@ def savedisk(xp,
 #         tmp=fitslist[i]
 #         tmp=tmp.replace(".fits","")
 #         news("remove: "+tmp)
-#         os.system("rm -rf "+tmp)            
-#     
+#         os.system("rm -rf "+tmp)
+#
 #     fitslist=glob.glob(path+'*.ms')
 #     for i in range(0,len(fitslist)):
 #         tmp=fitslist[i]
@@ -1063,16 +1224,16 @@ def savedisk(xp,
 #         tmp=tmp+'.flagversions'
 #         news("remove: "+tmp)
 #         os.system("rm -rf "+tmp)
-#         
+#
 #     fitslist=glob.glob(path+'*.ms.contsub')
 #     for i in range(0,len(fitslist)):
 #         tmp=fitslist[i]
 #         news("remove: "+tmp)
-#         os.system("rm -rf "+tmp) 
+#         os.system("rm -rf "+tmp)
 #         tmp=tmp+'.flagversions'
 #         news("remove: "+tmp)
-#         os.system("rm -rf "+tmp)            
-# 
+#         os.system("rm -rf "+tmp)
+#
 #     fitslist=glob.glob(path+'*.ms.cont')
 #     for i in range(0,len(fitslist)):
 #         tmp=fitslist[i]
@@ -1080,25 +1241,25 @@ def savedisk(xp,
 #         os.system("rm -rf "+tmp)
 #         tmp=tmp+'.flagversions'
 #         news("remove: "+tmp)
-#         os.system("rm -rf "+tmp)            
+#         os.system("rm -rf "+tmp)
 
 def checkbeam(outname,method='maximum'):
     #
     #    estimate the recommndated beam size
     #
     imhdlist=imhead(imagename=outname+'.image',mode='list')
-    
+
     if  'perplanebeams' in imhdlist.keys():
 
         nchan=imhdlist['perplanebeams']['nChannels']
-        
+
         psf_bmaj=np.arange(float(nchan))
         psf_bmin=np.arange(float(nchan))
         psf_bpa=np.arange(float(nchan))
         psf_size=np.arange(float(nchan))
-            
+
         for i in range(0,nchan):
-            
+
             news("")
             news('FRAME: %i' % i)
             news("")
@@ -1110,8 +1271,8 @@ def checkbeam(outname,method='maximum'):
             news('BMIN       %7.2f arcsec' % psf_bmin[i])
             news('BPA        %7.2f deg' % psf_bpa[i])
             news('BMAJXBMIN  %7.2f arcsec^2' % psf_size[i])
-        
-        
+
+
         psf_size_median=np.median(psf_size)
         sortindex=sorted(range(len(psf_size)),key=lambda x:psf_size[x])
         index_median=sortindex[nchan/2]
@@ -1124,13 +1285,13 @@ def checkbeam(outname,method='maximum'):
             index_choice=index_max
         if  method=='median':
             index_choice=index_median
-            
+
         rbmaj= '%.2f' % psf_bmaj[index_choice]
         rbmin= '%.2f' % psf_bmin[index_choice]
         rbpa= '%.2f' % psf_bpa[index_choice]
-    
+
     if  'beammajor' in imhdlist.keys():
-        
+
         bmaj=imhdlist['beammajor']
         bmin=imhdlist['beamminor']
         bpa=imhdlist['beampa']
@@ -1146,47 +1307,61 @@ def checkbeam(outname,method='maximum'):
     news(str(psf_restor_beam))
     return psf_restor_beam
 
-def resmoothpsf(outname):
+def resmoothpsf(imagename,
+                verbose=False):
     #
-    #    calculate the "ultimate" psf when resmooth=True
+    #    calculate the "apparent" psf for the CLEAN products with resmooth=True
     #
-    rmctable('cpsf.tmp')
-    os.system('cp -r '+outname+'.psf cpsf.tmp')
     
-    imhead(imagename='cpsf.tmp',mode='add',hdkey='bunit',hdvalue='Jy/beam')
+    rmctable('__cpsf.tmp')
+    rmctable(imagename+'.cpsf')
     
-    ia.open(outname+'_d.image')
-    rb=ia.restoringbeam()
-    ia.close()
-    ia.open('cpsf.tmp')
-    for i in range(0,rb['nStokes']):
-        for j in range(0,rb['nChannels']):
-            ia.setrestoringbeam(beam=rb['beams']['*'+str(j)]['*'+str(i)],channel=j,polarization=i)
-    rb2=ia.restoringbeam()
-    ia.close()
+    os.system('cp -r '+imagename+'.psf __cpsf.tmp')
+
+    if  verbose==False:
+        casalog.filter('ERROR')
+        
+    imhead(imagename='__cpsf.tmp',mode='add',hdkey='bunit',hdvalue='Jy/beam')
     
-    hdcim=imhead(outname+'.image',mode='list')
-    imsmooth(imagename='cpsf.tmp',targetres=True,
-            major=str(hdcim['beammajor']['value'])+hdcim['beammajor']['unit'],
-            minor=str(hdcim['beamminor']['value'])+hdcim['beamminor']['unit'],
-            pa=str(hdcim['beampa']['value'])+hdcim['beampa']['unit'],
-            outfile=outname+'.cpsf',
-            overwrite=True)
-    exportfits(imagename=outname+'.cpsf',fitsimage=outname+'.cpsf.fits',
+    if  os.path.exists(imagename+'_d.image'):
+        ia.open(imagename+'_d.image')
+        rb=ia.restoringbeam()
+        ia.close()
+    else:
+        rb={}
+        
+    if  'beams' in rb.keys():
+    
+        ia.open('__cpsf.tmp')
+        for i in range(0,rb['nStokes']):
+            for j in range(0,rb['nChannels']):
+                ia.setrestoringbeam(beam=rb['beams']['*'+str(j)]['*'+str(i)],channel=j,polarization=i)
+        rb2=ia.restoringbeam()
+        ia.close()
+    
+        hdcim=imhead(imagename+'.image',mode='list')
+        imsmooth(imagename='__cpsf.tmp',targetres=True,
+                major=str(hdcim['beammajor']['value'])+hdcim['beammajor']['unit'],
+                minor=str(hdcim['beamminor']['value'])+hdcim['beamminor']['unit'],
+                pa=str(hdcim['beampa']['value'])+hdcim['beampa']['unit'],
+                outfile=imagename+'.cpsf',
+                overwrite=True)
+        
+    else:
+        
+        os.system('cp -r __cpsf.tmp '+imagename+'.cpsf')
+    
+    
+    exportfits(imagename=imagename+'.cpsf',fitsimage=imagename+'.cpsf.fits',
                stokeslast=True,
                velocity=True,overwrite=True)
-    rmctable('cpsf.tmp')
     
-    # im2=ia.convolve2d(  outfile=outname+'.cpsf',
-    #                     axes=[0,1],
-    #                     type='gaussian',
-    #                     targetres=True,
-    #                     major=str(hdcim['beammajor']['value'])+hdcim['beammajor']['unit'],
-    #                     minor=str(hdcim['beamminor']['value'])+hdcim['beamminor']['unit'],
-    #                     pa=str(hdcim['beampa']['value'])+hdcim['beampa']['unit'],  
-    #                     overwrite=true);
+    if  verbose==False:
+        casalog.filter('INFO')
 
-def checkpsf(outname):    
+    rmctable('__cpsf.tmp')
+
+def checkpsf(outname):
     #
     #    check the psf at diffrent planes (out of date!)
     #
@@ -1195,7 +1370,7 @@ def checkpsf(outname):
     psf_nx=hd['shape'][0]
     psf_ny=hd['shape'][1]
     psf_nz=hd['shape'][3]
-    
+
     # get some info for the initial guessing
     if  'perplanebeams' in hd.keys():
         nchan=psf_nz
@@ -1212,7 +1387,7 @@ def checkpsf(outname):
             news('BMIN       %7.2f arcsec' % psf_bmin[i])
             news('BPA        %7.2f deg' % psf_bpa[i])
             news('BMAJXBMIN  %7.2f arcsec^2' % psf_size[i])
-        
+
         psf_size_median=np.median(psf_size)
         sortindex=sorted(range(len(psf_size)),key=lambda x:psf_size[x])
         index_median=sortindex[nchan/2]
@@ -1229,10 +1404,10 @@ def checkpsf(outname):
         bmaj=hd['beammajor']['value']
         bpa=hd['beampa']['value']
         bmin=hd['beamminor']['value']
-    
-    
+
+
     psize=abs(hd['cdelt1']/(np.pi)*180.*60.*60.)
-    
+
     # write a file with initial guessing
     estfile=open(outname+'.psf.imfit.est.log','w')
     print >>estfile,'1.0, '+\
@@ -1241,24 +1416,24 @@ def checkpsf(outname):
             str(bmaj)+'arcsec, '+str(bmin)+'arcsec, '+str(bpa)+'deg, f'
             # str(bmaj)+'arcsec, '+str(bmin)+'arcsec, '+str(bpa)+'deg' # without peak fixed to 1Jy/pixel
     estfile.close()
-    
+
     # setting fitbox
     imfit_box=  str(int(psf_nx/2-3*(bmaj/psize)))+','+\
                 str(int(psf_ny/2-3*(bmaj/psize)))+','+\
                 str(int(psf_nx/2+3*(bmaj/psize)))+','+\
-                str(int(psf_ny/2+3*(bmaj/psize))) 
+                str(int(psf_ny/2+3*(bmaj/psize)))
     #print imfit_box
     imfit_log=imfit(imagename=outname+'.psf',
                     box=imfit_box,
                     logfile=outname+'.psf.imfit.log',
                     estimates=outname+'.psf.imfit.est.log')
                     #estimates='')
-    
-    psf_nchan=imfit_log['results']['nelements']    
+
+    psf_nchan=imfit_log['results']['nelements']
     psf_bmaj=np.arange(float(psf_nchan))
     psf_bmin=np.arange(float(psf_nchan))
     psf_bpa=np.arange(float(psf_nchan))
-    
+
     for i in range(0,psf_nchan):
         news("")
         news('FRAME: %i' % i)
@@ -1269,7 +1444,7 @@ def checkpsf(outname):
         news('BMAJ %5.2f arcsec' % psf_bmaj[i])
         news('BMIN %5.2f arcsec' % psf_bmin[i])
         news('BPA  %5.2f deg' % psf_bpa[i])
-    
+
     news("")
     news("Initial Guessing")
     news("")
@@ -1284,7 +1459,7 @@ def checkpsf(outname):
     dist=np.abs(psf_area/mpsf_area-1)
     news(str(dist))
     dist= np.where( dist >0.1, dist, 0)
-    
+
     news("")
     news("pass the psf consistancy test?")
     news(str(np.sum(dist)==0))
@@ -1292,7 +1467,7 @@ def checkpsf(outname):
     news("How many frame has been fitted succesfully?")
     news("orginal channels: %i " % psf_nz)
     news("fitted  channels:  %i " % psf_nchan)
-    
+
     rbmaj= '%.2f' % np.mean(psf_bmaj)
     rbmin= '%.2f' % np.mean(psf_bmin)
     rbpa= '%.2f' % np.mean(psf_bpa)
@@ -1301,7 +1476,7 @@ def checkpsf(outname):
     rbpa=rbpa+'deg'
     psf_restor_beam=[rbmaj,rbmin,rbpa]
     news(str(psf_restor_beam))
-    
+
     return psf_restor_beam
 
 
@@ -1312,12 +1487,12 @@ def blsearch(logname=casalog.logfile()):
     news("")
     news("----------- antfilter Begin: -----------")
     news("")
-    
+
     casa_log = open(logname,'r')
     lines = casa_log.readlines()
     casa_log.close()
     lines.reverse()
-    
+
     antlist=[]
     lastfind=False
     for line in lines:
@@ -1340,18 +1515,18 @@ def blsearch(logname=casalog.logfile()):
                     ant1=ant1[0]
                     ant2=ant2.split('@')
                     ant2=ant2[0]
-                    antlist.append("antenna='"+ant1+'&'+ant2+"'") 
+                    antlist.append("antenna='"+ant1+'&'+ant2+"'")
                     lastfind=True
         else:
             if    lastfind==True:
-                break    
+                break
 
     antlist=list(set(antlist))
     news("")
     news("flagging command: "+str(len(antlist)))
     news(str(antlist))
     news("")
-    
+
     return antlist
     news("")
     news("----------- antfilter End: -----------")
@@ -1364,23 +1539,23 @@ def news(msg,origin='++xutils++'):
     msg=str(msg)
     casalog.origin(origin)
     casalog.post(msg)
-    
-    
-def genmask0(imfile,verbose=False):    
+
+
+def genmask0(imfile,verbose=False):
     #
     #     produce a mask image with unmask values=1
 
-        
+
     rmctable(imfile+'.mask0')
     rmctable('__tmp0',rmfile=True)
     rmctable('__tmp1',rmfile=True)
     rmctable('__tmp2',rmfile=True)
     rmctable('__tmp3',rmfile=True)
 
-    
+
     if  verbose==False:
         casalog.filter('ERROR')
-            
+
     os.system('cp -rf '+imfile+' __tmp0')
     immath(imagename=['__tmp0','__tmp0'],\
         expr='IM0/IM1',\
@@ -1393,28 +1568,28 @@ def genmask0(imfile,verbose=False):
         outfile='__tmp3')
     immath(imagename='__tmp3',expr='IM0',outfile=imfile+'.mask0',
         mask='"__tmp3">=1.0')
-    
+
     if  verbose==False:
         casalog.filter('INFO')
-    
+
     rmctable('__tmp0',rmfile=True)
     rmctable('__tmp1',rmfile=True)
     rmctable('__tmp2',rmfile=True)
     rmctable('__tmp3',rmfile=True)
-    
+
 
 def mask0clean(outname,mask0):
     """
-    mask a cube using a mask image 
-    note: used as a trimmer for masking out x-y pixels with partial coverages   
+    mask a cube using a mask image
+    note: used as a trimmer for masking out x-y pixels with partial coverages
     """
     version=['mask','cm','residual','model','cmodel',
             'psf','image','sen',
             'flux.pbcoverage','flux.pbcoverage.thresh_mask',
             'flux','flux.thresh_mask']
-    
+
     version=['cm','residual','cmodel','image','flux']
-    
+
     for i in range(0,len(version)):
         if  os.path.exists(outname+'.'+version[i]):
             rmctable(outname+'.'+version[i]+'.tmp')
@@ -1492,10 +1667,10 @@ def modelconv(outname,mode=''):
     rmctable(outname+'.cmodel')
     rmctable(outname+'.cmodel2')
     # mode=''
-    if  mode=="":    
+    if  mode=="":
         immath(imagename=[outname+'.image',outname+'.residual'],
                expr='IM0-IM1',outfile=outname+'.cmodel',imagemd=outname+'.image')
-    
+
     # mode='conv'
     if  mode=="test":
         bmaj=imhead(imagename=outname+'.image',mode='get',hdkey='beammajor')
@@ -1511,7 +1686,7 @@ def modelconv(outname,mode=''):
                 outfile=outname+'.cmodel2')
         immath(imagename=[outname+'.cmodel2',outname+'.image'],\
         expr='IM0+IM1-IM1',outfile=outname+'.cmodel')
-        rmctable(outname+'.cmodel2')    
+        rmctable(outname+'.cmodel2')
 
 def rmctable( tables,
               rmfile=False,
@@ -1522,14 +1697,14 @@ def rmctable( tables,
     """
     if  verbose==False:
         casalog.filter('ERROR')
-    
+
     rmtables(tables)
-    
-    if  rmfile==True:  
+
+    if  rmfile==True:
         os.system("rm -rf "+tables)
 
     if  verbose==False:
-        casalog.filter('INFO')    
+        casalog.filter('INFO')
 
 def copyweight(srcfile,
                copyback=False):
@@ -1537,10 +1712,10 @@ def copyweight(srcfile,
     copyback=False copy weight to weight_spectrum
     copyback=True  copy mean(weight_spectrum) to weight if weight_spectrum exists
     """
-    
+
     news("")
     news("--copyweight--")
-    
+
     if  copyback==True:
         news("  mean(weight_spectrum)->weight")
         tb.open(srcfile,nomodify=False)
@@ -1568,28 +1743,28 @@ def copyweight(srcfile,
             wts[i,:,:]=wtt[i,:]
         tb.putcol('WEIGHT_SPECTRUM',wts)
         tb.close()
-        
+
     news("")
-    
+
 def checkchflag(msfile):
     """
     check flag consistancy across channels
     it's able to handle ms with multiple spw/pol.
-    
+
     note: miriad/invert slop=1,zero could include
           partionally flagged records into imaging
           We can run xutils.unchflag() and zero-out such data
           to implement a similar treatment:
           http://www.atnf.csiro.au/computing/software/miriad/userguide/node145.html
     """
-    news("")          
+    news("")
     news("run checkchflag on "+msfile)
     news("")
     tb.open(msfile)
     ids=np.unique(tb.getcol("DATA_DESC_ID"))
-    
+
     for id in ids:
-        
+
         news("")
         news('query: DATA_DESC_ID=='+str(id))
         subtb=tb.query('DATA_DESC_ID=='+str(id))
@@ -1597,10 +1772,10 @@ def checkchflag(msfile):
         shape=flag.shape
         news('data shape:  '+str(shape))
         news("")
-        
+
         for i in range(0,shape[0]):
-            
-            flag0=flag[[i],:,:] # this will make a copy 
+
+            flag0=flag[[i],:,:] # this will make a copy
             flag0=flag0[0,:,:]  # otehrwise .view will not work
                                 # flag0.strides
             flag0=flag0.view(','.join(shape[1]* ['i1']))
@@ -1612,13 +1787,13 @@ def checkchflag(msfile):
                 u=u.translate(None, '(), ')
                 news(u+' '+str(counts[j])+'/'+str(shape[-1]))
         subtb.close()
-    
+
     tb.close()
     news("")
 
 def unchflag(msfile):
     #
-    #  cleanup flagging glitch near spw edges from mstransform() 
+    #  cleanup flagging glitch near spw edges from mstransform()
     #  this will make sure a consistant flagging and psf cross different
     #  channels (only use it when you believe mstransform flags more
     #  spw edge channels than it should do during spw regridding)
@@ -1635,7 +1810,7 @@ def unchflag(msfile):
                 flag[i,:,j]=False
     tb.putcol('FLAG',flag)
     tb.close()
-    
+
 def scalewt(srcfile,
             field='',
             uvrange='',
@@ -1651,27 +1826,27 @@ def scalewt(srcfile,
     # this function will only scale weight/sigma by a constant factor (derived by
     # comparing weight before&after statwt() results) for all records in a single track
     # This might be better than statwt() because:
-    #    *  weights in the raw data are usually correct in the relative sense in a single track 
-    #       (e.g. theoretical prediction using tsys+gain+int+freq etc.), just at 
+    #    *  weights in the raw data are usually correct in the relative sense in a single track
+    #       (e.g. theoretical prediction using tsys+gain+int+freq etc.), just at
     #       a wrong absolute scale (which is required when combing tracks).
     #    *  statwt() requires line-free data for noise evaluation. but still the vis "noise" will be
     #       amplified for the records with strong continuum emissions (see wt=1/sig^2.0 vs. uvdist from statwt results).
-    #       In addition, statwt() could introduce small-scale weight value "noise" 
+    #       In addition, statwt() could introduce small-scale weight value "noise"
     #       for individual records if the statistical sampling selection is not well done.
     #
     # modify=False: WEIGHT/SIGMA is not touched, so you could run a test
     #               and check if the scaling factor is reasonable.
     # uvrange:      ideally, the uvrange doesn't show strong signal (either cont or line)
     #
-    # 
+    #
     # BACKUP OLD WEIGHT & SIGMA & WEIGHT_SPECTRUM
-    # 
+    #
     # clean will use WEIGHT rather than WEIGHT_SPECTRUM (as for r4.2.1)
-    # 
+    #
     news("")
     news("--running scalewt from xutils--")
     news("")
-    
+
     #    SAVE OLD WEIGHT/SIGMA/WEIGHT_SPECTRUM VALUES
     ms.open(srcfile,nomodify=True)
     tbwt_old=ms.getdata(['weight','sigma'])
@@ -1681,7 +1856,7 @@ def scalewt(srcfile,
     if  wts_exist==True:
         tswt_old=tb.getcol('WEIGHT_SPECTRUM')
     tb.close()
-    
+
     #####
     # NOTE (as for r4.2.1):
     #    visstat(axis='weight') doesn't use the FLAG column correctly
@@ -1734,18 +1909,18 @@ def scalewt(srcfile,
     tb.close()
     news("<"*60)
     news("<"*60)
-    
+
     a=np.ravel(swt_before*flg_before)
     b=np.ravel(swt_after*flg_after)
     tag=np.where((a!=0) & (b!=0))[0]
-    
-    if  len(tag.flat)!=0: 
-    
+
+    if  len(tag.flat)!=0:
+
         a1=1./np.sqrt(a[tag])
         b1=1./np.sqrt(b[tag])
         a2=a[tag]
         b2=b[tag]
-        
+
         news("")
         news("1/WEIGHT^0.5")
         news("Median,Min,Max (before): "+str([np.median(a1),np.min(a1),np.max(a1)]))
@@ -1754,11 +1929,11 @@ def scalewt(srcfile,
         news("Median,Min,Max (before): "+str([np.median(a2),np.min(a2),np.max(a2)]))
         news("Median,Min,Max (after) : "+str([np.median(b2),np.min(b2),np.max(b2)]))
         news("")
-        
+
         if  plot==True:
             plt.close()
             plt.ioff()
-            
+
             plt.figure(figsize=(5,8))
             plt.subplot(2,1,1)
             plt.xlabel("1/wt$^{0.5}$ before")
@@ -1766,7 +1941,7 @@ def scalewt(srcfile,
             H, xedges, yedges = np.histogram2d(a1, b1, bins=(40,40))
             H = np.rot90(H)
             H = np.flipud(H)
-            Hmasked = np.ma.masked_where(H==0,H) 
+            Hmasked = np.ma.masked_where(H==0,H)
             plt.axis([0, xedges.max(), 0, yedges.max()])
             plt.pcolormesh(xedges,yedges,Hmasked)
             cbar = plt.colorbar()
@@ -1774,14 +1949,14 @@ def scalewt(srcfile,
             xrange=np.array([0, xedges.max()])
             plt.plot(xrange,xrange*(np.median(b1/a1)),label="sf="+str((1/np.median(b1/a1))**2.0))
             plt.legend()
-            
+
             plt.subplot(2,1,2)
             plt.xlabel("wt before")
             plt.ylabel("wt after")
             H, xedges, yedges = np.histogram2d(a2, b2, bins=(40,40))
             H = np.rot90(H)
             H = np.flipud(H)
-            Hmasked = np.ma.masked_where(H==0,H) 
+            Hmasked = np.ma.masked_where(H==0,H)
             plt.axis([0, xedges.max(), 0, yedges.max()])
             plt.pcolormesh(xedges,yedges,Hmasked)
             cbar = plt.colorbar()
@@ -1789,7 +1964,7 @@ def scalewt(srcfile,
             xrange=np.array([0, xedges.max()])
             plt.plot(xrange,xrange*(np.median(b2/a2)),label="sf="+str(np.median(b2/a2)))
             plt.legend()
-            
+
             #plt.show()
             plt.savefig(srcfile+".scalewt.pdf")
             plt.close()
@@ -1797,7 +1972,7 @@ def scalewt(srcfile,
             news("save scatter plot for the WEIGHT change to:")
             news(srcfile+".scalewt.pdf")
             news("")
-        
+
         """
         print "weight scaling factor: "+str((1/np.median(b1/a1))**2.0)
         print "weight scaling factor: "+str(np.median(b2/a2))
@@ -1823,9 +1998,9 @@ def scalewt(srcfile,
         news("      minsamp <= channel number in fitspw")
         news("*"*60)
         news("")
-    
+
     else:
-        
+
         sf=1.0
         news("")
         news("*"*60)
@@ -1837,7 +2012,7 @@ def scalewt(srcfile,
         news("      minsamp <= channel number in fitspw")
         news("*"*60)
         news("")
-            
+
     # SCALE THE OLD WEIGHT/SIGMA & LOAD THE NEW VALUES
     if  modify==True:
         news("WEIGHT/SIGMA are modified")
@@ -1849,7 +2024,7 @@ def scalewt(srcfile,
             tbwt_old['sigma']=tbwt_old['sigma']*0.0-1.0
     else:
         news("WEIGHT/SIGMA are not modified")
-    
+
     ms.open(srcfile,nomodify=False)
     tbwt_new=ms.getdata(['weight','sigma'])
     ms.putdata(tbwt_old)
@@ -1860,7 +2035,7 @@ def scalewt(srcfile,
     else:
         copyweight(srcfile)
     tb.close()
-    
+
     if  len(tag.flat)!=0:
         news("")
         news("add table keyword WEIGHT_SCALING="+str(sf)+" to "+srcfile)
@@ -1868,16 +2043,16 @@ def scalewt(srcfile,
         tb.open(srcfile,nomodify=False)
         tb.putkeyword('WEIGHT_SCALING',sf)
         tb.close()
-    
+
     return sf
-    
+
 def getevladata(url,user='',password='',extenv={}):
     #
     #    a shortcut to download VLA data
     #
     cmd="wget -r -w 2 -nH -c --cut-dirs=2 --no-check-certificate --user="+\
         user+" --password="+password+" -e robots=off "+url
-    
+
     p=subprocess.Popen(cmd,shell=True,env=extenv,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for line in iter(p.stdout.readline,''):
         news(line,origin='wget')
@@ -1920,7 +2095,7 @@ def flagtsys(caltable='',
     news("Flag bad TSYS")
     news("caltable:  "+str(caltable))
     news("tsysrange: "+str(tsysrange))
-    
+
     # READ FLAG/SPW/ANTENA/TSYS/SWPOW
     tb.open(caltable,nomodify=False)
     var=tb.getcol('FPARAM')
@@ -1929,7 +2104,7 @@ def flagtsys(caltable='',
     spwid=np.unique(spwids)
     antids=tb.getcol('ANTENNA1')
     antid=np.unique(antids)
-    
+
     for ant in antid:
         for spw in spwid:
             list=np.where(np.logical_and(spwids==spw,antids==ant))[0]
@@ -1939,12 +2114,12 @@ def flagtsys(caltable='',
                 tsys=var[pick*2+1,0,list]
                 tag=np.where(findoutliers(tsys,m=10,range=tsysrange)==True)
                 flag[:,:,list[tag]]=True
-                
+
     tb.putcol('FLAG',flag)
     tb.close
 
     news("")
-    
+
 def xplotcal(tbfile,iterant=False,
              amprange=[],pharange=[],
              tsysrange=[],spgrange=[],
@@ -1954,12 +2129,12 @@ def xplotcal(tbfile,iterant=False,
     news("--xplotcal--")
     news("")
     news("Plot Gain Tables")
-    
+
     tb.open(tbfile)
     tbtype=tb.getkeyword('VisCal')
     tb.close()
-    
-    
+
+
     if  tbtype=='B Jones' or \
         tbtype=='G Jones' or \
         tbtype=='G EVLASWPOW' :
@@ -1979,33 +2154,33 @@ def xplotcal(tbfile,iterant=False,
         if  spgrange==[]:
             if  tbtype=='G EVLASWPOW':
                 spgrange=[]
-        
+
         tb.open(tbfile+'/ANTENNA')
         ant_name=tb.getcol('NAME')
         ant_stat=tb.getcol('STATION')
         ant_code=range(0,len(tb.getcol('NAME')))
         tb.close()
-        
+
         tb.open(tbfile)
         spw_name=np.unique(tb.getcol('SPECTRAL_WINDOW_ID'))
         spw_name=sorted(list(set(spw_name)))
         spw_name=[str(i) for i in spw_name]
         tb.close()
-        
+
         news("")
         news("Antenna Name:   "+str(ant_name))
         news("SPW     Name:   "+str(spw_name))
         news("")
-        
+
         if  iterant==False:
             ant_name=['']
             ant_stat=['all']
             ant_code=['all']
-        
+
         merge_pdf='gs -sDEVICE=pdfwrite -sOutputFile='+tbfile+'.antall.pdf'
         merge_pdf=merge_pdf+' -dNOPAUSE -dBATCH'
         all_pdf=''
-        
+
         for i in range(0,len(ant_name)):
             one_pdf=tbfile+'.ant'+str(ant_code[i])+'.pdf'
             if  len(ant_name)==1:
@@ -2042,12 +2217,12 @@ def xplotcal(tbfile,iterant=False,
                         plt.title(subtitle,fontsize=10)
             merge_pdf=merge_pdf+' '+one_pdf
             all_pdf=all_pdf+' '+one_pdf
-            
+
         if  iterant==True:
             p=subprocess.Popen(merge_pdf,shell=True,env=extenv,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             output = p.stdout.read()
             os.system('rm '+all_pdf)
-    
+
     else:
         news("not supported .scal table")
 
@@ -2081,7 +2256,7 @@ def checkvrange0(vis='',
     if  line=='12co':
         restfreq=me.spectralline('CO_1_0')['m0']['value']
     c=qa.constants('c')['value']/1000.0
-    if  restfreq=='':    
+    if  restfreq=='':
         restfreq=me.spectralline('HI')['m0']['value']
     casalog.filter('INFO')
     news("")
@@ -2092,36 +2267,36 @@ def checkvrange0(vis='',
     if 'MEAS_FREQ_REF' in header_para:
         frame=tb.getcol('MEAS_FREQ_REF')
         spwids=range(0,len(tb.getcol('MEAS_FREQ_REF')))
-    else:  
+    else:
         spwids=0
-    
+
     chan_del_freq=np.average(np.abs(chan_freq[0]-chan_freq[1]))
     chan_low_freq=np.min(chan_freq)-chan_del_freq/2.0
     chan_hig_freq=np.max(chan_freq)+chan_del_freq/2.0
     news([chan_low_freq,chan_del_freq,chan_hig_freq])
     v=c*(restfreq-np.array([np.max(chan_freq),np.min(chan_freq)]))/restfreq
     news(v)
-    
+
     ms.open(vis)
     for spwid in spwids:
         req_freq=chan_freq[:,spwid]
         v=c*(restfreq-req_freq)/restfreq
         news(['spwid: '+str(spwid),'frame: '+str(frame[spwid]),np.min(np.sort(v)),np.max(np.sort(v)),np.abs(v[0]-v[1])])
     ms.close()
-    
+
     tb.close()
-    
+
     news("0 REST 1 LSRK2 LSRD 3 BARY 4 GEO 5 TOPO 6 GALACTO 7 LGROUP")
     news("")
-    
+
 def checkvrange(vis='',
                 outframe='LSRK',
                 line='',restfreq=115271200000,
-                spw='',field=''):
+                spw='',field='',verbose=False):
     """
     use imager.advisechansel() to find the data velocity coverage in a specific frame
     """
-    
+
     casalog.filter('ERROR')
     if  line=='hi':
         restfreq=me.spectralline('HI')['m0']['value']
@@ -2136,14 +2311,23 @@ def checkvrange(vis='',
     v1=c*(restfreq-freq1)/restfreq
     v2=c*(restfreq-freq2)/restfreq
     #print tmp
-    print v1,v2
+
+    vrange=[v1,v2]
+    if  verbose==True:
+        news(str(vrange))
+
+    return vrange
     #im.close()
 
 def checkchsel(vis='',
                outframe='LSRK',
+               spw='',
                vgrid=[1.,10.,1.],
-               line='',restfreq=115271200000):
-    
+               line='',restfreq=115271200000,verbose=False):
+    """
+    vgrid:    vstart, vend, width
+    use vrange to select spws
+    """
     casalog.filter('ERROR')
     if  line=='hi':
         restfreq=me.spectralline('HI')['m0']['value']
@@ -2151,15 +2335,18 @@ def checkchsel(vis='',
         restfreq=me.spectralline('CO_1_0')['m0']['value']
     casalog.filter('INFO')
     c=qa.constants('c')['value']/1000.0
-    
+
     fgrid=(1.0-np.array(vgrid)/c)*restfreq
     fgrid[2]=vgrid[2]/c*restfreq
-    im.open(vis)
-    print fgrid
+
+    if  verbose==False:
+        casalog.filter('ERROR')
+    im.selectvis(vis)
     selinfo=im.advisechansel(freqstart=np.min(fgrid[0]),freqend=np.max(fgrid[1]),freqstep=fgrid[2],freqframe=outframe)
-    print selinfo
     im.close
-                
+    if  verbose==False:
+        casalog.filter('INFO')
+    return selinfo
 
 def bpcopy(table,
            reference='0',
@@ -2186,39 +2373,39 @@ def bpcopy(table,
     #   xu.bpcopy(table,reference=reference,transfer=transfer,replace=True)
     #
     ###
-    
+
     news("")
     idr=reference.split(',')
     idt=transfer.split(',')
 
     if  replace==False:
-        
+
         if  os.path.exists(table+"_bpcopy"):
             rmtables(table+"_bpcopy")
         os.system("cp -rf "+table+" "+table+"_bpcopy")
         table=table+"_bpcopy"
-        
+
     for k in range(len(idr)):
-        
+
         if  os.path.exists("__tmp.bcal"):
             rmtables("__tmp.bcal")
-        
+
         tb.open(table,nomodify=False)
         subtbr=tb.query('SPECTRAL_WINDOW_ID=='+str(idr[k]))
         subtbt=tb.query('SPECTRAL_WINDOW_ID=='+str(idt[k]))
         docopy=(subtbt.nrows()==0 and subtbr.nrows()!=0)
-        
-        
+
+
         news(" reference: "+str(idr[k])+" transfer: "+str(idt[k])+" copy: "+str(docopy))
         if  docopy:
-            
+
             copytb=subtbr.copy('__tmp.bcal',deep=True,valuecopy=True,memorytable=True,returnobject=True)
-            
+
             spws=copytb.getcol("SPECTRAL_WINDOW_ID").tolist()
             for i in range(len(spws)):
                 spws[i]=int(idt[k])
             copytb.putcol("SPECTRAL_WINDOW_ID",spws)
-            
+
             copytb.copyrows(table)
             copytb.close()
 
@@ -2226,10 +2413,10 @@ def bpcopy(table,
         subtbr.close()
         subtbt.close()
         tb.close()
-        
-        if  os.path.exists("__tmp.bcal"):    
+
+        if  os.path.exists("__tmp.bcal"):
             rmtables("__tmp.bcal")
-        
+
 def rmcolumn(msfile,column=""):
     """
     remove columns from MS (only handle one column currently)
@@ -2257,14 +2444,14 @@ if  __name__=="__main__":
     #rmcolumn("n0772hi.src.ms.cont",column='WEIGHT_SPECTRUM')
     #rmcolumn("n0772hi.src.ms",column='WEIGHT_SPECTRUM')
     #sumwt("n0772d99a.src.ms")
-    #sumwt("n0772d99b.src.ms") 
-    #sumwt("n0772bc13a.src.ms") 
-    #sumwt("n0772bc13b.src.ms") 
+    #sumwt("n0772d99b.src.ms")
+    #sumwt("n0772bc13a.src.ms")
+    #sumwt("n0772bc13b.src.ms")
     #sumwt("n0772b13a.src.ms")
     #sumwt("n0772b13b.src.ms")
     #sumwt("n0772b13c.src.ms")
     #sumwt("n0772hi.src.ms")
-    #listobs("n2976co.src.ms") 
+    #listobs("n2976co.src.ms")
     #checkchflag("n0772hi.src.ms")
     #sumwt("n0337hi.src.ms")
     #xu.sumwt("../d03/d03.src.ms")
@@ -2272,5 +2459,3 @@ if  __name__=="__main__":
     #mossen(vis='n1156hi.src.ms',log='n1156hi.line.sens.log',
     #       mosweight=True,imsize=2**7*10,
     #       ftmachine='mosaic',weight='robust')
-          
-    
