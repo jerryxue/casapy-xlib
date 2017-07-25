@@ -18,6 +18,7 @@
 import socket
 from glob import glob as filesearch
 import inspect
+import casadef
 
 print ""
 print ""
