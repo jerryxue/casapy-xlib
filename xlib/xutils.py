@@ -19,6 +19,7 @@ from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 from email import Encoders
 
+im,cb,ms,tb,me,ia,po,sm,cl,cs,rg,sl,dc,vp,msmd,fi,fn,imd,sdms=gentools(['im','cb','ms','tb','me','ia','po','sm','cl','cs','rg','sl','dc','vp','msmd','fi','fn','imd','sdms'])
 
 def init():
 
@@ -476,16 +477,16 @@ def mossen(vis='',
            imsize=256,          # not used
            cell='1arcsec',      # not used
            weight='natural',
+           checkflag=False,
            verbose=False):
     #
     #   use imager.apparentsens() to estimate the sensitivity from weight
     #       note: as to v4.7, im.apparentsens() only read the WEIGHT column.
     #             it will assume the weight column represents the 1-channel noise for each vis record
     #             then derive the continuum or channel noise (depending on what is "selectvis")
-    #
+    #   A complete "flagged" spw choice will still work with checkflag=True 
     #   spw support list here 
     if  verbose==True:
-
         news("")
         news("run xu.mossen:")
         news("")
@@ -504,28 +505,35 @@ def mossen(vis='',
     if  verbose==False:
         casalog.filter('ERROR')
 
-    ms.open(vis)
-    im.open(vis)
-
-
-    for i in range(0,len(list_spw)):
-
-        stat=ms.statistics(column='FLAG',spw=list_spw[i],field=field,useflags=False)
-
-        if  verbose==True:
-            news(list_spw[i])
-            news("flagging fraction:"+str(stat['FLAG']['sum']/stat['FLAG']['npts']))
     
-        if  stat['FLAG']['sum']!=stat['FLAG']['npts']:
-            
+    im.open(vis)
+    
+    im.defineimage(nx=imsize,ny=imsize,cellx=cell,celly=cell)
+    im.setvp(dovp=True)
+    im.setoptions(ftmachine=ftmachine,padding=1.2)
+    
+    for i in range(0,len(list_spw)):
+        
+        if  verbose==True:
+            news('plane:'+str(i+1)+'/'+str(len(list_spw)))
+            news(list_spw[i])
+        if  checkflag==True:
+            ms.open(vis)
+            stat=ms.statistics(column='FLAG',spw=list_spw[i],field=field,useflags=False)
+            ms.close()
+            if  verbose==True:
+                news("flagging fraction:"+str(stat['FLAG']['sum']/stat['FLAG']['npts']))
+            if  stat['FLAG']['sum']!=stat['FLAG']['npts']:
+                im.selectvis(spw=list_spw[i],nchan=nchan,start=start,step=step,field=field)
+                im.weight(type=weight,robust=robust,mosaic=mosweight)
+                sens=im.apparentsens()
+                im_sens[i]=sens[1]
+        else:
             im.selectvis(spw=list_spw[i],nchan=nchan,start=start,step=step,field=field)
-            im.defineimage()
-            im.setvp(dovp=True)
-            im.setoptions(ftmachine=ftmachine,padding=1.2)
             im.weight(type=weight,robust=robust,mosaic=mosweight)
             sens=im.apparentsens()
             im_sens[i]=sens[1]
-    
+            
     #print >>vsfile,str(sens[1]),str(sens[2])
 
     if  verbose==False:
@@ -534,8 +542,6 @@ def mossen(vis='',
     if  logfile!='':
         vsfile.close()
 
-
-    ms.close()
     im.close()
 
     if  len(im_sens)==1:
@@ -551,6 +557,8 @@ def mossen_spec(vis='',
                 line='',
                 ftmachine='mosaic',
                 mosweight=False,
+                imsize=256,     
+                cell='1arcsec',               
                 weight='natural',
                 robust=0.5,
                 logfile=''):
@@ -593,11 +601,15 @@ def mossen_spec(vis='',
 
     im.close()
 
-    list_sen=mossen(vis=vis,spw=list_spw,ftmachine=ftmachine,mosweight=mosweight,weight=weight,robust=robust)
-
+    list_sen=mossen(vis=vis,spw=list_spw,ftmachine=ftmachine,
+                    imsize=imsize,cell=cell,
+                    mosweight=mosweight,weight=weight,robust=robust,verbose=True)
+    if  np.isscalar(list_sen): 
+        list_sen=[list_sen]
+    
     str_ch="{:>10}".format('plane')
     str_vr="{:>10}".format('velocity')
-    str_sp="{:^30}".format('spws')
+    str_sp="{:^60}".format('spws')
     str_se="{:>10}".format('sens')
     str_one=str_ch+str_vr+str_sp+str_se
     news(str_one)
@@ -606,14 +618,14 @@ def mossen_spec(vis='',
 
     str_ch="{:>10}".format('--')
     str_vr="{:>10}".format('km/s')
-    str_sp="{:^30}".format('--')
+    str_sp="{:^60}".format('--')
     str_se="{:>10}".format('mJy')
     str_one=str_ch+str_vr+str_sp+str_se
     news(str_one)
     if  logfile!='':
         print >>vsfile,str('#'+str_one[1:])
 
-    str_one='-'*60
+    str_one='-'*90
     news(str_one)
 
     for i in range(0,vgrid[2]):
@@ -621,7 +633,7 @@ def mossen_spec(vis='',
 
         str_ch="{0:>10.0f}".format(i+1)
         str_vr="{0:>10.2f}".format(list_vel[i])
-        str_sp="{0:^30}".format(list_spw[i])
+        str_sp="{0:^60}".format(list_spw[i])
         str_se="{0:>10.2f}".format(list_sen[i]*1000.0)
         
         str_one=str_ch+str_vr+str_sp+str_se
@@ -629,7 +641,7 @@ def mossen_spec(vis='',
         if  logfile!='':
             print >>vsfile,str(str_one)
 
-    str_one='-'*60
+    str_one='-'*90
     news(str_one)
 
     if  logfile!='':

@@ -280,6 +280,7 @@ def ximport(xp):
     #----------------------------------------------------------------------------------------
     #   Flagging Saving: Save the Flagging information
     #----------------------------------------------------------------------------------------
+    
     xu.news("")
     xu.news("--flagmanager--")
     xu.news("")
@@ -295,7 +296,7 @@ def ximport(xp):
     stoplog = casa_log.readlines()
     casa_log.close()
     xu.exportcasalog(startlog,stoplog, xp['prefix']+'.ximport.reduc.log')
-
+    
     #----------------------------------------------------------------------------------------
     #   End Statement
     #----------------------------------------------------------------------------------------
