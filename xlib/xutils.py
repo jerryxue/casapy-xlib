@@ -98,6 +98,7 @@ def init():
                                 # is still equally weighted in CVEL() although MSTRANSFORM() may take care of it in future.
     'flagreset':True,           # reset flagging to the orginal status
                                 # if False, flagging will be accumulated after each run of xcal.py.
+    'flagreset_version':'Original', #flagreset version
     'flagtest':False,           # abort processing after flagging
     'flagselect_default':[],    # default flagging
                                 # examples:

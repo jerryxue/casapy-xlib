@@ -291,11 +291,6 @@ def ximport(xp):
                 versionname='Original',
                 comment='Original Flagging',
                 merge='replace')
-
-    casa_log = open(casalog.logfile(),'r')
-    stoplog = casa_log.readlines()
-    casa_log.close()
-    xu.exportcasalog(startlog,stoplog, xp['prefix']+'.ximport.reduc.log')
     
     #----------------------------------------------------------------------------------------
     #   End Statement
@@ -308,6 +303,10 @@ def ximport(xp):
     xu.news("------------- End Task: ximport "+xp['prefix']+" -------------")
     xu.news("++")
     xu.news("")
+    casa_log = open(casalog.logfile(),'r')
+    stoplog = casa_log.readlines()
+    casa_log.close()
+    xu.exportcasalog(startlog,stoplog, xp['prefix']+'.ximport.reduc.log')
 
     if  xp['email']!='':
         xu.emailsender(xp['email'],\

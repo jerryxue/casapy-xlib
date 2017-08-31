@@ -155,7 +155,7 @@ def xcal(xp):
     #----------------------------------------------------------------------------------------
     
     if  xp['flagreset']==True:
-        flagmanager(vis=xp['prefix']+'.ms',mode='restore',versionname='Original')
+        flagmanager(vis=xp['prefix']+'.ms',mode='restore',versionname=xp['flagreset_version'])
     if  xp['flagreset']==False:
         flagmanager(vis=xp['prefix']+'.ms',mode='restore',versionname='flagged')
     
