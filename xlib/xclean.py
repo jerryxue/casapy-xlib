@@ -18,6 +18,9 @@ from email.MIMEText import MIMEText
 from email import Encoders
 import xutils as xu
 
+im,cb,ms,tb,me,ia,po,sm,cl,cs,rg,sl,dc,vp,msmd,fi,fn,imd,sdms=gentools(['im','cb','ms','tb','me','ia','po','sm','cl','cs','rg','sl','dc','vp','msmd','fi','fn','imd','sdms'])
+
+
 def xclean(xp):
         
     """
