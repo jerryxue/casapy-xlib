@@ -100,6 +100,12 @@ if  os.path.exists(au_path):
     sys.path.insert(1,au_path)
     import analysisUtils as au
 
+ap_path='/opt/anaconda2/lib/python2.7/site-packages'
+if  os.path.exists(ap_path):
+    sys.path.insert(1,ap_path)
+
+
+
 print ""
 print "+"*80
 print ""

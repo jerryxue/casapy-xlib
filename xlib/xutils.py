@@ -336,10 +336,16 @@ def init():
     'password':'',              # notification email password
     'version':'',               # script versaion, not implemented
     'log_listobs_msfile':'',    # not implemented
-
+    
+    # EXPORTFITS
     'dropdeg':False,
     'optical':False,
-    'dropstokes':False
+    'dropstokes':False,
+    'history':True,
+    'stockeslast':True,
+    'overwrite':True,
+    'velocity':True
+    
     }
     return xp
 
@@ -1162,6 +1168,7 @@ def cleanup(outname,tag='',resume=False):
 
 
 def exportclean(outname,keepcasaimage=True,
+                history=False,stokeslast=True,overwrite=True,velocity=True,
                 dropdeg=False,optical=False,dropstokes=False):
     #
     #    export imaging products into fits files
@@ -1177,8 +1184,8 @@ def exportclean(outname,keepcasaimage=True,
                        outname+'.'+version[i]+'.fits',
                        dropdeg=dropdeg,optical=optical,
                        dropstokes=dropstokes,
-                       stokeslast=True,history=False,
-                       overwrite=True,velocity=True)
+                       stokeslast=stokeslast,history=history,
+                       overwrite=overwrite,velocity=velocity)
             if  keepcasaimage==False:
                 rmctable(outname+'.'+version[i])
 
